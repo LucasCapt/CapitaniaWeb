@@ -1,0 +1,23 @@
+Código CETIP	RDCO24
+Código Mellon	945329
+Emissão	4/15/2013
+Vencimento	10/15/2020
+Indexador	IPCA +
+Taxa	0.05
+PU	10000
+Dias (juros)	Úteis
+Atraso AM (meses)	1
+Atraso PMT (du)	0
+AM Total	False
+
+
+Data	Juros Incorp.	Amortização	Amortização Extr.
+4/15/2013	0	0	0
+10/15/2014	0	0.06	0
+10/15/2015	0	0.08	0
+10/15/2016	0	0.14	0
+10/15/2017	0	0.12	0
+10/15/2018	0	0.18	0
+10/15/2019	0	0.2	0
+10/15/2020	0	0.22	0
+

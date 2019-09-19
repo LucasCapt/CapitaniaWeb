@@ -1,0 +1,28 @@
+Código CETIP	CART22
+Código Mellon	892018
+Data de Emissão	12/15/2012
+Vencimento	12/15/2024
+Indexador	IPCA +
+Taxa	0.0605
+PU	1000
+Dias (juros)	30/360
+Atraso AM (meses)	1
+Atraso PMT (du)	0
+AM Total	False
+
+
+Data	Juros Incorp.	Amortização	Amortização Extr.
+12/16/2012	0	0	0
+12/16/2013	0	0	0
+12/15/2014	0	0	0
+12/15/2015	0	0.01	0
+12/15/2016	0	0.01	0
+12/15/2017	0	0.02	0
+12/17/2018	0	0.02	0
+12/16/2019	0	0.02	0
+12/15/2020	0	0.05	0
+12/15/2021	0	0.12	0
+12/15/2022	0	0.2	0
+12/15/2023	0	0.25	0
+12/16/2024	0	0.3	0
+

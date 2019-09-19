@@ -1,0 +1,26 @@
+Código CETIP	AESS12
+Código Mellon	
+Data de Emissão	2/15/2013
+Vencimento	2/15/2018
+Indexador	CDI +
+Taxa	0.0125
+PU	10000
+Dias (juros)	Úteis
+Atraso AM (meses)	0
+Atraso PMT (du)	0
+AM Total	False
+
+
+Data	Juros Incorp.	Amortização	Amortização Extr.
+2/15/2013	0	0	0
+8/15/2013	0	0	0
+2/17/2014	0	0	0
+8/15/2014	0	0	0
+2/18/2015	0	0	0
+8/17/2015	0	0	0
+2/15/2016	0	0	0
+8/15/2016	0	0	0
+2/15/2017	0	0.5	0
+8/15/2017	0	0	0
+2/15/2018	0	0.5	0
+

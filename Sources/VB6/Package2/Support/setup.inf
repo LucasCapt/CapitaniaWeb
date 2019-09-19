@@ -1,0 +1,37 @@
+;*** BEGIN **********************************************************
+;**                                                                **
+;** Automatically generated on: Tue May 29 12:02:38 2018           **
+;**                                                                **
+;** MakeCAB Version: 6.1.7600.16385                                 **
+;**                                                                **
+;*** BEGIN **********************************************************
+[disk list]
+1,Disk 1
+[cabinet list]
+1,1,Compliance.CAB
+[file list]
+1,0,Setup.Lst,4384
+1,0,setup.exe,140800
+1,1,Compliance.exe,1007616
+1,1,msvbvm60.dll,1386496
+1,1,oleaut32.dll,572416
+1,1,olepro32.dll,90112
+1,1,asycfilt.dll,67584
+1,1,stdole2.tlb,16896
+1,1,COMCAT.DLL,22288
+1,1,ACEDAO.DLL,571320
+1,1,msadox.dll,372736
+1,1,msxml6.dll,1390592
+1,1,msflxgrd.ocx,244416
+1,1,FM20.DLL,1202856
+1,1,MSCOMCTL.OCX,1070232
+1,1,mscomct2.ocx,662288
+1,1,MSCHRT20.OCX,1008432
+1,1,SETUP1.EXE,286720
+1,1,Vb6stkit.dll,101888
+1,1,ST6UNST.EXE,73216
+;*** END ************************************************************
+;**                                                                **
+;** Automatically generated on: Tue May 29 12:02:38 2018           **
+;**                                                                **
+;*** END ************************************************************

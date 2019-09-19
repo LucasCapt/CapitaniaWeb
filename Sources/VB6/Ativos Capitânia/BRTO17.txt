@@ -1,0 +1,22 @@
+Código CETIP	BRTO17
+Código Mellon	
+Data de Emissão	8/8/2011
+Vencimento	8/8/2017
+Indexador	CDI +
+Taxa	0.01
+PU	10000000
+Dias (juros)	Úteis
+Atraso AM (meses)	0
+Atraso PMT (du)	0
+AM Total	False
+
+
+Data	Juros Incorp.	Amortização	Amortização Extr.
+8/8/2011	0	0	0
+8/8/2012	0	0	0
+8/8/2013	0	0	0
+8/8/2014	0	0	0
+8/8/2015	0	0	0
+8/8/2016	0	0	0
+8/8/2017	0	1	0
+

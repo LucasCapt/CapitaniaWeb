@@ -1,0 +1,970 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+xmlns:html="http://www.w3.org/TR/REC-html40">
+<Styles>
+<Style ss:ID="s21">
+<Font x:Family="Swiss" ss:Bold="1"/>
+</Style>
+<Style ss:ID="s22">
+<Font x:Family="Swiss" ss:Size="11" ss:Bold="1"/>
+</Style><Style ss:ID="firstNormalCell">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="lastNormalCell">
+   <Borders>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="lastRowFirstCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="lastRowCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="lastRowLastCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="headerFirstCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+  </Style>
+  <Style ss:ID="headerCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+  </Style>
+  <Style ss:ID="headerLastCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+  </Style>
+</Styles>
+<Worksheet ss:Name="Detailed LOC Report">
+<Table>
+<Row class="text">
+<Cell ss:StyleID="s22" id="h1"> <Data ss:Type="String">Lines of code per project</Data></Cell>
+<Cell ss:StyleID="s22" id="h1"> <Data ss:Type="String">LOC</Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Compliance.vbp</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="Number">23348</Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Code</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Comment</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Blank</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Design</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Supported</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\Form1.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">68</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">10</Data></Cell>
+<Cell> <Data ss:Type="Number">24</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CPropriedade.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">105</Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">19</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\MMain.bas</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">312</Data></Cell>
+<Cell> <Data ss:Type="Number">72</Data></Cell>
+<Cell> <Data ss:Type="Number">79</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CPropriedades.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">270</Data></Cell>
+<Cell> <Data ss:Type="Number">7</Data></Cell>
+<Cell> <Data ss:Type="Number">40</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\Regras.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">140</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">32</Data></Cell>
+<Cell> <Data ss:Type="Number">123</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CRegra.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">180</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">25</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CBook.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">84</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">22</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CRegras.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">137</Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">26</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CBooks.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">110</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">25</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FFundos.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">171</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">29</Data></Cell>
+<Cell> <Data ss:Type="Number">115</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CFundo.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">1339</Data></Cell>
+<Cell> <Data ss:Type="Number">133</Data></Cell>
+<Cell> <Data ss:Type="Number">242</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CFundos.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">376</Data></Cell>
+<Cell> <Data ss:Type="Number">27</Data></Cell>
+<Cell> <Data ss:Type="Number">70</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CPapel.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">585</Data></Cell>
+<Cell> <Data ss:Type="Number">47</Data></Cell>
+<Cell> <Data ss:Type="Number">97</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CPapeis.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">521</Data></Cell>
+<Cell> <Data ss:Type="Number">34</Data></Cell>
+<Cell> <Data ss:Type="Number">99</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CPosic.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">42</Data></Cell>
+<Cell> <Data ss:Type="Number">9</Data></Cell>
+<Cell> <Data ss:Type="Number">16</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\Fpapel.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">352</Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="Number">60</Data></Cell>
+<Cell> <Data ss:Type="Number">160</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FMain.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">580</Data></Cell>
+<Cell> <Data ss:Type="Number">23</Data></Cell>
+<Cell> <Data ss:Type="Number">169</Data></Cell>
+<Cell> <Data ss:Type="Number">685</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FFundo.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">278</Data></Cell>
+<Cell> <Data ss:Type="Number">7</Data></Cell>
+<Cell> <Data ss:Type="Number">40</Data></Cell>
+<Cell> <Data ss:Type="Number">121</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\Fsimula.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">88</Data></Cell>
+<Cell> <Data ss:Type="Number">7</Data></Cell>
+<Cell> <Data ss:Type="Number">14</Data></Cell>
+<Cell> <Data ss:Type="Number">158</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FTitulo.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">133</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">31</Data></Cell>
+<Cell> <Data ss:Type="Number">386</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CImporter.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">1152</Data></Cell>
+<Cell> <Data ss:Type="Number">106</Data></Cell>
+<Cell> <Data ss:Type="Number">284</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FStart.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">20</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FEditFund.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">118</Data></Cell>
+<Cell> <Data ss:Type="Number">5</Data></Cell>
+<Cell> <Data ss:Type="Number">26</Data></Cell>
+<Cell> <Data ss:Type="Number">573</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FInput.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">38</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">55</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FEditBook.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">55</Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">19</Data></Cell>
+<Cell> <Data ss:Type="Number">102</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FBooks.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">75</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">17</Data></Cell>
+<Cell> <Data ss:Type="Number">66</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FEditRegra.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">250</Data></Cell>
+<Cell> <Data ss:Type="Number">5</Data></Cell>
+<Cell> <Data ss:Type="Number">58</Data></Cell>
+<Cell> <Data ss:Type="Number">520</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FEditprop.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">41</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">9</Data></Cell>
+<Cell> <Data ss:Type="Number">95</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FInputData.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">29</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">5</Data></Cell>
+<Cell> <Data ss:Type="Number">64</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FRegraFast.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">60</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">193</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FAlloc.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">80</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">14</Data></Cell>
+<Cell> <Data ss:Type="Number">70</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CStress.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">174</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">22</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FStress.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">77</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">13</Data></Cell>
+<Cell> <Data ss:Type="Number">130</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FStressResult.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">45</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">10</Data></Cell>
+<Cell> <Data ss:Type="Number">60</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\C_CompReporter.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">317</Data></Cell>
+<Cell> <Data ss:Type="Number">26</Data></Cell>
+<Cell> <Data ss:Type="Number">66</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CNomeValor.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">10</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FTituloHist.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">59</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">12</Data></Cell>
+<Cell> <Data ss:Type="Number">33</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FCrossInvest.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">86</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">19</Data></Cell>
+<Cell> <Data ss:Type="Number">79</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FCashFlow.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">165</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="Number">68</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CRisco.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">288</Data></Cell>
+<Cell> <Data ss:Type="Number">16</Data></Cell>
+<Cell> <Data ss:Type="Number">52</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CConfig.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">264</Data></Cell>
+<Cell> <Data ss:Type="Number">27</Data></Cell>
+<Cell> <Data ss:Type="Number">67</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FRiskParms.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">44</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="Number">43</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FLiquidity.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">115</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">13</Data></Cell>
+<Cell> <Data ss:Type="Number">113</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FLiquidityPapel.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">70</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">14</Data></Cell>
+<Cell> <Data ss:Type="Number">93</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FMktRisk.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">46</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">9</Data></Cell>
+<Cell> <Data ss:Type="Number">60</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FHistoricos.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">452</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">27</Data></Cell>
+<Cell> <Data ss:Type="Number">78</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\C_Emailer.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">58</Data></Cell>
+<Cell> <Data ss:Type="Number">21</Data></Cell>
+<Cell> <Data ss:Type="Number">23</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FLiquidityDetailed.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">91</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">13</Data></Cell>
+<Cell> <Data ss:Type="Number">46</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FStressLiq.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">41</Data></Cell>
+<Cell> <Data ss:Type="Number">6</Data></Cell>
+<Cell> <Data ss:Type="Number">9</Data></Cell>
+<Cell> <Data ss:Type="Number">131</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FConfig.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">112</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">25</Data></Cell>
+<Cell> <Data ss:Type="Number">1372</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\fHistCarteira.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">70</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">25</Data></Cell>
+<Cell> <Data ss:Type="Number">80</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FCashReport.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">44</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">6</Data></Cell>
+<Cell> <Data ss:Type="Number">61</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CCtpt.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">19</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CTrade.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">86</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">18</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FAtualizacs.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">45</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="Number">55</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FChart.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">337</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">46</Data></Cell>
+<Cell> <Data ss:Type="Number">97</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\MMath.bas</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">413</Data></Cell>
+<Cell> <Data ss:Type="Number">19</Data></Cell>
+<Cell> <Data ss:Type="Number">65</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FReport.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">32</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">28</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FCreditRisk.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">232</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">25</Data></Cell>
+<Cell> <Data ss:Type="Number">33</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FTemplateTitulo.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">258</Data></Cell>
+<Cell> <Data ss:Type="Number">7</Data></Cell>
+<Cell> <Data ss:Type="Number">48</Data></Cell>
+<Cell> <Data ss:Type="Number">166</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FAka.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">56</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">10</Data></Cell>
+<Cell> <Data ss:Type="Number">154</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FAKAList.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">35</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">26</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FTentaImportar.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">28</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">6</Data></Cell>
+<Cell> <Data ss:Type="Number">90</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FCFPorPapel.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">100</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">22</Data></Cell>
+<Cell> <Data ss:Type="Number">24</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FBuscaISIN.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">51</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">11</Data></Cell>
+<Cell> <Data ss:Type="Number">48</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CAlocacao.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">38</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">6</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FFundLimits.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">40</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">7</Data></Cell>
+<Cell> <Data ss:Type="Number">60</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CUser.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">30</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">5</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FLiqStress.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">44</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">6</Data></Cell>
+<Cell> <Data ss:Type="Number">60</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FCreditScore.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">56</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">7</Data></Cell>
+<Cell> <Data ss:Type="Number">49</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CCreditName.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">174</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">27</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CCreditNames.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">122</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">16</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FBacktest.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">119</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="Number">50</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FAnbima.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">207</Data></Cell>
+<Cell> <Data ss:Type="Number">14</Data></Cell>
+<Cell> <Data ss:Type="Number">34</Data></Cell>
+<Cell> <Data ss:Type="Number">100</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CRiskHistoryElement.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">12</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CCrise.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">55</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">6</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CBlotter.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CBlotters.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\C_Mensagens.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">615</Data></Cell>
+<Cell> <Data ss:Type="Number">73</Data></Cell>
+<Cell> <Data ss:Type="Number">114</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\C_Debugger.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">19</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">6</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CTrades.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">220</Data></Cell>
+<Cell> <Data ss:Type="Number">29</Data></Cell>
+<Cell> <Data ss:Type="Number">47</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FTrades.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">65</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">9</Data></Cell>
+<Cell> <Data ss:Type="Number">40</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FPreTradeCompliance.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">137</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">17</Data></Cell>
+<Cell> <Data ss:Type="Number">110</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FCrpr.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">45</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">5</Data></Cell>
+<Cell> <Data ss:Type="Number">35</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CPreTradeCompItem.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">27</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FDelAka.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">74</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">11</Data></Cell>
+<Cell> <Data ss:Type="Number">121</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FReplicaPos.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">92</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">9</Data></Cell>
+<Cell> <Data ss:Type="Number">121</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CProvFilterElement.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">13</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FProvFilter.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">93</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">20</Data></Cell>
+<Cell> <Data ss:Type="Number">24</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\F_s_Purge.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">143</Data></Cell>
+<Cell> <Data ss:Type="Number">16</Data></Cell>
+<Cell> <Data ss:Type="Number">24</Data></Cell>
+<Cell> <Data ss:Type="Number">211</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FEditProv.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">94</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">16</Data></Cell>
+<Cell> <Data ss:Type="Number">168</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\F_s_ChgID.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">52</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">11</Data></Cell>
+<Cell> <Data ss:Type="Number">94</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FCrdNames.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">60</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">13</Data></Cell>
+<Cell> <Data ss:Type="Number">26</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FEditCrdName.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">60</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">11</Data></Cell>
+<Cell> <Data ss:Type="Number">122</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CRuleResult.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">27</Data></Cell>
+<Cell> <Data ss:Type="Number">5</Data></Cell>
+<Cell> <Data ss:Type="Number">3</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\FLiquidityDetailMo.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">54</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">12</Data></Cell>
+<Cell> <Data ss:Type="Number">41</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\CRiskLiqStressElement.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">24</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">2</Data></Cell>
+<Cell> <Data ss:Type="Number">8</Data></Cell>
+<Cell> <Data ss:Type="String">Yes</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Total lines of code:</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="Number">23348</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+</Table>
+</Worksheet>
+</Workbook>

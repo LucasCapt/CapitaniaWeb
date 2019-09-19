@@ -1,0 +1,28 @@
+Código CETIP	13C0033686
+Código Mellon	928376
+Emissão	3/22/2013
+Vencimento	2/29/2016
+Indexador	IPCA +
+Taxa	0.0675
+PU	300687.28522337
+Dias (juros)	30/360
+Atraso AM (meses)	2
+Atraso PMT (du)	1
+AM Total	True
+
+
+Data	Juros Incorp.	Amortização	Amortização Extr.
+3/22/2013	0	0	0
+9/22/2013	0	0	0
+3/22/2014	0	0	0
+9/22/2014	0	0	0
+3/22/2015	0	0	0
+9/22/2015	0	0	0
+3/22/2016	0	0	0
+9/22/2016	0	0.1666	0
+3/22/2017	0	0.1666	0
+9/22/2017	0	0.1667	0
+3/22/2018	0	0.1667	0
+9/22/2018	0	0.1667	0
+3/22/2019	0	0.1667	0
+

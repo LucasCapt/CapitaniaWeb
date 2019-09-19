@@ -1,0 +1,23 @@
+Código CETIP	CSMG26
+Código Mellon	
+Data de Emissão	2/15/2012
+Vencimento	2/15/2019
+Indexador	IPCA +
+Taxa	0.060246
+PU	1000000
+Dias (juros)	Úteis
+Atraso AM (meses)	1
+Atraso PMT (du)	0
+AM Total	False
+
+
+Data	Juros Incorp.	Amortização	Amortização Extr.
+2/15/2012	0	0	0
+2/15/2013	0	0	0
+2/15/2014	0	0.1667	0
+2/15/2015	0	0.1667	0
+2/15/2016	0	0.1667	0
+2/15/2017	0	0.1667	0
+2/15/2018	0	0.1667	0
+2/15/2019	0	0.1665	0
+
