@@ -12,7 +12,7 @@ Capitânia Project
 * migração da base de dados para SQL Server (80%)
 * adaptação versão atual programa (30%)
 
-#### Próximas tarefas
+#### Próximas tarefas (Semana de 30/09)
 * finalizar a migração da base de dados;
   * verificar as tabelas com inconsistências de dados;
 * alterar rotinas de tratamento de datas no programa VB6 (o formato de data do Access é diferente do formato do SQL Server)
