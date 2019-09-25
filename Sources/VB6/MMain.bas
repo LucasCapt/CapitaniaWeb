@@ -1,6 +1,8 @@
 Attribute VB_Name = "MMain"
 Public Const LongTimeAgo As Date = 36526
 
+Private vConexao As Database
+
 Public DBFileName As String
 Public ConfigFileName As String
 Public User As New CUser
@@ -332,7 +334,16 @@ End Sub
 
 
 Public Function OpenTheDatabase() As Database
-    Set OpenTheDatabase = DBEngine.Workspaces(0).OpenDatabase(DBFileName)
+
+    'If vConexao Is Nothing Then
+        Set ws = DBEngine.Workspaces(0)
+        Let strConnection = "ODBC;DSN=db_capitania;UID=capitania\dev.capitania;=Capitania2019"
+        Set db = ws.OpenDatabase("", False, False, strConnection)
+        Set vConexao = db
+    'End If
+    
+    Set OpenTheDatabase = vConexao
+    
 End Function
 
 

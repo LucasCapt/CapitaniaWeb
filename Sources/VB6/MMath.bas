@@ -36,7 +36,7 @@ Public Function CNPJComPonto(x As String) As String
 End Function
 
 Public Function SQLD(x As Date) As String
-    SQLD = "#" + Format(x, "MM/DD/YYYY") + "#"
+    SQLD = "'" + Format(x, "yyyy-MM-dd") + "'"
 End Function
 
 Public Function SQLBaseDate() As String
@@ -52,7 +52,7 @@ Public Function SQLTimeStamp() As String
 End Function
 
 Public Function SQLLongTime(x As Date) As String
-    SQLLongTime = "#" + Format(x, "MM/DD/YYYY HH:MM:SS") + "#"
+    SQLLongTime = "'" + Format(x, "yyyy-MM-dd HH:mm:ss") + "'"
 End Function
 
 Public Function FormatLimit(x As Double, r As CRegra)

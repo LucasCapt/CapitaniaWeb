@@ -969,7 +969,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
 
                 
                 'Busca o fundo no database e obtém o ID
-                    Set rs = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE CNPJ='" + CNPJ + "' AND (NOT DELETED OR DT_DELETED>" + SQLD(d) + ")")
+                    Set rs = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE CNPJ='" + CNPJ + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")")
                     If Not rs.EOF Then
                         fundoid = rs("ID")
                     Else
@@ -981,7 +981,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                     If fundoid > 0 Then
                     
                         'Limpa a base para a data d, fundo fundoid
-                        db.Execute ("DELETE FROM TPOSICLAYOUT2 WHERE DATA=#" + Format(d, "MM/DD/YYYY") + "# AND FUNDO=" + Str(fundoid))
+                        db.Execute ("DELETE FROM TPOSICLAYOUT2 WHERE DATA=" + SQLD(d) + " AND FUNDO=" + Str(fundoid))
                         db.Close: Set db = OpenTheDatabase 'Para não dar #erro
                         TDesp = 0
                         TProv = -VResgatar
