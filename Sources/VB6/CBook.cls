@@ -18,11 +18,11 @@ Public c As Collection
 Public FundosAplicN As Integer
 
 Public Sub ReadRulesDB()
-    Dim db As Database, rs As Recordset, x As CRegra
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CRegra
     Set c = New Collection
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TBOOKREGRA WHERE RULEBOOK=" + Str(ID))
+    Set rs = db.Execute("SELECT * FROM TBOOKREGRA WHERE RULEBOOK=" + Str(ID))
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         Set x = Regras.search(rs("Regra"))
@@ -33,7 +33,7 @@ Public Sub ReadRulesDB()
         End If
         rs.MoveNext
     Wend
-    db.Close
+    
 End Sub
 
 
@@ -48,12 +48,12 @@ End Sub
 
 
 Public Sub WriteDB()
-    Dim db As Database, rs As Recordset, sb As String, x As CBook, b As CRegra, dtcriado As Date
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, sb As String, x As CBook, b As CRegra, dtcriado As Date
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(Me.ID))
+        Set rs = db.Execute("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(Me.ID))
         If Not rs.EOF Then
             dtcriado = rs("DT_CREATED")
             db.Execute ("DELETE FROM TRULEBOOKS WHERE ID=" + Str(Me.ID))
@@ -69,7 +69,7 @@ Public Sub WriteDB()
         For Each b In c
             db.Execute ("INSERT INTO TBOOKREGRA (RULEBOOK, REGRA) VALUES (" + Str(Me.ID) + ", " + Str(b.ID) + ")")
         Next b
-        db.Close
+        
     End If
 End Sub
 

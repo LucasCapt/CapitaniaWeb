@@ -3,12 +3,12 @@ Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.Form fHistCarteira 
    Caption         =   "Histórico de Carteira"
-   ClientHeight    =   11445
+   ClientHeight    =   11250
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   7935
    LinkTopic       =   "Form1"
-   ScaleHeight     =   11445
+   ScaleHeight     =   11250
    ScaleWidth      =   7935
    StartUpPosition =   3  'Windows Default
    Begin VB.ComboBox Combo2 
@@ -95,7 +95,7 @@ End Sub
 
 
 Public Sub newrefresh()
-    Dim db As Database, rs As Recordset, rs1 As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset
     Dim d As Date, L As Integer, dt As Date, ky As String
     Dim Fundo As CFundo
     
@@ -122,7 +122,7 @@ Public Sub newrefresh()
             
             If Combo1 = "==TODOS==" Then u = "" Else u = "FUNDO=" + Str(Fundo.ID) + " AND"
             
-            Set rs = db.OpenRecordset("SELECT DATA, SUM(VALOR) AS TVAL FROM QPOSICPAPEL WHERE " + _
+            Set rs = db.Execute("SELECT DATA, SUM(VALOR) AS TVAL FROM QPOSICPAPEL WHERE " + _
                 u + " NOME='" + Combo2 + "' AND DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# GROUP BY DATA ORDER BY DATA")
             
         
@@ -142,7 +142,6 @@ Public Sub newrefresh()
             Grid.Visible = True
         End If
         
-        db.Close
     End If 'fundo is nothing
     Me.Show
 End Sub

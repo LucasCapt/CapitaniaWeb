@@ -101,7 +101,7 @@ End Sub
 
 
 Private Sub CommandButton1_Click()
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CFundo, s1 As String, s2 As String, key As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CFundo, s1 As String, s2 As String, key As String
     Select Case OKMode
         Case 1
             If Not PasteCF Then MsgBox ("Erros encontrados no Paste")
@@ -133,7 +133,6 @@ Private Sub CommandButton1_Click()
                     Str(Val_1(Grid.TextMatrix(i, 2))) + ", " + _
                     SQLBaseDate + ",FALSE," + SQLBaseDate + ")")
             Next i
-            db.Close
             Obj.CFFound = True
             Obj.FazFluxo
             Fundos.RecalcWRespectTo Obj

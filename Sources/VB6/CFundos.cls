@@ -15,7 +15,7 @@ Public c As New Collection
 
 
 Public Sub ReadDB(Data1 As Date, Optional f As Form)
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CFundo
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CFundo
     Dim pl As Double, a As Double, d As Date, b As Date, mxdata As Date
     Dim PlHist(2000) As Double, PLData(2000) As Date, i As Integer, NPL As Integer, PLMedio As Double
     Dim t0 As Date, td As Double, ti As Integer, t1 As Double, t2 As Double, t3 As Double, t4 As Double, t5 As Double, t6 As Double, t7 As Double, ttt As Double
@@ -29,18 +29,18 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
     
     'Lê todas as séries de quotas
     tt = Timer
-    Set rs = db.OpenRecordset("SELECT * FROM TQUOTAS WHERE DATA<=" + SQLBaseDate + " AND DATA>=" + SQLD(BaseDate - 365) + " ORDER BY FUNDO, DATA")
+    Set rs = db.Execute("SELECT * FROM TQUOTAS WHERE DATA<=" + SQLBaseDate + " AND DATA>=" + SQLD(BaseDate - 365) + " ORDER BY FUNDO, DATA")
     AllQuotas = rs.GetRows(rs.RecordCount)
     t6 = t6 + (Timer - tt)
     
     'Lê todas as últimas datas
     tt = Timer
-    Set rs = db.OpenRecordset("SELECT DISTINCT FUNDO, MAX(DATA) FROM TPOSIC WHERE DATA<=" + SQLD(Data1) + " GROUP BY FUNDO")
+    Set rs = db.Execute("SELECT DISTINCT FUNDO, MAX(DATA) FROM TPOSIC WHERE DATA<=" + SQLD(Data1) + " GROUP BY FUNDO")
     AllMaxDates = rs.GetRows(rs.RecordCount)
     t2 = t2 + Timer - tt
         
     'Lê os fundos
-    Set rs = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
+    Set rs = db.Execute("SELECT * FROM TFUNDOS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         Set x = New CFundo
@@ -81,7 +81,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
                 
         'Le livros de regras
             tt = Timer
-            Set rs1 = db.OpenRecordset("SELECT * FROM TFUNDOBOOK WHERE FUNDO=" + Str(rs("ID")))
+            Set rs1 = db.Execute("SELECT * FROM TFUNDOBOOK WHERE FUNDO=" + Str(rs("ID")))
             If Not rs1.EOF Then rs1.MoveFirst
             While Not rs1.EOF
                 x.AddNewBook (rs1("Book"))
@@ -101,7 +101,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
                     
             'Le a carteira
             If x.Dt_LastPortfolio > LongTimeAgo Then
-                Set rs1 = db.OpenRecordset("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(rs("ID")) + " AND DATA=" + SQLD(x.Dt_LastPortfolio) + " ORDER BY VALOR DESC")
+                Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(rs("ID")) + " AND DATA=" + SQLD(x.Dt_LastPortfolio) + " ORDER BY VALOR DESC")
                 rs1.MoveFirst
                 While Not rs1.EOF
                     x.IncluiPosic rs1("Papel"), CritNN(rs1("Valor")), CritNN(rs1("Quant")), False, "AUTO_TIPO_1"
@@ -118,7 +118,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
         'Le fila de resgate
             tt = Timer
             x.ResetResgate
-            Set rs1 = db.OpenRecordset("SELECT * FROM TRESGATES WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate + " AND DATALIQ>" + SQLBaseDate + " AND (NOT CANCELADO OR DATACANCEL>" + SQLBaseDate + ")")
+            Set rs1 = db.Execute("SELECT * FROM TRESGATES WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate + " AND DATALIQ>" + SQLBaseDate + " AND (NOT CANCELADO OR DATACANCEL>" + SQLBaseDate + ")")
             While Not rs1.EOF
                 x.InlcluiResgate rs1("DATALIQ"), rs1("VALOR"), rs1("TOTAL"), rs1("DATAOBS")
                 rs1.MoveNext
@@ -127,7 +127,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             
         'Le fila de transferências
             x.ResetTransf
-            Set rs1 = db.OpenRecordset("SELECT * FROM TTRANSFERS WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate + " AND DATALIQ>" + SQLBaseDate + " AND (NOT CANCELADO OR DATACANCEL>" + SQLBaseDate + ")")
+            Set rs1 = db.Execute("SELECT * FROM TTRANSFERS WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate + " AND DATALIQ>" + SQLBaseDate + " AND (NOT CANCELADO OR DATACANCEL>" + SQLBaseDate + ")")
             While Not rs1.EOF
                 x.InlcluiTransf rs1("DATALIQ"), rs1("VALOR")
                 rs1.MoveNext
@@ -138,7 +138,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
         'Calcula Volatilidade do Patrimônio Líquido e guarda a série de PL
             'esta parte demora
             tt = Timer
-            Set rs1 = db.OpenRecordset("SELECT * FROM THISTRISK WHERE FUNDO='" + x.nome + "' AND DATARUN>=" + SQLD(BaseDate - 1440) + " AND DATARUN<=" + SQLBaseDate + " AND DAY(DATARUN)>26 ORDER BY DATARUN")
+            Set rs1 = db.Execute("SELECT * FROM THISTRISK WHERE FUNDO='" + x.nome + "' AND DATARUN>=" + SQLD(BaseDate - 1440) + " AND DATARUN<=" + SQLBaseDate + " AND DAY(DATARUN)>26 ORDER BY DATARUN")
             NPL = 0
             If rs1.EOF Then
                 x.VolPL = 0
@@ -178,7 +178,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             
         'Calcula Volatilidade do Resgate
             tt = Timer
-            Set rs1 = db.OpenRecordset("SELECT DATALIQ, SUM(VALOR) AS TTVALUE FROM TRESGATES WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS>=" + SQLD(BaseDate - 1440) + " AND DATAOBS<=" + SQLBaseDate + " AND NOT CANCELADO GROUP BY DATALIQ ORDER BY DATALIQ")
+            Set rs1 = db.Execute("SELECT DATALIQ, SUM(VALOR) AS TTVALUE FROM TRESGATES WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS>=" + SQLD(BaseDate - 1440) + " AND DATAOBS<=" + SQLBaseDate + " AND NOT CANCELADO GROUP BY DATALIQ ORDER BY DATALIQ")
             If rs1.EOF Or NPL = 0 Then
                 x.VolResg = 0
             Else
@@ -227,11 +227,11 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             
         'Obtem concentração do maior cotista
             tt = Timer
-            Set rs1 = db.OpenRecordset("SELECT MAX (DATAOBS) AS MAXDATA FROM TMAIORCOTISTA WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate)
+            Set rs1 = db.Execute("SELECT MAX (DATAOBS) AS MAXDATA FROM TMAIORCOTISTA WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate)
             If Not rs1.EOF Then
                 If Not IsNull(rs1("MAXDATA")) Then
                     mxdata = rs1("MAXDATA")
-                    Set rs1 = db.OpenRecordset("SELECT * FROM TMAIORCOTISTA WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS=" + SQLD(mxdata))
+                    Set rs1 = db.Execute("SELECT * FROM TMAIORCOTISTA WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS=" + SQLD(mxdata))
                     If Not rs1.EOF Then
                         x.MaiorCotista = rs1("MAXCOT1")
                     End If
@@ -251,7 +251,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
         rs.MoveNext
         
     Wend
-    db.Close
+    
     
     td = (Timer - t0)
     WriteLogPerf "LE_FUNDOS", ti, td
@@ -301,17 +301,17 @@ End Function
 
 
 Public Function Cria(x As String) As CFundo
-    Dim db As Database, rs As Recordset, y As CFundo, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CFundo, LastNumber As Integer
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT MAX (ID) AS MAXID FROM TFUNDOS")
+        Set rs = db.Execute("SELECT MAX (ID) AS MAXID FROM TFUNDOS")
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
             
         db.Execute ("INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(LastNumber + 1) + ",'" + x + "', '', FALSE, '', " + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
-        db.Close
+        
         
         Set y = New CFundo
         y.ID = LastNumber + 1
@@ -339,7 +339,7 @@ End Sub
 
 
 Public Sub ExcluiFundo(x As CFundo)
-    Dim db As Database, rs As Recordset, y As CFundo
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CFundo
     
     If MainStatus = "LIVE" Then
         

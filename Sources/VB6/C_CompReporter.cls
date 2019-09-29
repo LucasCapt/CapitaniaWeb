@@ -14,18 +14,17 @@ Attribute VB_Exposed = False
 
 
 Public Sub report_Blotter()
-    Dim db As Database, ts1 As String, u As CTrade
+    Dim db As ADODB.Connection, ts1 As String, u As CTrade
     Set db = OpenTheDatabase
     ts1 = SQLTimeStamp
     For Each u In Trades.CTodayTrades
         db.Execute ("INSERT INTO THISTTRADEERRS (DATARUN, DATA, TRADEKEY, ADDR, FUNDO, ATIVO, CV, QUANT, TAXA, PU, EXTENSO) VALUES (" + _
         ts1 + "," + SQLBaseDate + ",'" + u.TradeKey + "','" + u.Addr + "','" + u.Fundo + "','" + u.Ativo + "','" + u.CV + "'," + Str(u.Quant) + "," + Str(u.Taxa) + "," + Str(u.PU) + ",'" + u.Extenso + "')")
     Next u
-    db.Close
 End Sub
 
 Public Sub Report_Allocation(Optional frm As Form)
-    Dim db As Database, rs As Recordset, x As CAlocacao
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CAlocacao
     
     Set db = OpenTheDatabase
     
@@ -36,11 +35,10 @@ Public Sub Report_Allocation(Optional frm As Form)
         db.Execute ("INSERT INTO THISTALLOC (DATA, FUNDO, ATIVO, PUFUNDO, PUGERAL, CV, COMPLIANT) VALUES (" + SQLBaseDate + ", '" + _
         x.Fundo + "','" + x.Ativo + "'," + Str(x.PUFundo) + "," + Str(x.PUGeral) + ",'" + x.CV + "','" + x.Compliant + "')")
     Next x
-    db.Close
 End Sub
 
 Public Sub Report_CashReport(Optional frm As Form)
-    Dim db As Database, rs As Recordset, f As CFundo
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, f As CFundo
     
     Set db = OpenTheDatabase
     
@@ -64,7 +62,7 @@ End Sub
 
 
 Public Sub Report_AML(Optional frm As Form)
-    Dim db As Database, rs As Recordset, trd As CTrade, trd1 As CTrade, m As String, bkr As CCtpt, vai As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, trd As CTrade, trd1 As CTrade, m As String, bkr As CCtpt, vai As String
     
     Set db = OpenTheDatabase
     
@@ -153,7 +151,7 @@ Sub GravaDB(Optional frm As Form)
 
     Dim f As CFundo, b As CBook, r As CRegra, px As Integer, c As Collection, h As CNomeValor
     Dim u As String, u1 As String, u2 As String, m As Double
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     Dim v As Double, s As Double, s1 As Double, i As Integer, prop As CPropriedade, trd As CTrade
     Dim t0 As Date, td As Double, ti As Integer
     Dim RR As CRuleResult
@@ -333,7 +331,6 @@ Sub GravaDB(Optional frm As Form)
                 Next i
             Next f 'próximo fundo (Concentração)
             
-        db.Close
         
         td = (Now() - t0) * 24 * 3600
         WriteLogPerf "REPORT_COMP", 1, td
@@ -342,7 +339,7 @@ Sub GravaDB(Optional frm As Form)
 End Sub
 
 Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
-    Dim f As CFundo, db As Database, stt As String, u As CPreTradeCompItem
+    Dim f As CFundo, db As ADODB.Connection, stt As String, u As CPreTradeCompItem
     Dim td As CTrade, ReportTime As String, achou As Boolean, ti As Double
     Dim FrontString As String, St_Status As String, St_Obs As String, St_ok As String
     
@@ -410,7 +407,6 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
             End If
         Next td
     
-    db.Close
     ti = (Now() - t0) * 24 * 3600
     WriteLogPerf "REPORT_PTC", 1, ti
 End Sub

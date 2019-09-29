@@ -29,19 +29,19 @@ Public CNPJ As Collection 'de NomeValor
 
 
 Public Sub WriteDB()
-    Dim db As Database, u As CNomeValor, rs As Recordset
+    Dim db As ADODB.Connection, u As CNomeValor, rs As ADODB.Recordset
     If MainStatus = "LIVE" Then
         Set db = OpenTheDatabase
         db.Execute ("DELETE FROM TRATINGNAMES WHERE ID='" + Me.Cod + "'")
         db.Execute ("INSERT INTO TRATINGNAMES (ID, NOME, SETOR) VALUES ('" + Me.Cod + "','" + Me.nome + "','" + Me.setor + "')")
         db.Execute ("DELETE FROM TCNPJNOME WHERE NOMECREDITO='" + Me.Cod + "'")
         For Each u In CNPJ
-            Set rs = db.OpenRecordset("SELECT * FROM TCNPJNOME WHERE CNPJ='" + u.nome + "'")
+            Set rs = db.Execute("SELECT * FROM TCNPJNOME WHERE CNPJ='" + u.nome + "'")
             If rs.EOF _
                 Then db.Execute ("INSERT INTO TCNPJNOME (CNPJ, NOMECREDITO) VALUES ('" + u.nome + "','" + Me.Cod + "')") _
                 Else WriteLogError "CNPJ em Duplicidade. Não incluído", u.nome
         Next u
-        db.Close
+
     End If
 End Sub
 

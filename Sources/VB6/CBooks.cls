@@ -14,11 +14,11 @@ Attribute VB_Exposed = False
 Public c As Collection
 
 Public Sub ReadDB()
-    Dim db As Database, rs As Recordset, x As CBook
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CBook
     Set c = New Collection
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TRULEBOOKS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
+    Set rs = db.Execute("SELECT * FROM TRULEBOOKS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         Set x = New CBook
@@ -28,7 +28,7 @@ Public Sub ReadDB()
         c.Add x
         rs.MoveNext
     Wend
-    db.Close
+    
 End Sub
 
 Public Function search(x As String) As CBook
@@ -48,11 +48,11 @@ End Function
 
 
 Public Function Cria(x As String) As CBook
-    Dim db As Database, rs As Recordset, y As CBook, NextID As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CBook, NextID As Integer
         
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT MAX(ID) AS MAXID FROM TRULEBOOKS")
+    Set rs = db.Execute("SELECT MAX(ID) AS MAXID FROM TRULEBOOKS")
     If rs.EOF() Then NextID = 1 Else NextID = rs("MAXID") + 1
     
     Set y = New CBook
@@ -65,11 +65,11 @@ Public Function Cria(x As String) As CBook
     
     If MainStatus = "LIVE" Then
         db.Execute ("INSERT INTO TRULEBOOKS (ID, NOME, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(NextID) + ", '" + x + "'," + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
-        Set rs = db.OpenRecordset("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(NextID))
+        Set rs = db.Execute("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(NextID))
         If rs.EOF Then Set Cria = Nothing
     End If
     
-    db.Close
+    
     
 End Function
 
@@ -92,7 +92,7 @@ End Sub
 
 
 Public Sub Deleta(x As CBook)
-    Dim db As Database, rs As Recordset, y As CBook, f As CFundo, vai As Boolean, i As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CBook, f As CFundo, vai As Boolean, i As Integer
     
     If MainStatus = "LIVE" Then
         vai = True
@@ -104,7 +104,7 @@ Public Sub Deleta(x As CBook)
             Set db = OpenTheDatabase
             db.Execute ("UPDATE TRULEBOOKS SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
             'db.Execute ("DELETE FROM TBOOKREGRA WHERE RULEBOOK=" + Str(x.ID))
-            db.Close
+            
             
             For i = 1 To c.Count - 1
                 If c(i).ID = x.ID Then c.remove (i)

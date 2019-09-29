@@ -114,7 +114,7 @@ Public Sub newshow()
 End Sub
 
 Private Sub Command1_Click()
-    Dim db As Database, IDVelho As String, IDNovo As String
+    Dim db As ADODB.Connection, IDVelho As String, IDNovo As String
 
     'Executa
     IDVelho = Me.Combo1
@@ -145,7 +145,6 @@ Private Sub Command1_Click()
             ResetAll FStart
             FMain.Refaz
             FStart.Hide
-        db.Close
     Else
         MsgBox ("Substituição cancelada.")
         Me.Hide

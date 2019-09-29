@@ -205,7 +205,7 @@ Private Sub B_Cancel_Click()
 End Sub
 
 Private Sub B_OK_Click()
-    Dim db As Database, f As CFundo, vai As Boolean, y As CProvFilterElement
+    Dim db As ADODB.Connection, f As CFundo, vai As Boolean, y As CProvFilterElement
         
     vai = True
     If IsNumeric(Me.I_Fundo) Then
@@ -244,7 +244,6 @@ Private Sub B_OK_Click()
                         Set db = OpenTheDatabase
                         db.Execute ("INSERT INTO TPROVFILTER (FUNDO, PROV_COD, PROV_DATA, PP_ISIN, PP_COD, DESCR, PP_TIPO, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(Obj.Fundo) + ", '" + Obj.ProvCod + "', '" + _
                         Obj.ProvData + "','" + Obj.PPISIN + "', '" + Obj.PPCod + "', '" + Obj.Descr + "', '" + Obj.PPTipo + "', " + SQLBaseDate + ", " + SQLBaseDate + ", FALSE)")
-                        db.Close
                         WriteLog ("EDITOU PROVISAO NOVA")
                         Disclaimer
                         If FProvFilter.Visible Then FProvFilter.newrefresh
@@ -258,7 +257,6 @@ Private Sub B_OK_Click()
                     Set db = OpenTheDatabase
                     db.Execute ("UPDATE TPROVFILTER SET FUNDO =" + Str(Obj.Fundo) + ", PROV_COD='" + Obj.ProvCod + "', PROV_DATA='" + _
                     Obj.ProvData + "',PP_ISIN='" + Obj.PPISIN + "', PP_COD='" + Obj.PPCod + "', DESCR='" + Obj.Descr + "', PP_TIPO='" + Obj.PPTipo + "' WHERE IDUNICA=" + Str(Obj.IDUnica))
-                    db.Close
                     WriteLog ("EDITOU PROVISAO " + Str(Obj.IDUnica))
                     Disclaimer
                     If FProvFilter.Visible Then FProvFilter.newrefresh

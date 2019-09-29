@@ -17,7 +17,7 @@ Public cctpts As Collection
 Public cAlloc As Collection
 
 Public Sub ReadDB(FromDate As Date, Optional f As Form)
-    Dim db As Database, rs As Recordset, x As CTrade, y As CCtpt
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CTrade, y As CCtpt
     
     If Not f Is Nothing Then f.Say ("Lendo Trades")
     
@@ -26,7 +26,7 @@ Public Sub ReadDB(FromDate As Date, Optional f As Form)
     
     'Lê Ctpts
         Set cctpts = New Collection
-        Set rs = db.OpenRecordset("SELECT * FROM TCTPT")
+        Set rs = db.Execute("SELECT * FROM TCTPT")
         If Not rs.EOF Then rs.MoveFirst
         While Not rs.EOF
             Set y = New CCtpt
@@ -51,7 +51,7 @@ Public Sub ReadDB(FromDate As Date, Optional f As Form)
     'Lê Trades
         Set CTrades = New Collection
         Set CTodayTrades = New Collection
-        Set rs = db.OpenRecordset("SELECT * FROM TTRADES WHERE DATA >= " + SQLD(FromDate) + " AND DATA <=" + SQLBaseDate + " ORDER BY FUNDO, ATIVO, CV")
+        Set rs = db.Execute("SELECT * FROM TTRADES WHERE DATA >= " + SQLD(FromDate) + " AND DATA <=" + SQLBaseDate + " ORDER BY FUNDO, ATIVO, CV")
         If Not rs.EOF Then rs.MoveFirst
         While Not rs.EOF
             Set x = New CTrade
@@ -79,7 +79,7 @@ Public Sub ReadDB(FromDate As Date, Optional f As Form)
         
         'Reporta o status dos Trades
         ComReporter.report_Blotter
-    db.Close
+
 End Sub
 
 
@@ -94,7 +94,7 @@ End Sub
 Public Sub ChecaAML()
     'verifica se os preços estão dentro do túnel
     Dim p(1000) As Double, t(1000) As Date, N As Integer, q As String, Comparavel As Double
-    Dim db As Database, rs As Recordset, x As CTrade, y As CTrade
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CTrade, y As CTrade
     Dim Sxy As Double, Sx As Double, Sy As Double, Sx2 As Double
     
     Dim Bh As Double, Bl As Double, Bh2 As Double, Bl2 As Double, bh0 As Double, bl0 As Double
@@ -126,7 +126,7 @@ Public Sub ChecaAML()
             If x.BandaHigh = 0 And x.BandaLow = 0 Then
 
                 'Determina bandahigh e bandalow para o ativo pelo registro de pricing externo
-                    Set rs = db.OpenRecordset("SELECT * FROM TPRICING WHERE DATAOBS = " + SQLBaseDate + " AND ATIVO='" + x.Ativo + "'")
+                    Set rs = db.Execute("SELECT * FROM TPRICING WHERE DATAOBS = " + SQLBaseDate + " AND ATIVO='" + x.Ativo + "'")
                     If Not rs.EOF Then
                         bh0 = rs("PRECO") * 1.01
                         bl0 = rs("PRECO") * 0.99
@@ -137,7 +137,7 @@ Public Sub ChecaAML()
                     End If
             
                 'Determina bandahigh e bandalow para o ativo pela regressão de trades passados
-                    Set rs = db.OpenRecordset("SELECT * FROM TTRADES WHERE DATA <= " + SQLBaseDate + " AND DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "# AND ATIVO='" + x.Ativo + "' ORDER BY DATA DESC")
+                    Set rs = db.Execute("SELECT * FROM TTRADES WHERE DATA <= " + SQLBaseDate + " AND DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "# AND ATIVO='" + x.Ativo + "' ORDER BY DATA DESC")
                     N = 0
                     While Not rs.EOF And N < 250
                         If rs("PU") > 0 Then
@@ -227,7 +227,7 @@ End Sub
 
 
 Public Sub ChecaRateio()
-    Dim db As Database, rs As Recordset, x As CAlocacao
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CAlocacao
 
     
     Set db = OpenTheDatabase
@@ -235,7 +235,7 @@ Public Sub ChecaRateio()
     Set cAlloc = New Collection
     
      'Determina o PU médio por fundo
-        Set rs = db.OpenRecordset("SELECT ATIVO, FUNDO, CV, sum(QUANT) as q1, sum(PU*QUANT) as s1, sum(TAXA*QUANT) as t1 FROM TTRADES WHERE DATA = " + SQLBaseDate + " GROUP BY ATIVO, FUNDO, CV")
+        Set rs = db.Execute("SELECT ATIVO, FUNDO, CV, sum(QUANT) as q1, sum(PU*QUANT) as s1, sum(TAXA*QUANT) as t1 FROM TTRADES WHERE DATA = " + SQLBaseDate + " GROUP BY ATIVO, FUNDO, CV")
         While Not rs.EOF
             Set x = New CAlocacao
             x.Ativo = rs("ATIVO")
@@ -249,7 +249,7 @@ Public Sub ChecaRateio()
         Wend
     
     'Determina a alocacao geral média (todos os fundos)
-        Set rs = db.OpenRecordset("SELECT ATIVO, CV, sum(QUANT) as q1, sum(PU*QUANT) as s1, sum(TAXA*QUANT) as t1 FROM TTRADES WHERE DATA = " + SQLBaseDate + " GROUP BY ATIVO, CV")
+        Set rs = db.Execute("SELECT ATIVO, CV, sum(QUANT) as q1, sum(PU*QUANT) as s1, sum(TAXA*QUANT) as t1 FROM TTRADES WHERE DATA = " + SQLBaseDate + " GROUP BY ATIVO, CV")
         While Not rs.EOF
             For Each x In cAlloc
                 If x.Ativo = rs("ATIVO") And x.CV = rs("CV") Then
@@ -261,7 +261,6 @@ Public Sub ChecaRateio()
             rs.MoveNext
         Wend
         
-    db.Close
     
 End Sub
 

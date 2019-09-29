@@ -139,7 +139,7 @@ Public Sub showfor(Obj As CPapel)
 End Sub
 
 Private Sub B_OK_Click()
-    Dim i As Integer, db As Database, rs As Recordset, j As Integer
+    Dim i As Integer, db As ADODB.Connection, rs As ADODB.Recordset, j As Integer
     
     Set db = OpenTheDatabase
     For i = 1 To N
@@ -152,7 +152,7 @@ Private Sub B_OK_Click()
             If Papeis.akaList(j).nome = AkasToDel(i) Then Papeis.akaList.remove j Else j = j + 1
         Wend
     Next i
-    db.Close
+
     MsgBox ("Destruição de Alias concluída.")
     MMain.ResetAll
 End Sub
@@ -163,7 +163,7 @@ Private Sub Command1_Click()
 End Sub
 
 Private Sub Command2_Click()
-    Dim u As CNomeValor, db As Database, rs As Recordset, pp As CPapel, i As Integer
+    Dim u As CNomeValor, db As ADODB.Connection, rs As ADODB.Recordset, pp As CPapel, i As Integer
     
     Me.Label3.Visible = False
     Me.Grid.Visible = False
@@ -184,17 +184,17 @@ Private Sub Command2_Click()
                     Grid.AddItem u.nome
                     N = N + 1
                     AkasToDel(N) = u.nome
-                    Set rs = db.OpenRecordset("SELECT * FROM TPOSIC WHERE PAPEL='" + AkasToDel(N) + "'")
+                    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE PAPEL='" + AkasToDel(N) + "'")
                     If rs.EOF Then Grid.TextMatrix(N, 1) = "" Else Grid.TextMatrix(N, 1) = "X"
                     
-                    Set rs = db.OpenRecordset("SELECT * FROM TPAPELPROP WHERE PAPEL='" + AkasToDel(N) + "'")
+                    Set rs = db.Execute("SELECT * FROM TPAPELPROP WHERE PAPEL='" + AkasToDel(N) + "'")
                     If rs.EOF Then Grid.TextMatrix(N, 2) = "" Else Grid.TextMatrix(N, 2) = "X"
                     
-                    Set rs = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + AkasToDel(N) + "'")
+                    Set rs = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + AkasToDel(N) + "'")
                     If rs.EOF Then Grid.TextMatrix(N, 3) = "" Else Grid.TextMatrix(N, 3) = "X"
                 End If
             Next u
-            db.Close
+        
             
         If N = 0 Then
             Label3.Visible = True

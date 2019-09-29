@@ -29,7 +29,7 @@ Property Get DurMos() As Double
     DurMos = (Fim - Ini) / 30
 End Property
 
-Public Sub Populate(db As Database)
+Public Sub Populate(db As ADODB.Connection)
     ChgIPCA2Y = ChangeInRiskFactor("IPCA2Y", db)
     ChgIPCA5Y = ChangeInRiskFactor("IPCA5Y", db)
     ChgIPCA10Y = ChangeInRiskFactor("IPC102Y", db)
@@ -40,18 +40,18 @@ Public Sub Populate(db As Database)
     ChgPRE5Y = ChangeInRiskFactor("PRE5Y", db)
 End Sub
 
-Private Function ChangeInRiskFactor(nome As String, db As Database) As Double
-    Dim rs As Recordset, mxdata As Date, a As Double
+Private Function ChangeInRiskFactor(nome As String, db As ADODB.Connection) As Double
+    Dim rs As ADODB.Recordset, mxdata As Date, a As Double
     
-    Set rs = db.OpenRecordset("SELECT MAX(DATA) AS MAXDATE FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA<=" + SQLD(Ini))
+    Set rs = db.Execute("SELECT MAX(DATA) AS MAXDATE FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA<=" + SQLD(Ini))
     If Not IsNull(rs("MAXDATE")) Then
         mxdata = rs("MAXDATE")
-        Set rs = db.OpenRecordset("SELECT * FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA=" + SQLD(mxdata))
+        Set rs = db.Execute("SELECT * FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA=" + SQLD(mxdata))
         If Not rs.EOF Then
             a = rs("VALOR")
-            Set rs = db.OpenRecordset("SELECT MAX(DATA) AS MAXDATE FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA<=" + SQLD(Fim))
+            Set rs = db.Execute("SELECT MAX(DATA) AS MAXDATE FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA<=" + SQLD(Fim))
             If Not IsNull(rs("MAXDATE")) And a > 0 Then
-                Set rs = db.OpenRecordset("SELECT * FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA=" + SQLD(mxdata))
+                Set rs = db.Execute("SELECT * FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA=" + SQLD(mxdata))
                 If Not rs.EOF Then
                     ChangeInRiskFactor = rs("VALOR") / a - 1
                 Else

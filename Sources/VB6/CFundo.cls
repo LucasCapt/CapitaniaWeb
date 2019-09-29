@@ -722,12 +722,12 @@ End Property
 
 
 Public Sub WriteDB()
-    Dim db As Database, rs As Recordset, sb As String, x As CFundo, b As CBook
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, sb As String, x As CFundo, b As CBook
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE ID=" + Str(Me.ID))
+        Set rs = db.Execute("SELECT * FROM TFUNDOS WHERE ID=" + Str(Me.ID))
         
         'If Me.OverrideLimit Then u = "TRUE" Else u = "FALSE"
         'If Me.LimCredReg Then u2 = "TRUE" Else u2 = "FALSE"
@@ -768,7 +768,7 @@ Public Sub WriteDB()
         For Each b In MyBooks
             db.Execute ("INSERT INTO TFUNDOBOOK (FUNDO, BOOK) VALUES (" + Str(Me.ID) + ", " + Str(b.ID) + ")")
         Next b
-        db.Close
+        
         
     End If
 End Sub
@@ -1157,10 +1157,10 @@ End Function
 '\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 Public Function GetAllQuotasFrom(d As Date) As Collection
-    Dim db As Database, rs As Recordset, a As New Collection, u As CNomeValor
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, a As New Collection, u As CNomeValor
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TQUOTAS WHERE FUNDO = " + Str(Me.ID) + "AND DATA>=" + SQLD(d) + " AND DATA<=" + SQLBaseDate + " ORDER BY DATA")
+    Set rs = db.Execute("SELECT * FROM TQUOTAS WHERE FUNDO = " + Str(Me.ID) + "AND DATA>=" + SQLD(d) + " AND DATA<=" + SQLBaseDate + " ORDER BY DATA")
     While Not rs.EOF
         Set u = New CNomeValor
         u.Data = rs("DATA")
@@ -1169,7 +1169,7 @@ Public Function GetAllQuotasFrom(d As Date) As Collection
         rs.MoveNext
     Wend
     Set GetAllQuotasFrom = a
-    db.Close
+    
 End Function
 
 

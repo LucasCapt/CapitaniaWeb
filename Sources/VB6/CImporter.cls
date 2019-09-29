@@ -32,7 +32,7 @@ End Sub
 '                               I M P O R T A Ç Ã O     D E     P R I C I N G
 '-----------------------------------------------------------------------------------------------------------
 Sub importaADTV(Level As Integer, Optional f As Form)
-    Dim db As Database, rs As Recordset, rs1 As Recordset, LastDate As Date, d As Date, adtv As Double, adtvCond As Double
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, LastDate As Date, d As Date, adtv As Double, adtvCond As Double
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("ADTV")) Then
         
@@ -40,7 +40,7 @@ Sub importaADTV(Level As Integer, Optional f As Form)
         Set db = OpenTheDatabase
         If Not f Is Nothing Then f.Say ("Importando ADTV")
         
-        Set rs1 = db.OpenRecordset("SELECT MAX(DATA) AS LASTDATE FROM TADTV WHERE DATA<=" + SQLD(Now()))
+        Set rs1 = db.Execute("SELECT MAX(DATA) AS LASTDATE FROM TADTV WHERE DATA<=" + SQLD(Now()))
         If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE") - 5
         If LastDate < DateSerial(2015, 10, 1) Then LastDate = DateSerial(2015, 10, 1)
         rs1.Close
@@ -64,7 +64,6 @@ Sub importaADTV(Level As Integer, Optional f As Form)
                                 adtv = ws.cells(1, j + 1)
                                 If IsNumeric(ws.cells(1, j + 2)) Then adtvCond = ws.cells(1, j + 2) Else adtvCond = adtv
                                 db.Execute ("DELETE FROM TADTV WHERE NOME ='" + Ativo + "' AND DATA=" + SQLD(d))
-                                db.Close: Set db = OpenTheDatabase 'Para não dar #erro
                                 db.Execute ("INSERT INTO TADTV (DATA, NOME, ADTV, ADTVCOND, ADTVCLASSE, ADTVCLASSECOND) VALUES (" + SQLD(d) + ", '" + Ativo + "', " + Str(adtv) + "," + Str(adtvCond) + "," + Str(adtv) + "," + Str(adtvCond) + ")")
                             End If
                         End If
@@ -86,7 +85,7 @@ End Sub
 
 
 Sub ImportaPricing(Level As Integer, Optional f As Form)
-    Dim db As Database, rs As Recordset, rs1 As Recordset, LastDate As Date, d As Date
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, LastDate As Date, d As Date
     Dim nome As String, L As String, fdo As String, pp As String, vl As String
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("PRICING")) Then
@@ -96,7 +95,7 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
         If Not f Is Nothing Then f.Say ("Importando Pricing")
         
         'Identifica a última data que consta do database de pricing
-        Set rs1 = db.OpenRecordset("SELECT MAX(DATAOBS) AS LASTDATE FROM TPRICING WHERE DATAOBS<=" + SQLD(Now()))
+        Set rs1 = db.Execute("SELECT MAX(DATAOBS) AS LASTDATE FROM TPRICING WHERE DATAOBS<=" + SQLD(Now()))
         If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE") - 5
         If LastDate < DateSerial(2015, 10, 1) Then LastDate = DateSerial(2015, 10, 1)
         rs1.Close
@@ -147,7 +146,6 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                         
                         'Grava
                         db.Execute ("DELETE FROM TPRICING WHERE DATAOBS=" + SQLD(d) + " AND ATIVO='" + Ativo + "'")
-                        db.Close: Set db = OpenTheDatabase 'Para não dar #erro
                         db.Execute ("INSERT INTO TPRICING (DATAOBS, ATIVO, PRECO) VALUES (" + SQLD(d) + ", '" + Ativo + "', " + preco + ")")
                         
                     Wend
@@ -168,7 +166,6 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                         Wend
                         If ws.cells(i, j) = d Then
                             db.Execute ("DELETE FROM TPRICING WHERE DATAOBS=" + SQLD(d) + " AND ATIVO='" + Ativo + "'")
-                            db.Close: Set db = OpenTheDatabase 'Para não dar #erro
                             db.Execute ("INSERT INTO TPRICING (DATAOBS, ATIVO, PRECO) VALUES (" + SQLD(d) + ", '" + Ativo + "', " + Str(ws.cells(i, j + 1)) + ")")
                         End If
                         j = j + 3
@@ -179,8 +176,7 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                     
                 d = d + 1
             Wend 'while d<Now()
-            
-            db.Close
+        
             If Not ws Is Nothing Then ws.Parent.Close
             If Not Excel Is Nothing Then ReleaseExcel
         End If 'Lastdate<Now()
@@ -197,7 +193,7 @@ End Sub
 '-----------------------------------------------------------------------------------------------------------
 
 Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPosic, LastDate As Date, d As Date
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date, d As Date
     Dim nome As String, L As String, Ativo As String, preco As String, cvirg As Integer, i As Integer
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("POSICAO")) Then
@@ -207,7 +203,7 @@ Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
         If Not f Is Nothing Then f.Say ("Importando Posições")
         
         'Identifica a última data que consta do database de posicao
-        Set rs1 = db.OpenRecordset("SELECT MAX(DATA) AS LASTDATE FROM TPOSIC WHERE DATA<=" + SQLD(Now()))
+        Set rs1 = db.Execute("SELECT MAX(DATA) AS LASTDATE FROM TPOSIC WHERE DATA<=" + SQLD(Now()))
         If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE")
         If LastDate < DateSerial(2015, 1, 1) Then LastDate = DateSerial(2015, 1, 1)
         rs1.Close
@@ -228,7 +224,6 @@ Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
                     Layt22MainParaData d
                     d = d + 1
                 Wend
-                db.Close
         
         End If
         
@@ -242,7 +237,7 @@ End Sub
 
 Sub ImportaPosicaoParaData(d As Date, Optional Notify As Boolean = False)
     'Esta rotina importa apenas carteiras .txt
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPosic, LastDate As Date, nome As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date, nome As String
     
     Set db = OpenTheDatabase
     nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
@@ -250,7 +245,6 @@ Sub ImportaPosicaoParaData(d As Date, Optional Notify As Boolean = False)
         Open nome For Input As 1
         'Limpa a base para a data d
         db.Execute ("DELETE FROM TPOSIC WHERE DATA=#" + Format(d, "MM/DD/YYYY") + "#")
-        db.Close: Set db = OpenTheDatabase 'Linha para evitar #Erro
         Line Input #1, L 'Pula primeira linha)
         While Not EOF(1)
             Line Input #1, L
@@ -278,7 +272,7 @@ End Sub
 '                               I M P O R T A     R E S G A T E S
 '-----------------------------------------------------------------------------------------------------------
 Sub ImportaResgates(Level As Integer, Optional f As Form)
-    Dim db As Database, rs As Recordset, rs1 As Recordset, d As Date, fd As String, vs As String, v As Double
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, d As Date, fd As String, vs As String, v As Double
     Dim w As Object, wb As Object, MaxLines As Integer, spg As String, tp As Boolean
     Dim LastDate As Date, CutDate As Date, S_Cancel As String
     
@@ -292,7 +286,7 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
         Set db = OpenTheDatabase
           
         'Identifica a última data que consta do database de resgates
-        Set rs1 = db.OpenRecordset("SELECT MAX(DATAOBS) AS LASTDATE FROM TRESGATES WHERE DATAOBS<=" + SQLD(Now()))
+        Set rs1 = db.Execute("SELECT MAX(DATAOBS) AS LASTDATE FROM TRESGATES WHERE DATAOBS<=" + SQLD(Now()))
         If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE")
         If LastDate < DateSerial(2012, 1, 1) Then LastDate = DateSerial(2012, 1, 1)
         rs1.Close
@@ -314,8 +308,7 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
                     'Vai reimportar os últimos 365 dias de resgates agendados, para cobrir os cancelados
                     'Elimina todos os resgates agendados depois de CutDate
                     
-                    db.Execute ("DELETE FROM TRESGATES WHERE DATAOBS >= #" + Format(CutDate, "MM/DD/YYYY") + "#")
-                    db.Close: Set db = OpenTheDatabase 'Linha para evitar #Erro
+                    db.Execute ("DELETE FROM TRESGATES WHERE DATAOBS >= " + SQLD(CutDate))
                     
                     'localiza aproximadamente o início da série (Cutdate)
                     i = 16384
@@ -331,25 +324,25 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
                     
                     
                     While w.cells(i, 1) <> "" And i < MaxLines And w.cells(i, 1) <= Now()
-                        
+                        DoEvents
                         d = w.cells(i, 1)
                         fd = w.cells(i, 2)
                         vs = w.cells(i, 5)
                         tp = (w.cells(i, 7) = "T")
                         
                         If Not IsDate(w.cells(i, 10)) Then d1 = LongTimeAgo Else d1 = w.cells(i, 10)
-                        If w.cells(i, 9) <> "" Then S_Cancel = "TRUE" Else S_Cancel = "FALSE"
+                        If w.cells(i, 9) <> "" Then S_Cancel = "1" Else S_Cancel = "0"
                         
                         If Left(vs, 2) = "R$" Then v = Val(Trim(Mid(vs, 3))) Else v = Val(vs)
-                        If w.cells(i, 6) = "" Then spg = Format(d, "MM/DD/YYYY") Else spg = Format(w.cells(i, 6), "MM/DD/YYYY")
-                        If tp Then uu = "TRUE" Else uu = "FALSE"
+                        If w.cells(i, 6) = "" Then spg = Format(d, "YYYY-MM-DD") Else spg = Format(CDate(w.cells(i, 6)), "YYYY-MM-DD")
+                        If tp Then uu = "1" Else uu = "0"
                         
                         order = "INSERT INTO TRESGATES (DATAOBS, FUNDO, DATALIQ, VALOR, DATACANCEL, CANCELADO, TOTAL) VALUES " + _
-                        "(#" + Format(d, "MM/DD/YYYY") + "#" + _
+                        "(" + SQLD(d) + _
                         ",'" + fd + "'" + _
-                        ",#" + spg + "#" + _
+                        "," + SQLD(CDate(spg)) + "" + _
                         "," + Str(v) + _
-                        ",#" + Format(d1, "MM/DD/YYYY") + "#" + _
+                        "," + SQLD(CDate(d1)) + _
                         "," + S_Cancel + _
                         "," + uu + ")"
                         
@@ -370,8 +363,7 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
                     'Vai reimportar os últimos 365 dias de resgates agendados, para cobrir os cancelados
                     'Elimina todos os resgates agendados depois de CutDate
                     
-                    db.Execute ("DELETE FROM TTRANSFERS WHERE DATAOBS >= #" + Format(CutDate, "MM/DD/YYYY") + "#")
-                    db.Close: Set db = OpenTheDatabase 'Para não dar #erro
+                    db.Execute ("DELETE FROM TTRANSFERS WHERE DATAOBS >= " + SQLD(CutDate))
                     
                     'localiza aproximadamente o início da série (Cutdate)
                     i = 2048
@@ -384,22 +376,23 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
                     Wend
                     
                     While wt.cells(i, 1) <> "" And i < MaxLines And wt.cells(i, 1) <= Now()
-                    
+                        DoEvents
+                        
                         d = wt.cells(i, 1)
                         fd = wt.cells(i, 4) 'Fundo que recebe a transferência
                         vs = wt.cells(i, 5)
                         If Not IsDate(wt.cells(i, 10)) Then d1 = LongTimeAgo Else d1 = wt.cells(i, 10)
-                        If wt.cells(i, 9) = "X" Then S_Cancel = "TRUE" Else S_Cancel = "FALSE"
+                        If wt.cells(i, 9) = "X" Then S_Cancel = "1" Else S_Cancel = "0"
                         
                         If Left(vs, 2) = "R$" Then v = Val(Trim(Mid(vs, 3))) Else v = Val(vs)
-                        If wt.cells(i, 6) = "" Then spg = Format(d, "MM/DD/YYYY") Else spg = Format(wt.cells(i, 6), "MM/DD/YYYY")
+                        If wt.cells(i, 6) = "" Then spg = SQLD(d) Else spg = SQLD(CDate(wt.cells(i, 6)))
                         
                         order = "INSERT INTO TTRANSFERS (DATAOBS, FUNDO, DATALIQ, VALOR, DATACANCEL, CANCELADO) VALUES " + _
-                        "(#" + Format(d, "MM/DD/YYYY") + "#" + _
+                        "(" + SQLD(d) + _
                         ",'" + fd + "'" + _
-                        ",#" + spg + "#" + _
+                        "," + spg + _
                         "," + Str(v) + _
-                        ",#" + Format(d1, "MM/DD/YYYY") + "#" + _
+                        "," + SQLD(CDate(d1)) + _
                         "," + S_Cancel + ")"
                         
                         db.Execute (order)
@@ -415,7 +408,6 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
         If Not w Is Nothing Then w.Parent.Close
         If Not Excel Is Nothing Then ReleaseExcel
         
-        db.Close
         
         FlagImportouNoDia "RESGATES"
         WriteLog "IMPORTOU RESGATES"
@@ -444,10 +436,10 @@ Public Sub ImportMaxCotistas(Level As Integer, Optional f As Form)
             If Not wb Is Nothing Then
                 Set w = wb.worksheets("DATA")
                 d = w.cells(1, 1)
-                db.Execute ("DELETE FROM TMAIORCOTISTA WHERE DATAOBS=#" + Format(d, "MM/DD/YYYY") + "#")
-                db.Close: Set db = OpenTheDatabase 'Para não dar #erro
+                db.Execute ("DELETE FROM TMAIORCOTISTA WHERE DATAOBS=" + SQLD(d))
                 
                 For Each w In wb.worksheets
+                    DoEvents
                     If w.Name <> "DATA" Then
                         nom = w.Name
                         If w.cells(1, 3) = "VALOR BRUTO" Then
@@ -459,6 +451,7 @@ Public Sub ImportMaxCotistas(Level As Integer, Optional f As Form)
                         End If
                         i = 2: j = 1: cot(1) = 0: cot(2) = 0: cot(3) = 0
                         While w.cells(i, 1) <> "" And i < 100 And j < 4
+                            DoEvents
                             If w.cells(i, Col + 1) = "" Then
                                 If IsNumeric(w.cells(i, Col)) Then cot(j) = w.cells(i, Col) Else cot(j) = 0
                                 j = j + 1
@@ -466,7 +459,7 @@ Public Sub ImportMaxCotistas(Level As Integer, Optional f As Form)
                             i = i + 1
                         Wend
                         db.Execute ("INSERT INTO TMAIORCOTISTA (DATAOBS, FUNDO, MAXCOT1, MAXCOT2, MAXCOT3) VALUES (" + _
-                            "#" + Format(d, "MM/DD/YYYY") + "#," + _
+                             SQLD(d) + "," + _
                             "'" + nom + "'," + _
                             Str(cot(1)) + "," + Str(cot(2)) + "," + Str(cot(3)) + ")")
                     End If
@@ -475,7 +468,6 @@ Public Sub ImportMaxCotistas(Level As Integer, Optional f As Form)
             
         If Not wb Is Nothing Then wb.Close
         If Not Excel Is Nothing Then ReleaseExcel
-        db.Close
         
         FlagImportouNoDia "MAXCOTISTAS"
         WriteLog "IMPORTOU MAXCOTISTAS"
@@ -503,7 +495,7 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
         If SinceDate <> 0 Then
             d = SinceDate
         Else
-            Set rs = db.OpenRecordset("SELECT MAX(DATA) AS MAXDATE FROM TTRADES")
+            Set rs = db.Execute("SELECT MAX(DATA) AS MAXDATE FROM TTRADES")
             If rs.EOF Then
                 d = Now() - 30
             ElseIf IsNull(rs("MAXDATE")) Then
@@ -516,7 +508,6 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
         End If
         
         db.Execute ("DELETE FROM TTRADES WHERE DATA>=" + SQLD(d))
-        db.Close: Set db = OpenTheDatabase 'Para não dar #erro
         
         If Not f Is Nothing Then f.Say ("Importando trades desde " + Format(d, "dd-MMM-yy"))
         
@@ -644,7 +635,6 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
                 d1 = d1 + 1
             Wend 'd1<=now()
             
-        db.Close
         Fundos.ResetPreTradeCompl
         FlagImportouNoDia "TRADES"
         WriteLog "IMPORTOU TRADES"
@@ -659,7 +649,7 @@ End Sub
 
 Public Sub ImportRiskSeries(Level As Integer, Optional f As Form)
     'Lê a planilha, coloca no Database, e lê para a memória
-    Dim w As Object, wb As Object, w1 As Object, a As String, db As Database, rs As Recordset, d1 As Date
+    Dim w As Object, wb As Object, w1 As Object, a As String, db As ADODB.Connection, rs As ADODB.Recordset, d1 As Date
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("SERIES")) Then
     
@@ -691,14 +681,15 @@ Public Sub ImportRiskSeries(Level As Integer, Optional f As Form)
             If Not w Is Nothing Then
                 i = 1
                 While w.cells(1, i) <> "" And i < 256
+                    DoEvents
                     a = w.cells(1, i)
                     If InStr(a, " ") > 0 Then a = Left(a, InStr(a, " ") - 1)
                     If IsDate(w.cells(4, i)) Then
                         d1 = w.cells(4, i)
                         db.Execute ("DELETE FROM TRATINGS WHERE ID='" + a + "' AND DATA>=" + SQLD(d1))
-                        db.Close: Set db = OpenTheDatabase 'Para não dar #erro
                         j = 4
                         While IsDate(w.cells(j, i))
+                            DoEvents
                             db.Execute ("INSERT INTO TRATINGS (DATA, ID, RATING) VALUES (" + SQLD(w.cells(j, i)) + ",'" + a + "','" + w.cells(j, i + 1) + "')")
                             j = j + 1
                         Wend
@@ -713,13 +704,13 @@ Public Sub ImportRiskSeries(Level As Integer, Optional f As Form)
             If Not w Is Nothing Then
                 i = 1
                 While w.cells(1, i) <> "" And i < 256
+                    DoEvents
                     If IsNumeric(w.cells(1, i)) Then
                         fundoid = w.cells(1, i) 'numero do fundo
                         If Not f Is Nothing Then f.Say ("Importando as quotas - fundo " + Str(fundoid))
                         If IsDate(w.cells(6, i)) Then
                             d1 = w.cells(6, i)
                             db.Execute ("DELETE FROM TQUOTAS WHERE FUNDO=" + Str(fundoid) + " AND DATA>=" + SQLD(d1))
-                            db.Close: Set db = OpenTheDatabase 'Para não dar #erro
                             j = 6
                             While IsDate(w.cells(j, i))
                                 db.Execute ("INSERT INTO TQUOTAS (DATA, FUNDO, QUOTA) VALUES (" + SQLD(w.cells(j, i)) + "," + Str(fundoid) + "," + Str(w.cells(j, i + 1)) + ")")
@@ -735,7 +726,6 @@ Public Sub ImportRiskSeries(Level As Integer, Optional f As Form)
         
         If Not w Is Nothing Then w.Parent.Close
         If Not Excel Is Nothing Then ReleaseExcel
-        db.Close
         
         FlagImportouNoDia "SERIES"
         WriteLog "IMPORTOU SERIES"
@@ -746,11 +736,11 @@ End Sub
 
 
 
-Private Sub ImportaSerie(DBName As String, WSName As String, w As Object, db As Database)
-    Dim rs As Recordset, d As Date, Incompleta As Boolean, UltData As Date
+Private Sub ImportaSerie(DBName As String, WSName As String, w As Object, db As ADODB.Connection)
+    Dim rs As ADODB.Recordset, d As Date, Incompleta As Boolean, UltData As Date
     
     
-    Set rs = db.OpenRecordset("SELECT MAX(DATA) AS LASTDATE FROM TFACTORHIST WHERE FACTORID='" + DBName + "' AND DATA<=" + SQLBaseDate + " AND DATA >=" + SQLD(Now() - 720))
+    Set rs = db.Execute("SELECT MAX(DATA) AS LASTDATE FROM TFACTORHIST WHERE FACTORID='" + DBName + "' AND DATA<=" + SQLBaseDate + " AND DATA >=" + SQLD(Now() - 720))
     UltData = Now() - 3650
     If rs.EOF Then
         Incompleta = True
@@ -820,26 +810,26 @@ End Sub
 '-----------------------------------------------------------------------------------------------------------
 Public Sub CriticaPosicaoParaData(d As Date)
     'Procura por unknowns e não identificados e compara com data anterior
-    Dim db As Database, rs As Recordset, rs1 As Recordset, d1 As Date, achou As Boolean, achou2 As Boolean
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, d1 As Date, achou As Boolean, achou2 As Boolean
     Dim alterou As Boolean, lf As String
     
     alterou = False
     lf = Chr(10)
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d) + " AND PAPEL='00000000000000'", dbOpenDynaset)
+    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d) + " AND PAPEL='00000000000000'")
     While Not rs.EOF
         d1 = d - 1
         achou = False
         While Not achou And d1 > d - 7
-            Set rs1 = db.OpenRecordset("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d1) + " AND FUNDO=" + Str(rs("FUNDO")))
+            Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d1) + " AND FUNDO=" + Str(rs("FUNDO")))
             achou = Not rs1.EOF
             If Not achou Then d1 = d1 - 1
         Wend
         If achou Then
             l1 = rs("VALOR") * 0.9
             L2 = rs("VALOR") * 1.1
-            Set rs1 = db.OpenRecordset("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d1) + " AND FUNDO=" + Str(rs("FUNDO")) + " AND VALOR>=" + Str(l1) + " AND VALOR<=" + Str(L2))
+            Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d1) + " AND FUNDO=" + Str(rs("FUNDO")) + " AND VALOR>=" + Str(l1) + " AND VALOR<=" + Str(L2))
             achou2 = False
             While Not rs1.EOF And Not achou2
                 If MsgBox("O papel dessa posição: " + lf + _
@@ -855,7 +845,6 @@ Public Sub CriticaPosicaoParaData(d As Date)
                             
                         alterou = True
                         achou2 = True
-                        rs.Edit
                         rs("PAPEL") = rs1("PAPEL")
                         rs.Update
                 End If
@@ -865,7 +854,6 @@ Public Sub CriticaPosicaoParaData(d As Date)
         rs.MoveNext
     Wend
     rs.Close
-    db.Close
     
     If alterou Then
         FStart.Show vbModeless
@@ -887,6 +875,7 @@ Public Sub ImportaXMLANBIMAparaData(d As Date, Optional Notify As Boolean = Fals
     
     For Each y In c
         ImportaXMLANBIMADePastaParaData y.nome, d, Notify
+        DoEvents
     Next y
     
 End Sub
@@ -896,7 +885,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
     'Importa arquivo XML para tabela TPOSICLAYOUT2
     'Data d é a data do arquivo, não necessariamente da posição
 
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPosic, LastDate As Date
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date
     Dim fundoid As Integer, plind As Double, nome As String, CNPJ As String, dtposic As Date, dtposicSt As String
     Dim XML As New DOMDocument, noh As IXMLDOMNode, noh2 As IXMLDOMNode, Root As IXMLDOMElement
     Dim pIsin As String, pCod As String, q1 As String, v1 As String
@@ -914,7 +903,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
     nome = FileSystem.Dir(Config.XMLANBIMAPath + pasta + "\*" + Format(d, "_YYYYMMDD_") + "*.xml")
     
     'Lê o provfilter
-    Set rs = db.OpenRecordset("SELECT * FROM TPROVFILTER WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ")")
+    Set rs = db.Execute("SELECT * FROM TPROVFILTER WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1  AND DT_DELETED<=" + SQLBaseDate + ")")
     Set ProvFilter = New Collection
     While Not rs.EOF
         Set z = New CProvFilterElement
@@ -969,11 +958,11 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
 
                 
                 'Busca o fundo no database e obtém o ID
-                    Set rs = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE CNPJ='" + CNPJ + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")")
+                    Set rs = db.Execute("SELECT * FROM TFUNDOS WHERE CNPJ='" + CNPJ + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")")
                     If Not rs.EOF Then
                         fundoid = rs("ID")
                     Else
-                        Set rs = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE NOME='" + nome + "' AND (NOT DELETED OR DT_DELETED>" + SQLD(d) + ")")
+                        Set rs = db.Execute("SELECT * FROM TFUNDOS WHERE NOME='" + nome + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")")
                         If Not rs.EOF Then fundoid = rs("ID") Else fundoid = -1
                     End If
                                     
@@ -982,7 +971,6 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                     
                         'Limpa a base para a data d, fundo fundoid
                         db.Execute ("DELETE FROM TPOSICLAYOUT2 WHERE DATA=" + SQLD(d) + " AND FUNDO=" + Str(fundoid))
-                        db.Close: Set db = OpenTheDatabase 'Para não dar #erro
                         TDesp = 0
                         TProv = -VResgatar
                         TPL = 0
@@ -1139,17 +1127,17 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                             End Select
                             
                             Scupom = Str(Val(Scupom) / 100)
-                            If compr Then ucomp = "TRUE" Else ucomp = "FALSE"
+                            If compr Then ucomp = "1" Else ucomp = "0"
                             
                             If grava Then _
-                                db.Execute ("INSERT INTO TPOSICLAYOUT2 (FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, INDEX,CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA) VALUES (" + _
+                                db.Execute ("INSERT INTO TPOSICLAYOUT2 (FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX],CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA) VALUES (" + _
                                 Str(fundoid) + ", '" + ltipo + "', '" + pIsin + "', '" + pCod + "'," + q1 + ", " + v1 + ", " + SQLD(d) + "," + SQLD(dv) + "," + SQLD(di) + ",'" + Sindex + "'," + Scupom + "," + Spindex + ",'" + Scnpji + "','" + pasta + "'," + ucomp + ")")
                         
                         Next noh2 'proxima posição
                         
                         'Grava Totais de provisão e despesa
-                        If TProv <> 0 Then db.Execute ("INSERT INTO TPOSICLAYOUT2 (FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, INDEX,CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA) VALUES (" + Str(fundoid) + ", 'PROVISAO', 'PROVISAO', 'PROVISAO'," + Str(TProv) + ", " + Str(TProv) + ", " + SQLD(d) + ",#01/01/1990#,#01/01/1990#,'',0,0,'','" + pasta + "',FALSE)")
-                        If TDesp <> 0 Then db.Execute ("INSERT INTO TPOSICLAYOUT2 (FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, INDEX,CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA) VALUES (" + Str(fundoid) + ", 'DESPESA', 'DESPESA', 'DESPESA'," + Str(TDesp) + ", " + Str(TDesp) + ", " + SQLD(d) + ",#01/01/1990#,#01/01/1990#,'',0,0,'','" + pasta + "',FALSE)")
+                        If TProv <> 0 Then db.Execute ("INSERT INTO TPOSICLAYOUT2 (FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX],CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA) VALUES (" + Str(fundoid) + ", 'PROVISAO', 'PROVISAO', 'PROVISAO'," + Str(TProv) + ", " + Str(TProv) + ", " + SQLD(d) + ",'1990-01-01','1990-01-01','',0,0,'','" + pasta + "',0)")
+                        If TDesp <> 0 Then db.Execute ("INSERT INTO TPOSICLAYOUT2 (FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX],CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA) VALUES (" + Str(fundoid) + ", 'DESPESA', 'DESPESA', 'DESPESA'," + Str(TDesp) + ", " + Str(TDesp) + ", " + SQLD(d) + ",'1990-01-01','1990-01-01','',0,0,'','" + pasta + "',0)")
                         TPL = TPL + TProv + TDesp
                         If Abs(TPL - plind) > 0.05 * plind Then
                             If Notify Then MsgBox ("Fundo " + nome + " inconsistente na importação XML:" + Chr(13) + Format(TPL, "###,###,##0") + " x " + Format(plind, "###,###,##0"))
@@ -1167,18 +1155,17 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
         nome = FileSystem.Dir()
 
     Wend
-    db.Close
 End Sub
 
 
-Private Function ConsultaPapelNaBase(db As Database, ID As String) As Recordset
+Private Function ConsultaPapelNaBase(db As ADODB.Connection, ID As String) As ADODB.Recordset
     'Procura o papel na base (db aberto) e no Alias
-    Dim r As Recordset, R1 As Recordset
-    Set r = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + ID + "'")
+    Dim r As ADODB.Recordset, R1 As ADODB.Recordset
+    Set r = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + ID + "'")
     If r.EOF Then
         'Procura tb na lista de alias
-        Set R1 = db.OpenRecordset("SELECT * FROM TAKA WHERE FROMID='" + ID + "'")
-        If Not R1.EOF Then Set r = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + CritS(R1("TOID")) + "'")
+        Set R1 = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + ID + "'")
+        If Not R1.EOF Then Set r = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(R1("TOID")) + "'")
     End If
     Set ConsultaPapelNaBase = r
 End Function
@@ -1190,7 +1177,7 @@ Public Sub Layt22MainParaData(d As Date)
     'Substitui TPOSIC preexistente de cada fundo/data encontrado em TPOSICLAYOUT2
     'cadastra os títulos que não forem encontrados (ISIN) em TPAPEL
     
-    Dim db As Database, rs As Recordset, rs1 As Recordset, rs2 As Recordset, rs3 As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, rs2 As ADODB.Recordset, rs3 As ADODB.Recordset
     Dim pp As CPapel, po As CPosic, fd As CFundo, a As String, fvez As Integer
     Dim ppID As String, PPISIN As String, PapelAchado As Boolean
     Dim SelectOrder As String
@@ -1198,22 +1185,23 @@ Public Sub Layt22MainParaData(d As Date)
     
     Set db = OpenTheDatabase
     
-    'Set rs = db.OpenRecordset("SELECT * FROM TPOSICLAYOUT2 WHERE DATA=" + SQLD(d) + " ORDER BY FUNDO")
+    'Set rs = db.Execute("SELECT * FROM TPOSICLAYOUT2 WHERE DATA=" + SQLD(d) + " ORDER BY FUNDO")
     
     SelectOrder = "SELECT FUNDO, PAPEL_ISIN, SUM(QUANT) AS SQ, SUM(VALOR) AS SV, DATA, PAPEL_COD," + _
-                  " MAX(TIPO) AS TIPO1, MAX(DTVENC) AS DTVENC1, MIN(DTISSUE) AS DTISSUE1, MAX(INDEX) AS INDEX1, MIN(CUPOM) AS CUPOM1, MIN(PINDEX) AS PINDEX1, CNPJISSUE, IMPORTFOLDER, COMPROMISSADA" + _
+                  " MAX(TIPO) AS TIPO1, MAX(DTVENC) AS DTVENC1, MIN(DTISSUE) AS DTISSUE1, MAX([INDEX]) AS INDEX1, MIN(CUPOM) AS CUPOM1, MIN(PINDEX) AS PINDEX1, CNPJISSUE, IMPORTFOLDER, COMPROMISSADA" + _
                   " FROM TPOSICLAYOUT2" + _
                   " WHERE DATA=" + SQLD(d) + _
                   " GROUP BY FUNDO, PAPEL_ISIN, DATA, PAPEL_COD, CNPJISSUE, IMPORTFOLDER, COMPROMISSADA" + _
                   " ORDER BY FUNDO"
                   
     
-    Set rs = db.OpenRecordset(SelectOrder)
+    Set rs = db.Execute(SelectOrder)
     
     fvez = 0
     
     While Not rs.EOF
-    
+            
+        DoEvents
         If rs("FUNDO") <> fvez Then 'Limpa TPOSIC fundo a fundo
             db.Execute ("DELETE FROM TPOSIC WHERE DATA=" + SQLD(d) + " AND FUNDO = " + Str(rs("FUNDO")))
             fvez = rs("FUNDO")
@@ -1224,81 +1212,81 @@ Public Sub Layt22MainParaData(d As Date)
                 
         If rs("COMPROMISSADA") Then
             'É compromissada
-            Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='OVER'")
-            If rs1.EOF Then Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='COMPROMISSADA'")
+            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='OVER'")
+            If rs1.EOF Then Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='COMPROMISSADA'")
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then
             'Procura o papel na TPAPEL pelo ISIN = ISIN
-            Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ISIN='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (NOT DELETED OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ISIN='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")")
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then
             'Procura o papel na TPAPEL por ID = ISIN
-            Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (NOT DELETED OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado Then
             'Procura no AKA por FromID = ISIN
-            Set rs2 = db.OpenRecordset("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (NOT DELETED OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs2 = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")")
             If rs2.EOF Then
                 PapelAchado = False
             Else
-                Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
+                Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
                 PapelAchado = Not rs1.EOF
             End If
         End If
         
         If Not PapelAchado And CritS(rs("TIPO1")) = "cotas" Then
             'Verifica, se for fundo, por CNPJ = CNPJISSUE
-            Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE CNPJ<>'' AND CNPJ='" + CritS(rs("CNPJISSUE")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (NOT DELETED OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE CNPJ<>'' AND CNPJ='" + CritS(rs("CNPJISSUE")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")")
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado And CritS(rs("TIPO1")) = "cotas" Then
             'Verifica se é um dos fundos da casa por CNPJ=CNPJISSUE
-            Set rs2 = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE CNPJ='" + CritS(rs("CNPJISSUE")) + "'")
+            Set rs2 = db.Execute("SELECT * FROM TFUNDOS WHERE CNPJ='" + CritS(rs("CNPJISSUE")) + "'")
             If rs2.EOF Then
                 PapelAchado = False
             Else
-                Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("IDTITULO")) + "'")
+                Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("IDTITULO")) + "'")
                 PapelAchado = Not rs1.EOF
             End If
         End If
         
         If Not PapelAchado And CritS(rs("TIPO1")) = "cotas" Then
             'Procura, se fundo, no AKA por FromID = CNPJISSUE
-            Set rs2 = db.OpenRecordset("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("CNPJISSUE")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (NOT DELETED OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs2 = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("CNPJISSUE")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
             If rs2.EOF Then
                 PapelAchado = False
             Else
-                Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
+                Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
                 PapelAchado = Not rs1.EOF
             End If
         End If
             
         If Not PapelAchado Then
             'Tenta achar por ID = Papel_Cod
-            Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (NOT DELETED OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado Then
             'Tenta achar por CodCetip = Papel_Cod
-            Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE CODCETIP='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (NOT DELETED OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE CODCETIP='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado Then
             'Procura, se fundo, no AKA por FromID = Papel_Cod
-            Set rs2 = db.OpenRecordset("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (NOT DELETED OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs2 = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
             If rs2.EOF Then
                 PapelAchado = False
             Else
-                Set rs1 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
+                Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
                 PapelAchado = Not rs1.EOF
             End If
         End If
@@ -1340,12 +1328,12 @@ Public Sub Layt22MainParaData(d As Date)
                 
                 
                 'verifica se ID já existe e cria ID unica
-                    Set rs2 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + pp.ID + "'")
+                    Set rs2 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + pp.ID + "'")
                     If Not rs2.EOF Then
                         i = 0
                         While Not rs2.EOF
                             i = i + 1
-                            Set rs2 = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + pp.ID + "(" + Trim(Str(i)) + ")'")
+                            Set rs2 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + pp.ID + "(" + Trim(Str(i)) + ")'")
                         Wend
                         pp.ID = pp.ID + "(" + Trim(Str(i)) + ")"
                         WriteLogError "Papel importado com ID provavelmente já existente", pp.ID
@@ -1487,12 +1475,12 @@ Public Sub Layt22MainParaData(d As Date)
             
             'Tenta achar o Nome crédito pelo CNPJ
             If pp.CNPJ <> "" Then
-                Set rs3 = db.OpenRecordset("SELECT * FROM TCNPJNOME WHERE CNPJ='" + pp.CNPJ + "'")
+                Set rs3 = db.Execute("SELECT * FROM TCNPJNOME WHERE CNPJ='" + pp.CNPJ + "'")
                 If Not rs3.EOF Then pp.NameCr = rs3("NOMECREDITO")
             End If
             
             db.Execute ("INSERT INTO TPAPEL (NOME, ID, STATUS, FUNDO, CLASS_LIQ, CLASS_RENTAB, DATA_EMISSAO, DATA_VENCTO, " + _
-                "INDEX, COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO) VALUES " + _
+                "[INDEX], COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO) VALUES " + _
                 "('" + pp.nome + "', '" + _
                 pp.ID + "','" + _
                 pp.Status + "', '" + _
@@ -1511,7 +1499,7 @@ Public Sub Layt22MainParaData(d As Date)
                 pp.CNPJ + "','" + _
                 pp.CodCetip + "'," + _
                 SQLD(d) + "," + _
-                SQLD(d) + ",FALSE,'" + pp.Tipo + "')")
+                SQLD(d) + ",0,'" + pp.Tipo + "')")
                     
             'Deixa nas variáveis padrão para inserir em TPOSIC
                 PPISIN = pp.ISIN
@@ -1526,7 +1514,6 @@ Public Sub Layt22MainParaData(d As Date)
         
         rs.MoveNext
     Wend
-    db.Close
 End Sub
 
 

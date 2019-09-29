@@ -147,13 +147,13 @@ Public FFundoColumnNames As New Collection
 
 
 Public Sub ReadConfig()
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     
     Set db = OpenTheDatabase
     
     'Lê registro de configuração
-        Set rs = db.OpenRecordset("SELECT * FROM TCONFIG")
+        Set rs = db.Execute("SELECT * FROM TCONFIG")
         HistFilePath = rs("HistFilePath")
         HistFileName = rs("HistFileName")
         HistFileTab = rs("HistFileTab")
@@ -256,7 +256,7 @@ Public Sub ReadConfig()
         Senha = CritS(rs("Senha"))
     
     'Lê a mailing list
-        Set rs = db.OpenRecordset("SELECT * FROM TMAILINGLIST")
+        Set rs = db.Execute("SELECT * FROM TMAILINGLIST")
         While Not rs.EOF
             MailerN = MailerN + 1
             MailerNome(MailerN) = rs("nome")
@@ -268,7 +268,7 @@ Public Sub ReadConfig()
         
     'Lê constantes de liquidez
         Set CLiqStress = New Collection
-        Set rs = db.OpenRecordset("SELECT * FROM TLIQSTRESS")
+        Set rs = db.Execute("SELECT * FROM TLIQSTRESS")
         While Not rs.EOF
             Set u = New CNomeValor
             u.nome = rs("TIPO409")
@@ -280,7 +280,7 @@ Public Sub ReadConfig()
         
     'Lê configurações das colunas do FFundo
         Set FFundoColumnNames = New Collection
-        Set rs = db.OpenRecordset("SELECT * FROM TConfigFFundoCols WHERE USERNAME='" + User.username + "'")
+        Set rs = db.Execute("SELECT * FROM TConfigFFundoCols WHERE USERNAME='" + User.username + "'")
         While Not rs.EOF
             Set u = New CNomeValor
             u.nome = rs("ColumnName")
@@ -288,7 +288,6 @@ Public Sub ReadConfig()
             rs.MoveNext
         Wend
         
-    db.Close
 End Sub
 
 Property Get MailerContactEmail(i As Integer) As String
@@ -353,7 +352,7 @@ End Function
 
 
 Private Sub WriteFFundoColDB()
-    Dim db As Database, rs As Recordset, u As CNomeValor
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, u As CNomeValor
     
     Set db = OpenTheDatabase
     
@@ -361,6 +360,5 @@ Private Sub WriteFFundoColDB()
     For Each u In FFundoColumnNames
         db.Execute ("INSERT INTO TCONFIGFFUNDOCOLS (USERNAME, COLUMNNAME) VALUES ('" + User.username + "','" + u.nome + "')")
     Next u
-    db.Close
 End Sub
 

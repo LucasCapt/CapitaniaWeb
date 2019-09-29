@@ -40,12 +40,12 @@ Attribute VB_Exposed = False
 
 Public Sub showfor(x As CPapel)
     Dim i As Integer
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     Dim datas(1000) As Date, N As Integer
     
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT DISTINCT DATA FROM TPAPELPROP WHERE PAPEL = '" + x.ID + "' AND DATA <=" + SQLBaseDate + " ORDER BY DATA")
+    Set rs = db.Execute("SELECT DISTINCT DATA FROM TPAPELPROP WHERE PAPEL = '" + x.ID + "' AND DATA <=" + SQLBaseDate + " ORDER BY DATA")
     If Not rs.EOF Then rs.MoveFirst
     N = 0
     While Not rs.EOF
@@ -65,7 +65,7 @@ Public Sub showfor(x As CPapel)
         Grid.AddItem Props.c(i).nome
     Next i
     
-    Set rs = db.OpenRecordset("SELECT * FROM TPAPELPROP WHERE PAPEL='" + x.ID + "' AND DATA <=" + SQLBaseDate + " ORDER BY PROPRIEDADE, DATA")
+    Set rs = db.Execute("SELECT * FROM TPAPELPROP WHERE PAPEL='" + x.ID + "' AND DATA <=" + SQLBaseDate + " ORDER BY PROPRIEDADE, DATA")
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         i = Props.SearchIndex(rs("PROPRIEDADE"))
@@ -75,7 +75,6 @@ Public Sub showfor(x As CPapel)
         Grid.TextMatrix(i, jj) = rs("VALOR")
         rs.MoveNext
     Wend
-    db.Close
     Me.Show
 End Sub
 

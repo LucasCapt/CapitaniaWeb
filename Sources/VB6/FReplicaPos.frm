@@ -151,12 +151,12 @@ End Sub
 
 
 Private Sub Combo1_lostfocus()
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     Set Fundo = Fundos.searchName(Combo1)
     If Not Fundo Is Nothing Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT MAX (DATA) AS MAXDATA FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID))
+        Set rs = db.Execute("SELECT MAX (DATA) AS MAXDATA FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID))
         If Not rs.EOF Then
             Me.Combo4 = Str(Day(rs("MAXDATA")))
             Me.Combo2.ListIndex = Month(rs("MAXDATA")) - 1
@@ -165,11 +165,11 @@ Private Sub Combo1_lostfocus()
     Else
         MsgBox ("Fundo Inexistente.")
     End If
-    db.Close
+
 End Sub
 
 Private Sub Command1_Click()
-    Dim db As Database, rs As Recordset, DataFrom As Date, DataTo As Date
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, DataFrom As Date, DataTo As Date
     
     Set db = OpenTheDatabase
     If MainStatus <> "LIVE" Then
@@ -178,7 +178,7 @@ Private Sub Command1_Click()
         If Not Fundo Is Nothing Then
             DataFrom = DateSerial(Val(Combo3), Combo2.ListIndex + 1, Val(Combo4))
             DataTo = DateSerial(Val(Combo5), Combo6.ListIndex + 1, Val(Combo7))
-            Set rs = db.OpenRecordset("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataTo))
+            Set rs = db.Execute("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataTo))
             If rs.EOF Then
                 vai = True
             Else
@@ -189,7 +189,7 @@ Private Sub Command1_Click()
                     
                     Set db = OpenTheDatabase
                     db.Execute ("DELETE FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataTo))
-                    Set rs = db.OpenRecordset("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataFrom))
+                    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataFrom))
                     While Not rs.EOF
                         db.Execute ("INSERT INTO TPOSIC (FUNDO, PAPEL, ISIN, VALOR, DATA, TIPO, QUANT, BLOQUEADO) VALUES (" + _
                             Str(Fundo.ID) + ",'" + _
@@ -202,7 +202,6 @@ Private Sub Command1_Click()
                             Str(CritNN(rs("BLOQUEADO"))) + ")")
                         rs.MoveNext
                     Wend
-                    db.Close
                     MsgBox ("Replicação concluída")
                     Me.Hide
                 Else

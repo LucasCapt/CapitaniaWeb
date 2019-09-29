@@ -105,7 +105,7 @@ Private L_qual As String
 
 
 Public Sub newshow(qual As String)
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
 
     Label1.Visible = False: Label2.Visible = False: Label3.Visible = False
     Combo1.Visible = False: Combo2.Visible = False: Combo3.Visible = False: Combo4.Visible = False: Combo5.Visible = False
@@ -143,14 +143,13 @@ Public Sub newshow(qual As String)
             Label1 = "Papel"
             
             Set db = OpenTheDatabase
-            Set rs = db.OpenRecordset("SELECT DISTINCT ATIVO FROM TTRADES WHERE DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "#")
+            Set rs = db.Execute("SELECT DISTINCT ATIVO FROM TTRADES WHERE DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "#")
             Combo1.Clear
             While Not rs.EOF
                 Combo1.AddItem rs("ATIVO")
                 rs.MoveNext
             Wend
             Combo1 = Combo1.List(0)
-            db.Close
             MSChart1.chartType = VtChChartType2dXY
         Case "CFLOW"
             MakeField1Padrao
@@ -199,7 +198,7 @@ End Sub
 Public Sub newrefresh()
     Dim f As CFundo, pp As CPapel, PR As CPropriedade, ppi As Integer
     Dim a As Collection, ds As String
-    Dim db As Database, rs As Recordset, rs2 As Recordset, pp1 As CPropriedade
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs2 As ADODB.Recordset, pp1 As CPropriedade
     
     MSChart1.Visible = False
     If L_qual <> "TRADE" Then Set f = Fundos.searchName(Me.Combo1)
@@ -248,19 +247,19 @@ Public Sub newrefresh()
             AdjustXScale
             Select Case Combo2
                 Case K_PropName1
-                    Set rs = db.OpenRecordset("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_LIQ AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                    Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_LIQ AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.CLASS_LIQ='" + Combo3 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.CLASS_LIQ, TPOSIC.DATA ORDER BY TPOSIC.DATA")
                 Case K_PropName2
-                    Set rs = db.OpenRecordset("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_RENTAB AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                    Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_RENTAB AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.CLASS_RENTAB='" + Combo3 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.CLASS_RENTAB, TPOSIC.DATA ORDER BY TPOSIC.DATA")
                 Case K_PropName3
-                      Set rs = db.OpenRecordset("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                      Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.INDEX='" + Combo3 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.INDEX, TPOSIC.DATA ORDER BY TPOSIC.DATA")
                 Case K_PropName4
-                      Set rs = db.OpenRecordset("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                      Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.NOME='" + Combo3 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.INDEX, TPOSIC.DATA ORDER BY TPOSIC.DATA")
                 Case Else
@@ -278,12 +277,12 @@ Public Sub newrefresh()
                         " GROUP BY TPOSIC.FUNDO, QLASTPROPVALUES.VALOR, TPOSIC.DATA " + _
                         " ORDER BY TPOSIC.DATA"
                         
-                        Set rs = db.OpenRecordset(selcommand)
+                        Set rs = db.Execute(selcommand)
                     End If
             End Select
             
             If Combo5 = "%" Then _
-                Set rs2 = db.OpenRecordset("SELECT TPOSIC.DATA AS D1, TPOSIC.FUNDO AS F1, SUM(TPOSIC.VALOR) AS V1 " + _
+                Set rs2 = db.Execute("SELECT TPOSIC.DATA AS D1, TPOSIC.FUNDO AS F1, SUM(TPOSIC.VALOR) AS V1 " + _
                         "FROM TPOSIC WHERE TPOSIC.FUNDO=" + Str(f.ID) + " " + _
                         "AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPOSIC.DATA ORDER BY TPOSIC.DATA")
             
@@ -297,12 +296,12 @@ Public Sub newrefresh()
             If Not f Is Nothing Then
                 
                 Set db = OpenTheDatabase
-                Set rs = db.OpenRecordset("SELECT TPOSIC.FUNDO AS F1, TPAPEL.NOME AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.NOME AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID or TPOSIC.PAPEL =TPAPEL.CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.NOME='" + Combo2 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.NOME, TPOSIC.DATA ORDER BY TPOSIC.DATA")
                       
                 If Combo5 = "%" Then _
-                    Set rs2 = db.OpenRecordset("SELECT TPOSIC.DATA AS D1, TPOSIC.FUNDO AS F1, SUM(TPOSIC.VALOR) AS V1 " + _
+                    Set rs2 = db.Execute("SELECT TPOSIC.DATA AS D1, TPOSIC.FUNDO AS F1, SUM(TPOSIC.VALOR) AS V1 " + _
                         "FROM TPOSIC WHERE TPOSIC.FUNDO=" + Str(f.ID) + " " + _
                         "AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPOSIC.DATA ORDER BY TPOSIC.DATA")
                     
@@ -316,15 +315,14 @@ Public Sub newrefresh()
             AdjustXScale
             
             Set db = OpenTheDatabase
-            Set rs = db.OpenRecordset("SELECT DATA, FUNDO, SUM(VALOR) AS VALOR1 FROM TPOSIC WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " GROUP BY FUNDO, DATA ORDER BY DATA")
+            Set rs = db.Execute("SELECT DATA, FUNDO, SUM(VALOR) AS VALOR1 FROM TPOSIC WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " GROUP BY FUNDO, DATA ORDER BY DATA")
             CreateSingleLineChart rs, "DATA", "VALOR1"
-            db.Close
             
         Case "TRADE" '----------------------------------------------------< TRADES (x,y)  >
             ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
             
             Set db = OpenTheDatabase
-            Set rs = db.OpenRecordset("SELECT DATA, ATIVO, PU FROM TTRADES WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND ATIVO ='" + Combo1 + "' ORDER BY DATA")
+            Set rs = db.Execute("SELECT DATA, ATIVO, PU FROM TTRADES WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND ATIVO ='" + Combo1 + "' ORDER BY DATA")
             If Not rs.EOF Then
                 MSChart1.RowCount = rs.RecordCount
                 MSChart1.ColumnCount = 2
@@ -347,7 +345,6 @@ Public Sub newrefresh()
             Next x
             MSChart1.Plot.SeriesCollection(1).DataPoints(-1).Marker.Visible = True
             MSChart1.Plot.SeriesCollection(1).ShowLine = False
-            db.Close
         Case "CFLOW"
         
         Case "QUOTA"
@@ -355,7 +352,7 @@ Public Sub newrefresh()
             ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
             
             Set db = OpenTheDatabase
-            Set rs = db.OpenRecordset("SELECT DATA, FUNDO, QUOTA FROM TQUOTAS WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " ORDER BY DATA")
+            Set rs = db.Execute("SELECT DATA, FUNDO, QUOTA FROM TQUOTAS WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " ORDER BY DATA")
             CreateSingleLineChart rs, "DATA", "QUOTA"
             
         Case "RISCOCRD"
@@ -363,7 +360,7 @@ Public Sub newrefresh()
             ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
             
             Set db = OpenTheDatabase
-            Set rs = db.OpenRecordset("SELECT DATAINFO, FUNDO, CRD_EL1 FROM THISTRISK WHERE DATAINFO >=" + ds + " AND DATAINFO<=" + SQLBaseDate + " AND FUNDO ='" + f.nome + "' ORDER BY DATAINFO")
+            Set rs = db.Execute("SELECT DATAINFO, FUNDO, CRD_EL1 FROM THISTRISK WHERE DATAINFO >=" + ds + " AND DATAINFO<=" + SQLBaseDate + " AND FUNDO ='" + f.nome + "' ORDER BY DATAINFO")
             CreateSingleLineChart rs, "DATAINFO", "CRD_EL1"
             
     End Select
@@ -433,7 +430,7 @@ Private Function Combo2PropertyPPI() As Integer
     End Select
 End Function
 
-Private Sub CreateSingleLineChart(rs As Recordset, XField As String, Yfield As String, Optional rs2 As Recordset, Optional EhPercent As Boolean = False)
+Private Sub CreateSingleLineChart(rs As ADODB.Recordset, XField As String, Yfield As String, Optional rs2 As ADODB.Recordset, Optional EhPercent As Boolean = False)
     If Not rs Is Nothing And Not (rs2 Is Nothing And EhPercent) Then
         If Not rs.EOF Then
             MSChart1.RowCount = rs.RecordCount
@@ -446,7 +443,7 @@ Private Sub CreateSingleLineChart(rs As Recordset, XField As String, Yfield As S
                 
                 If EhPercent Then
                     rs2.MoveFirst
-                    rs2.FindFirst ("D1>=#" + Format(rs(XField), "MM/DD/YYYY") + "#")
+                    Call rs2.Find("D1>=" + SQLD(rs(XField)))
                     pl = rs2("V1")
                     If pl = 0 Then pl = 100000000#
                     MSChart1.Data = rs(Yfield) / pl

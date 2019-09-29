@@ -271,16 +271,15 @@ End Function
 '  log
 '-------------------------------------------------------------------------------------------------------------
 Public Sub WriteLog(acao As String)
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    db.Execute ("INSERT INTO TLOG (DATAHORA, ACAO, USER, COMPUTER) VALUES (#" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "#,'" + acao + "','" + User.username + "','" + Environ("ComputerName") + "')")
-    db.Close
+    db.Execute ("INSERT INTO TLOG (DATAHORA, ACAO, [USER], COMPUTER) VALUES ('" + Format(Now(), "YYYY-MM-DD HH:MM:SS") + "','" + acao + "','" + User.username + "','" + Environ("ComputerName") + "')")
 End Sub
 
 
 Public Sub WriteLogPerf(acao As String, items As Integer, segundos As Double)
-    Dim db As Database, rs As Recordset, i_s As Double, s_i As Double
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, i_s As Double, s_i As Double
     If segundos > 0 Then i_s = items / segundos
     If items > 0 Then s_i = segundos / items
     
@@ -288,26 +287,23 @@ Public Sub WriteLogPerf(acao As String, items As Integer, segundos As Double)
     db.Execute ("INSERT INTO TLOGPERF (DATAHORA, OPER, USER, ITENS, SECS, ITEMPERSEC, SECPERITEM) VALUES " + _
                 "(#" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "#,'" + acao + "','" + User.username + "'," + _
                 Str(items) + "," + Str(segundos) + "," + Str(i_s) + "," + Str(s_i) + ")")
-    db.Close
 End Sub
 
 Public Sub WriteLogError(ErrMsg As String, ErrItem As String)
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    db.Execute ("INSERT INTO TLOGERRO (DATAHORA, MSGERRO, ITEM, USER) VALUES (#" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "#,'" + ErrMsg + "','" + ErrItem + "','" + User.username + "')")
-    db.Close
+    db.Execute ("INSERT INTO TLOGERRO (DATAHORA, MSGERRO, ITEM, [USER]) VALUES ('" + Format(Now(), "YYYY-MM-DD HH:MM:SS") + "','" + ErrMsg + "','" + ErrItem + "','" + User.username + "')")
 End Sub
 
 Public Sub AtualizaErros()
-    Dim db As Database, rs As Recordset, d As Date
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, d As Date
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT MAX (DATAHORA) AS LASTREVISION FROM TLOG WHERE ACAO = 'REVIU ERROS'")
+    Set rs = db.Execute("SELECT MAX (DATAHORA) AS LASTREVISION FROM TLOG WHERE ACAO = 'REVIU ERROS'")
     If rs.EOF Then d = LongTimeAgo Else d = CritD(rs("LASTREVISION"))
-    Set rs = db.OpenRecordset("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>#" + Format(d, "MM/DD/YYYY HH:MM:SS") + "#")
+    Set rs = db.Execute("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>#" + Format(d, "MM/DD/YYYY HH:MM:SS") + "#")
     If rs.EOF Then NumErrors = 0 Else NumErrors = CritN(rs("NERROS"))
-    db.Close
 End Sub
 
 '-------------------------------------------------------------------------------------------------------------
@@ -315,37 +311,36 @@ End Sub
 '-------------------------------------------------------------------------------------------------------------
 
 Public Function JahImportouNoDia(qual As String) As Boolean
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='" + qual + "' AND DATARUN=" + SQLNow)
+    Set rs = db.Execute("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='" + qual + "' AND DATARUN=" + SQLNow)
     JahImportouNoDia = Not rs.EOF
-    db.Close
+
 End Function
 
 Public Function JahReportouNoDia() As Boolean
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='REPORT' AND DATARUN=" + SQLNow)
+    Set rs = db.Execute("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='REPORT' AND DATARUN=" + SQLNow)
     JahReportouNoDia = Not rs.EOF
-    db.Close
+
 End Function
 
 Public Sub FlagImportouNoDia(qual As String)
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
     db.Execute ("INSERT INTO THISTIMPORTREPORT (DATARUN, QUAL, QUEM) VALUES (" + SQLNow + ",'" + qual + "','" + User.username + "')")
-    db.Close
+
 End Sub
 
 Public Sub FlagReportouNoDia()
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
     db.Execute ("INSERT INTO THISTIMPORTREPORT (DATARUN, QUAL, QUEM) VALUES (" + SQLNow + ",'REPORT','" + User.username + "')")
-    db.Close
 End Sub
 
 

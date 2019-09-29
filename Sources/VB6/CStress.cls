@@ -17,10 +17,10 @@ Private Percent(1000) As Double
 Private N As Integer
 
 Public Sub ReadDB()
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPapel
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPapel
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TSTRESS ORDER BY NOME")
+    Set rs = db.Execute("SELECT * FROM TSTRESS ORDER BY NOME")
     If Not rs.EOF Then rs.MoveFirst
     N = 0
     While Not rs.EOF
@@ -30,7 +30,6 @@ Public Sub ReadDB()
         Percent(N) = rs("Percentual")
         rs.MoveNext
     Wend
-    db.Close
     Ordena
 End Sub
 
@@ -56,7 +55,7 @@ Property Get ListaDeCenarios() As Collection
 End Property
 
 Public Sub WriteDB()
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPapel
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPapel
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
@@ -65,7 +64,6 @@ Public Sub WriteDB()
         For i = 1 To N
             db.Execute ("INSERT INTO TSTRESS (NOME, TITULO, PERCENTUAL) VALUES ('" + Nomes(i) + "','" + Titulos(i) + "'," + Str(Percent(i)) + ")")
         Next i
-        db.Close
     End If
 End Sub
 

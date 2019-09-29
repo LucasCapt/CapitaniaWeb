@@ -1,7 +1,7 @@
 Attribute VB_Name = "MMain"
 Public Const LongTimeAgo As Date = 36526
 
-Private vConexao As Database
+Private vConexao As ADODB.Connection
 
 Public DBFileName As String
 Public ConfigFileName As String
@@ -237,25 +237,25 @@ End Function
 
 
 Public Function ThereIsPositionForDate(d As Date) As Boolean
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
+    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
     ThereIsPositionForDate = Not (rs.EOF)
-    db.Close
+    
 End Function
 
 
 Public Function TestaTrocaData(d As Date) As Boolean
-    Dim db As Database, rs As Recordset, rs1 As Recordset, hacart As Boolean, resp As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, hacart As Boolean, resp As String
     
     If d <= Now() Then
         
         Set db = OpenTheDatabase
         'Procura Última Carteira
-        Set rs1 = db.OpenRecordset("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
+        Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
         hacart = Not rs1.EOF
-        db.Close
+        
         
         If hacart Then
             FStart.newshow ("Alterando data...")
@@ -284,9 +284,9 @@ Public Function TestaTrocaData(d As Date) As Boolean
                 'Se usuário escolheu importar, tenta ler novamente arquivos
                 
                 Set db = OpenTheDatabase
-                Set rs1 = db.OpenRecordset("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
+                Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
                 hacart = Not rs1.EOF
-                db.Close
+                
                 If hacart Then
                     SetBaseDateTo d
                     TestaTrocaData = True
@@ -333,14 +333,21 @@ Public Sub ExitSimulation()
 End Sub
 
 
-Public Function OpenTheDatabase() As Database
+Public Function OpenTheDatabase() As ADODB.Connection
 
-    'If vConexao Is Nothing Then
-        Set ws = DBEngine.Workspaces(0)
-        Let strConnection = "ODBC;DSN=db_capitania;UID=capitania\dev.capitania;=Capitania2019"
-        Set db = ws.OpenDatabase("", False, False, strConnection)
-        Set vConexao = db
-    'End If
+    If vConexao Is Nothing Then
+        'Let strConnection = "ODBC;DSN=db_capitania;UID=capitania\dev.capitania;=Capitania2019"
+        Let strconnection = "PROVIDER=SQLOLEDB;DATASOURCE=WIN10DEV;Initial Catalog=db_capitania;Trusted_connection=yes"
+        Set vConexao = New ADODB.Connection
+        vConexao.Provider = "SQLOLEDB"
+        vConexao.Properties("Data Source").value = "WIN10DEV"
+        vConexao.Properties("Initial Catalog").value = "db_capitania"
+        'vConexao.Properties("User ID").value = "capitania\dev.capitania"
+        'vConexao.Properties("Password").value = "Capitania2019"
+        vConexao.Properties("Integrated Security").value = "SSPI"
+        
+        Call vConexao.open(strconnection)
+    End If
     
     Set OpenTheDatabase = vConexao
     
@@ -416,13 +423,13 @@ End Sub
 Sub exceptional_Old()
 '   Esta rotina reprocessa carteiras entre duas datas
 
-    Dim db As Database, rs As Recordset, ds(500) As Date, N As Integer, f As CFundo
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, ds(500) As Date, N As Integer, f As CFundo
     
     FStart.Show
 
 
 '   -------2 datas já presentes na HistRisk
-    '    Set rs = db.OpenRecordset("SELECT DISTINCT DATARUN FROM THISTRISK WHERE DATARUN<=#12/04/2019# AND DATARUN>=#10/03/2018#")
+    '    Set rs = db.Execute("SELECT DISTINCT DATARUN FROM THISTRISK WHERE DATARUN<=#12/04/2019# AND DATARUN>=#10/03/2018#")
     '    N = 0
     '    While Not rs.EOF
     '        N = N + 1

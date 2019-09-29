@@ -75,14 +75,14 @@ End Property
 
 
 Public Sub WriteDB()
-    Dim db As Database, rs As Recordset, sbPor As String, sMov As String, sPara As String, order As String, SpPara As String, SpPor As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, sbPor As String, sMov As String, sPara As String, order As String, SpPara As String, SpPor As String
     Dim sbAND As String, spand As String, sissue As String, sbissue As String, dst As String, sbquant As String, sbConector As String
     Dim sbAND2 As String, spand2 As String, sbAND3 As String, spand3 As String
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT * FROM TREGRAS WHERE ID=" + Str(Me.ID))
+        Set rs = db.Execute("SELECT * FROM TREGRAS WHERE ID=" + Str(Me.ID))
         If Not rs.EOF Then
             rs.Close
             db.Execute ("DELETE FROM TREGRAS WHERE ID=" + Str(Me.ID))
@@ -122,7 +122,7 @@ Public Sub WriteDB()
         
         db.Execute order
         
-        db.Close
+        
     End If
 End Sub
 

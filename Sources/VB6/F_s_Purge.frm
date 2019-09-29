@@ -222,7 +222,7 @@ Private PassadoList As New Collection
 
 Public Sub newshow()
     Dim p As CPapel, u As CNomeValor, achou As Boolean
-Dim db As Database, rs As Recordset, N As Integer, SouOrfao As Boolean, UltData As Date
+Dim db As ADODB.Connection, rs As ADODB.Recordset, N As Integer, SouOrfao As Boolean, UltData As Date
     
     Me.Show
     Label1 = "(calc...)"
@@ -247,10 +247,10 @@ Dim db As Database, rs As Recordset, N As Integer, SouOrfao As Boolean, UltData 
         
             'Verifica órfão
             SouOrfao = False
-            Set rs = db.OpenRecordset("SELECT * FROM TAKA WHERE FROMID='" + p.ID + "' OR TOID='" + p.ID + "'")
+            Set rs = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + p.ID + "' OR TOID='" + p.ID + "'")
             If rs.EOF Then
                 'Pode ser... não tem registro na AKA
-                 Set rs = db.OpenRecordset("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "'")
+                 Set rs = db.Execute("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "'")
                  If rs.EOF Then
                      'Papel é um órfão
                      OrfaoList.Add p, p.ID
@@ -262,10 +262,10 @@ Dim db As Database, rs As Recordset, N As Integer, SouOrfao As Boolean, UltData 
             'Verifica Vencido (que não seja PERP nem OVER nem tenha estado em Carteira após Venc+7)
             If p.Dt_Venc < BaseDate - 92 And p.Class_Rent <> "PERP" And p.Class_Rent <> "OVER" Then
                 'Pode ser, mas checa se não esteve em nenhuma carteira após M-3
-                Set rs = db.OpenRecordset("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(p.Dt_Venc + 7) + ")")
+                Set rs = db.Execute("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(p.Dt_Venc + 7) + ")")
                 If rs.EOF Then
                     'Pode ser... não existe em AKA ou foi deletado da AKA até Venc+7
-                    Set rs = db.OpenRecordset("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "' AND DATA>" + SQLD(p.Dt_Venc + 7))
+                    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "' AND DATA>" + SQLD(p.Dt_Venc + 7))
                     If rs.EOF Then
                         VencidoList.Add p, p.ID
                     End If
@@ -275,10 +275,10 @@ Dim db As Database, rs As Recordset, N As Integer, SouOrfao As Boolean, UltData 
             'Verifica passado (não utilizado há mais de 2 anos)
             If Not SouOrfao Then
                 'Não é órfão, mas pode estar passado
-                Set rs = db.OpenRecordset("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(BaseDate - 730) + ")")
+                Set rs = db.Execute("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(BaseDate - 730) + ")")
                 If rs.EOF Then
                     'Pode ser... não existe em AKA ou foi deletado da AKA até 2Y-1
-                    Set rs = db.OpenRecordset("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "' AND DATA>" + SQLD(BaseDate - 730))
+                    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "' AND DATA>" + SQLD(BaseDate - 730))
                     If rs.EOF Then
                         PassadoList.Add p, p.ID
                     End If
@@ -288,7 +288,6 @@ Dim db As Database, rs As Recordset, N As Integer, SouOrfao As Boolean, UltData 
 
         End If 'posictotalv=0
     Next p
-    db.Close
     
     'Reporta
     newrefresh
@@ -307,7 +306,7 @@ End Sub
 
 Private Sub Command1_Click()
     'Eliminar Liberados
-    Dim p As CPapel, db As Database, rs As Recordset, p1 As CPapel
+    Dim p As CPapel, db As ADODB.Connection, rs As ADODB.Recordset, p1 As CPapel
     
     Set db = OpenTheDatabase
     For Each p In OrfaoListA
@@ -320,12 +319,12 @@ Private Sub Command1_Click()
     Papeis.Refresh
     newrefresh
     FMain.FazStatusBar
-    db.Close
+
 End Sub
 
 Private Sub Command2_Click()
     'Elimina não editados
-    Dim p As CPapel, db As Database, rs As Recordset, p1 As CPapel
+    Dim p As CPapel, db As ADODB.Connection, rs As ADODB.Recordset, p1 As CPapel
     
     Set db = OpenTheDatabase
     For Each p In OrfaoListB
@@ -338,12 +337,12 @@ Private Sub Command2_Click()
     Papeis.Refresh
     newrefresh
     FMain.FazStatusBar
-    db.Close
+
 End Sub
 
 Private Sub Command3_Click()
     'Eliminar TODOS
-    Dim p As CPapel, db As Database, rs As Recordset, p1 As CPapel
+    Dim p As CPapel, db As ADODB.Connection, rs As ADODB.Recordset, p1 As CPapel
     
     Set db = OpenTheDatabase
     For Each p In OrfaoList
@@ -357,13 +356,13 @@ Private Sub Command3_Click()
     Papeis.Refresh
     newrefresh
     FMain.FazStatusBar
-    db.Close
+
 End Sub
 
 
 Private Sub Command4_Click()
     'Deletar os velhos
-    Dim p As CPapel, db As Database, rs As Recordset, p1 As CPapel
+    Dim p As CPapel, db As ADODB.Connection, rs As ADODB.Recordset, p1 As CPapel
     
     Set db = OpenTheDatabase
     For Each p In PassadoList
@@ -374,12 +373,12 @@ Private Sub Command4_Click()
     Papeis.Refresh
     newrefresh
     FMain.FazStatusBar
-    db.Close
+
 End Sub
 
 Private Sub Command5_Click()
     'Deletar os vencidos
-    Dim p As CPapel, db As Database, rs As Recordset, p1 As CPapel
+    Dim p As CPapel, db As ADODB.Connection, rs As ADODB.Recordset, p1 As CPapel
     
     Set db = OpenTheDatabase
     For Each p In VencidoList
@@ -390,5 +389,5 @@ Private Sub Command5_Click()
     Papeis.Refresh
     newrefresh
     FMain.FazStatusBar
-    db.Close
+
 End Sub

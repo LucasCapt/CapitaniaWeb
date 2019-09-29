@@ -14,11 +14,11 @@ Attribute VB_Exposed = False
 Public c As New Collection
 
 Public Sub ReadDB()
-    Dim db As Database, rs As Recordset, x As CRegra
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CRegra
     Set c = New Collection
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TREGRAS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
+    Set rs = db.Execute("SELECT * FROM TREGRAS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         Set x = New CRegra
@@ -56,7 +56,7 @@ Public Sub ReadDB()
         c.Add x
         rs.MoveNext
     Wend
-    db.Close
+    
 End Sub
 
 Public Function search(x As Integer) As CRegra
@@ -75,7 +75,7 @@ End Function
 
 Public Sub Exclui(x As CRegra)
     Dim b As CBook, EhUsada As Boolean, R1 As CRegra
-    Dim db As Database, rs As Recordset, i As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, i As Integer
     
     'Verifica se regra é usada em algum book
     EhUsada = False
@@ -93,7 +93,7 @@ Public Sub Exclui(x As CRegra)
             
             Set db = OpenTheDatabase
             db.Execute ("UPDATE TREGRAS SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
-            db.Close
+            
         End If
         
         'Retira da Lista
@@ -111,12 +111,12 @@ End Sub
 
 
 Public Function Cria(x As String) As CRegra
-    Dim db As Database, rs As Recordset, y As CRegra, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CRegra, LastNumber As Integer
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT MAX (ID) AS MAXID FROM TREGRAS")
+        Set rs = db.Execute("SELECT MAX (ID) AS MAXID FROM TREGRAS")
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
         
@@ -124,7 +124,7 @@ Public Function Cria(x As String) As CRegra
             "VALUES (" + Str(LastNumber + 1) + ", '" + x + "', 'MAX', 0, FALSE, 0, FALSE, 0, '', 0, 0, '', FALSE, FALSE, " + SQLBaseDate + "," + SQLBaseDate + ",'CTRL','PL')"
         
         db.Execute order
-        db.Close
+        
     
         Set y = New CRegra
         y.ID = LastNumber + 1

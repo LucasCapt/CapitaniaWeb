@@ -59,36 +59,34 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Public Sub newshow()
-    Dim db As Database, rs As Recordset, f As CFundo
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, f As CFundo
     
     Set db = OpenTheDatabase
     
     
-    Set rs = db.OpenRecordset("SELECT MAX(DATA) as A1 FROM TPAPELPROP")
+    Set rs = db.Execute("SELECT MAX(DATA) as A1 FROM TPAPELPROP")
     a1 = rs("A1")
     
-    Set rs = db.OpenRecordset("SELECT MAX(DATA) as A1 FROM TPOSIC")
+    Set rs = db.Execute("SELECT MAX(DATA) as A1 FROM TPOSIC")
     a2 = rs("A1")
     
-    Set rs = db.OpenRecordset("SELECT MAX(DATA) as A1 FROM TFACTORHIST")
+    Set rs = db.Execute("SELECT MAX(DATA) as A1 FROM TFACTORHIST")
     a3 = rs("A1")
     
-    Set rs = db.OpenRecordset("SELECT MAX(DATAOBS) as A1 FROM TRESGATES")
+    Set rs = db.Execute("SELECT MAX(DATAOBS) as A1 FROM TRESGATES")
     a4 = rs("A1")
     
-    Set rs = db.OpenRecordset("SELECT MAX(DATAOBS) as A1 FROM TTRANSFERS")
+    Set rs = db.Execute("SELECT MAX(DATAOBS) as A1 FROM TTRANSFERS")
     a5 = rs("A1")
     
-     Set rs = db.OpenRecordset("SELECT MAX(DATAOBS) as A1 FROM TMAIORCOTISTA")
+     Set rs = db.Execute("SELECT MAX(DATAOBS) as A1 FROM TMAIORCOTISTA")
     a6 = rs("A1")
     
-    Set rs = db.OpenRecordset("SELECT MAX(DATA) as A1 FROM TTRADES")
+    Set rs = db.Execute("SELECT MAX(DATA) as A1 FROM TTRADES")
     a7 = rs("A1")
     
-    Set rs = db.OpenRecordset("SELECT MAX(ATUALIZADO) as A1 FROM TCTPT")
+    Set rs = db.Execute("SELECT MAX(ATUALIZADO) as A1 FROM TCTPT")
     a8 = rs("A1")
-    
-    db.Close
     
     
     Me.Label1 = "Atualização das Importações" + Chr(10) + _

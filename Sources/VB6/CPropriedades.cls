@@ -41,18 +41,18 @@ Private Sub FazPropIndex()
 End Sub
 
 Public Sub ReadDB()
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPropriedade
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPropriedade
     Set c = New Collection
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TPROPRIEDADES ORDER BY NOME")
+    Set rs = db.Execute("SELECT * FROM TPROPRIEDADES ORDER BY NOME")
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         Set x = New CPropriedade
         x.nome = rs("Nome")
         x.ID = rs("ID")
         x.ValorLivre = rs("ValorLivre")
-        Set rs1 = db.OpenRecordset("SELECT * FROM TPROPVALUES WHERE PROPRIEDADE=" + Str(rs("ID")) + " ORDER BY VALOR")
+        Set rs1 = db.Execute("SELECT * FROM TPROPVALUES WHERE PROPRIEDADE=" + Str(rs("ID")) + " ORDER BY VALOR")
         If Not rs1.EOF Then rs1.MoveFirst
         While Not rs1.EOF
             x.AddNew (rs1("Valor"))
@@ -61,7 +61,7 @@ Public Sub ReadDB()
         c.Add x
         rs.MoveNext
     Wend
-    db.Close
+    
     
     
     '---Cria os dummys das extras (mas não inclui na coleção)
@@ -256,17 +256,17 @@ End Sub
 
 
 Public Function Cria(x As String) As CPropriedade
-    Dim db As Database, rs As Recordset, y As CPropriedade, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CPropriedade, LastNumber As Integer
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT MAX (ID) AS MAXID FROM TPROPRIEDADES")
+        Set rs = db.Execute("SELECT MAX (ID) AS MAXID FROM TPROPRIEDADES")
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
             
         db.Execute ("INSERT INTO TPROPRIEDADES (ID, NOME) VALUES (" + Str(LastNumber + 1) + ",'" + x + "')")
-        db.Close
+        
     
         Set y = New CPropriedade
         y.ID = LastNumber + 1
@@ -299,7 +299,7 @@ End Sub
 
 Public Sub Delete(ID As String)
     Dim i As Integer, f As CPapel
-    Dim db As Database, rs As Recordset, y As CPropriedade, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CPropriedade, LastNumber As Integer
     
     If MainStatus = "LIVE" Then
         
@@ -307,7 +307,7 @@ Public Sub Delete(ID As String)
         db.Execute ("DELETE FROM TPROPRIEDADES WHERE ID=" + Str(ID))
         db.Execute ("DELETE FROM TPROPVALUES WHERE PROPRIEDADE = " + Str(ID))
         db.Execute ("DELETE FROM TPAPELPROP WHERE PROPRIEDADE = " + Str(ID))
-        db.Close
+        
     End If
     
     'Deleta da lista e dos papéis
