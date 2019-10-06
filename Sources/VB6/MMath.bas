@@ -284,8 +284,8 @@ Public Sub WriteLogPerf(acao As String, items As Integer, segundos As Double)
     If items > 0 Then s_i = segundos / items
     
     Set db = OpenTheDatabase
-    db.Execute ("INSERT INTO TLOGPERF (DATAHORA, OPER, USER, ITENS, SECS, ITEMPERSEC, SECPERITEM) VALUES " + _
-                "(#" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "#,'" + acao + "','" + User.username + "'," + _
+    db.Execute ("INSERT INTO TLOGPERF (DATAHORA, OPER, [USER], ITENS, SECS, ITEMPERSEC, SECPERITEM) VALUES " + _
+                "('" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "','" + acao + "','" + User.username + "'," + _
                 Str(items) + "," + Str(segundos) + "," + Str(i_s) + "," + Str(s_i) + ")")
 End Sub
 
@@ -300,9 +300,11 @@ Public Sub AtualizaErros()
     Dim db As ADODB.Connection, rs As ADODB.Recordset, d As Date
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT MAX (DATAHORA) AS LASTREVISION FROM TLOG WHERE ACAO = 'REVIU ERROS'")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT MAX (DATAHORA) AS LASTREVISION FROM TLOG WHERE ACAO = 'REVIU ERROS'", db, adOpenForwardOnly, adLockReadOnly)
     If rs.EOF Then d = LongTimeAgo Else d = CritD(rs("LASTREVISION"))
-    Set rs = db.Execute("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>#" + Format(d, "MM/DD/YYYY HH:MM:SS") + "#")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
     If rs.EOF Then NumErrors = 0 Else NumErrors = CritN(rs("NERROS"))
 End Sub
 
@@ -314,7 +316,8 @@ Public Function JahImportouNoDia(qual As String) As Boolean
     Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='" + qual + "' AND DATARUN=" + SQLNow)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='" + qual + "' AND DATARUN=" + SQLNow, db, adOpenForwardOnly, adLockReadOnly)
     JahImportouNoDia = Not rs.EOF
 
 End Function
@@ -323,7 +326,8 @@ Public Function JahReportouNoDia() As Boolean
     Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='REPORT' AND DATARUN=" + SQLNow)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='REPORT' AND DATARUN=" + SQLNow, db, adOpenForwardOnly, adLockReadOnly)
     JahReportouNoDia = Not rs.EOF
 
 End Function

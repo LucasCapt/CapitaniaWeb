@@ -63,7 +63,8 @@ Public Sub newshow(qual As Integer)
                 
     End Select
     
-    Set rs = db.Execute(SelectOrder)
+    Set rs = New ADODB.Recordset
+    Call rs.open(SelectOrder, db, adOpenForwardOnly, adLockReadOnly)
         
     
     Grid.Rows = 1

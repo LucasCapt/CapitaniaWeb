@@ -18,9 +18,11 @@ Public Sub ReadDB()
     Set c = New Collection
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TREGRAS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TREGRAS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1 AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
+        DoEvents
         Set x = New CRegra
         x.ID = rs("ID")
         x.nome = rs("Nome")
@@ -116,7 +118,8 @@ Public Function Cria(x As String) As CRegra
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.Execute("SELECT MAX (ID) AS MAXID FROM TREGRAS")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT MAX (ID) AS MAXID FROM TREGRAS", db, adOpenForwardOnly, adLockReadOnly)
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
         

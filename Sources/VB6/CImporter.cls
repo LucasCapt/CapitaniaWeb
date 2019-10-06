@@ -37,10 +37,11 @@ Sub importaADTV(Level As Integer, Optional f As Form)
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("ADTV")) Then
         
         
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
         If Not f Is Nothing Then f.Say ("Importando ADTV")
         
-        Set rs1 = db.Execute("SELECT MAX(DATA) AS LASTDATE FROM TADTV WHERE DATA<=" + SQLD(Now()))
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT MAX(DATA) AS LASTDATE FROM TADTV WHERE DATA<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
         If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE") - 5
         If LastDate < DateSerial(2015, 10, 1) Then LastDate = DateSerial(2015, 10, 1)
         rs1.Close
@@ -52,16 +53,19 @@ Sub importaADTV(Level As Integer, Optional f As Form)
             If Not ws Is Nothing Then
                 j = 1
                 While ws.cells(1, j) <> ""
+                    DoEvents
                     If InStr(ws.cells(1, j), " ") > 1 _
                         Then Ativo = Left(ws.cells(1, j), InStr(ws.cells(1, j), " ") - 1) _
                         Else Ativo = ws.cells(1, j)
                     i = 4
                     d = DateSerial(2015, 1, 1)
                     While ws.cells(i, j) <> "" And i < 100
+                        DoEvents
                         If ws.cells(i, j) > LastDate Then
                             d = ws.cells(i, j)
                             If IsNumeric(ws.cells(1, j + 1)) And ws.cells(i, j) <> "" Then
                                 adtv = ws.cells(1, j + 1)
+                                Call FStart.Say("Importando ADTV Ativo " & Ativo & " Data " & d)
                                 If IsNumeric(ws.cells(1, j + 2)) Then adtvCond = ws.cells(1, j + 2) Else adtvCond = adtv
                                 db.Execute ("DELETE FROM TADTV WHERE NOME ='" + Ativo + "' AND DATA=" + SQLD(d))
                                 db.Execute ("INSERT INTO TADTV (DATA, NOME, ADTV, ADTVCOND, ADTVCLASSE, ADTVCLASSECOND) VALUES (" + SQLD(d) + ", '" + Ativo + "', " + Str(adtv) + "," + Str(adtvCond) + "," + Str(adtv) + "," + Str(adtvCond) + ")")
@@ -86,16 +90,17 @@ End Sub
 
 Sub ImportaPricing(Level As Integer, Optional f As Form)
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, LastDate As Date, d As Date
-    Dim nome As String, L As String, fdo As String, pp As String, vl As String
+    Dim Nome As String, L As String, fdo As String, pp As String, vl As String
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("PRICING")) Then
     
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
         
         If Not f Is Nothing Then f.Say ("Importando Pricing")
         
         'Identifica a última data que consta do database de pricing
-        Set rs1 = db.Execute("SELECT MAX(DATAOBS) AS LASTDATE FROM TPRICING WHERE DATAOBS<=" + SQLD(Now()))
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT MAX(DATAOBS) AS LASTDATE FROM TPRICING WHERE DATAOBS<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
         If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE") - 5
         If LastDate < DateSerial(2015, 10, 1) Then LastDate = DateSerial(2015, 10, 1)
         rs1.Close
@@ -109,22 +114,24 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
             While d <= Now() 'Importa para cada data após o 5o dia anterior ao último registrado
             
                 If Not f Is Nothing Then f.Say ("Checando pricing " + Format(d, "dd-MMM-yy"))
-                nome = Config.PricingFilePrefix + Format(Year(d), "0000") + Format(Month(d), "00") + Format(Day(d), "00") + ".txt"
+                Nome = Config.PricingFilePrefix + Format(Year(d), "0000") + Format(Month(d), "00") + Format(Day(d), "00") + ".txt"
                 
-                If FileExists(nome) Then
+                If FileExists(Nome) Then
                     '---------Importa da Planilha
                     If Not f Is Nothing Then f.Say ("Importando pricing " + Format(d, "dd-MMM-yy"))
-                    Open nome For Input As 1
+                    Open Nome For Input As 1
                     
                     If Not EOF(1) Then Line Input #1, L
                     
                     While Not EOF(1)
+                        DoEvents
                         Line Input #1, L
                         
                         'Procura a 3a vírgula e separa o ativo
                         i = 1
                         cvirg = 0
                         While i < Len(L) And cvirg < 3
+                            DoEvents
                             If Mid(L, i, 1) = ";" Then cvirg = cvirg + 1
                             i = i + 1
                         Wend
@@ -144,6 +151,7 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                         While i > 1 And Mid(L, i, 1) <> ";": i = i - 1: Wend
                         preco = Mid(L, i + 1, j - i)
                         
+                        If Not f Is Nothing Then f.Say ("Importando pricing " + Format(d, "dd-MMM-yy") + " Ativo: " & Ativo)
                         'Grava
                         db.Execute ("DELETE FROM TPRICING WHERE DATAOBS=" + SQLD(d) + " AND ATIVO='" + Ativo + "'")
                         db.Execute ("INSERT INTO TPRICING (DATAOBS, ATIVO, PRECO) VALUES (" + SQLD(d) + ", '" + Ativo + "', " + preco + ")")
@@ -157,6 +165,7 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                     '-------- Importa FII/ debentures (uma vez que importa, trava a importação do anterior)
                     j = 1
                     While ws.cells(1, j) <> ""
+                        DoEvents
                         If InStr(ws.cells(1, j), " ") > 1 _
                             Then Ativo = Left(ws.cells(1, j), InStr(ws.cells(1, j), " ") - 1) _
                             Else Ativo = ws.cells(1, j)
@@ -194,16 +203,17 @@ End Sub
 
 Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date, d As Date
-    Dim nome As String, L As String, Ativo As String, preco As String, cvirg As Integer, i As Integer
+    Dim Nome As String, L As String, Ativo As String, preco As String, cvirg As Integer, i As Integer
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("POSICAO")) Then
     
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
         
         If Not f Is Nothing Then f.Say ("Importando Posições")
         
         'Identifica a última data que consta do database de posicao
-        Set rs1 = db.Execute("SELECT MAX(DATA) AS LASTDATE FROM TPOSIC WHERE DATA<=" + SQLD(Now()))
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT MAX(DATA) AS LASTDATE FROM TPOSIC WHERE DATA<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
         If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE")
         If LastDate < DateSerial(2015, 1, 1) Then LastDate = DateSerial(2015, 1, 1)
         rs1.Close
@@ -214,8 +224,8 @@ Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
                 If ForceLast Then d = LastDate Else d = LastDate + 1
                 While d <= Now()
                     If Not f Is Nothing Then f.Say ("Checando posição " + Format(d, "dd-MMM-yy"))
-                    nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
-                    If FileExists(nome) Then
+                    Nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
+                    If FileExists(Nome) Then
                         If Not f Is Nothing Then f.Say ("Importando posição TXT " + Format(d, "dd-MMM-yy"))
                         ImportaPosicaoParaData d, False
                     End If
@@ -237,12 +247,12 @@ End Sub
 
 Sub ImportaPosicaoParaData(d As Date, Optional Notify As Boolean = False)
     'Esta rotina importa apenas carteiras .txt
-    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date, nome As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date, Nome As String
     
-    Set db = OpenTheDatabase
-    nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
-    If FileExists(nome) Then
-        Open nome For Input As 1
+    Set db = OpenTheDatabase(True)
+    Nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
+    If FileExists(Nome) Then
+        Open Nome For Input As 1
         'Limpa a base para a data d
         db.Execute ("DELETE FROM TPOSIC WHERE DATA=#" + Format(d, "MM/DD/YYYY") + "#")
         Line Input #1, L 'Pula primeira linha)
@@ -283,10 +293,11 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
         If Not f Is Nothing Then f.Say ("Importando Resgates")
         
         
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
           
         'Identifica a última data que consta do database de resgates
-        Set rs1 = db.Execute("SELECT MAX(DATAOBS) AS LASTDATE FROM TRESGATES WHERE DATAOBS<=" + SQLD(Now()))
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT MAX(DATAOBS) AS LASTDATE FROM TRESGATES WHERE DATAOBS<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
         If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE")
         If LastDate < DateSerial(2012, 1, 1) Then LastDate = DateSerial(2012, 1, 1)
         rs1.Close
@@ -426,7 +437,7 @@ Public Sub ImportMaxCotistas(Level As Integer, Optional f As Form)
     
         If Not f Is Nothing Then f.Say ("Importando maiores cotistas")
         
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
         
         'Inicializa Excel e a Planilha
             CaptureExcel
@@ -484,18 +495,20 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
     Dim d1 As Date, f1 As String, a1 As String, CV As String, q1 As Double, t1 As Double, p1 As Double, b1 As String, pr1 As Double, ps1 As String, PR As String, vf As Double
     Dim L As String, FileName As String, c As Integer, fundoid As Integer, NegFilePath As String
     Dim hi As Integer, lo As Integer, meio As Integer, celmeio As Variant
+    Dim rs As ADODB.Recordset
     
     If Level = 2 Or Level = 3 Or (Level = 1 And Not JahImportouNoDia("TRADES")) Or ehPreTrade Then
     
         If Not f Is Nothing Then f.Say ("Importando trades")
         
         
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
         
         If SinceDate <> 0 Then
             d = SinceDate
         Else
-            Set rs = db.Execute("SELECT MAX(DATA) AS MAXDATE FROM TTRADES")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT MAX(DATA) AS MAXDATE FROM TTRADES", db, adOpenForwardOnly, adLockReadOnly)
             If rs.EOF Then
                 d = Now() - 30
             ElseIf IsNull(rs("MAXDATE")) Then
@@ -514,7 +527,7 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
         'Importa CRM (database)
             'Database do CRM
             Set db1 = DBEngine.Workspaces(0).OpenDatabase(Config.CRMDataBase)
-            Set rs1 = db1.OpenRecordset("SELECT * FROM DEALS WHERE TIMESTAMP>=#" + Format(d, "MM/DD/YYYY") + "#")
+            Set rs1 = db1.OpenRecordset("SELECT * FROM DEALS WHERE TIMESTAMP>=" + SQLD(d))
             While Not rs1.EOF
             
                 If rs1("Timestamp") <= Now() Then
@@ -654,7 +667,7 @@ Public Sub ImportRiskSeries(Level As Integer, Optional f As Form)
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("SERIES")) Then
     
         
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
     
         'Inicializa Excel e a Planilha
         CaptureExcel
@@ -683,6 +696,7 @@ Public Sub ImportRiskSeries(Level As Integer, Optional f As Form)
                 While w.cells(1, i) <> "" And i < 256
                     DoEvents
                     a = w.cells(1, i)
+                    If Not f Is Nothing Then f.Say ("Importando os ratings " & w.cells(1, i))
                     If InStr(a, " ") > 0 Then a = Left(a, InStr(a, " ") - 1)
                     If IsDate(w.cells(4, i)) Then
                         d1 = w.cells(4, i)
@@ -740,7 +754,8 @@ Private Sub ImportaSerie(DBName As String, WSName As String, w As Object, db As 
     Dim rs As ADODB.Recordset, d As Date, Incompleta As Boolean, UltData As Date
     
     
-    Set rs = db.Execute("SELECT MAX(DATA) AS LASTDATE FROM TFACTORHIST WHERE FACTORID='" + DBName + "' AND DATA<=" + SQLBaseDate + " AND DATA >=" + SQLD(Now() - 720))
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT MAX(DATA) AS LASTDATE FROM TFACTORHIST WHERE FACTORID='" + DBName + "' AND DATA<=" + SQLBaseDate + " AND DATA >=" + SQLD(Now() - 720), db, adOpenForwardOnly, adLockReadOnly)
     UltData = Now() - 3650
     If rs.EOF Then
         Incompleta = True
@@ -816,20 +831,23 @@ Public Sub CriticaPosicaoParaData(d As Date)
     alterou = False
     lf = Chr(10)
     
-    Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d) + " AND PAPEL='00000000000000'")
+    Set db = OpenTheDatabase(True)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d) + " AND PAPEL='00000000000000'", db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
         d1 = d - 1
         achou = False
         While Not achou And d1 > d - 7
-            Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d1) + " AND FUNDO=" + Str(rs("FUNDO")))
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d1) + " AND FUNDO=" + Str(rs("FUNDO")), db, adOpenForwardOnly, adLockReadOnly)
             achou = Not rs1.EOF
             If Not achou Then d1 = d1 - 1
         Wend
         If achou Then
             l1 = rs("VALOR") * 0.9
             L2 = rs("VALOR") * 1.1
-            Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d1) + " AND FUNDO=" + Str(rs("FUNDO")) + " AND VALOR>=" + Str(l1) + " AND VALOR<=" + Str(L2))
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d1) + " AND FUNDO=" + Str(rs("FUNDO")) + " AND VALOR>=" + Str(l1) + " AND VALOR<=" + Str(L2), db, adOpenForwardOnly, adLockReadOnly)
             achou2 = False
             While Not rs1.EOF And Not achou2
                 If MsgBox("O papel dessa posição: " + lf + _
@@ -874,7 +892,7 @@ Public Sub ImportaXMLANBIMAparaData(d As Date, Optional Notify As Boolean = Fals
     Set c = GetFolders(Config.XMLANBIMAPath)
     
     For Each y In c
-        ImportaXMLANBIMADePastaParaData y.nome, d, Notify
+        ImportaXMLANBIMADePastaParaData y.Nome, d, Notify
         DoEvents
     Next y
     
@@ -886,7 +904,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
     'Data d é a data do arquivo, não necessariamente da posição
 
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date
-    Dim fundoid As Integer, plind As Double, nome As String, CNPJ As String, dtposic As Date, dtposicSt As String
+    Dim fundoid As Integer, plind As Double, Nome As String, CNPJ As String, dtposic As Date, dtposicSt As String
     Dim XML As New DOMDocument, noh As IXMLDOMNode, noh2 As IXMLDOMNode, Root As IXMLDOMElement
     Dim pIsin As String, pCod As String, q1 As String, v1 As String
     Dim TDesp As Double, TProv As Double, TPL As Double, VResgatas As Double
@@ -895,15 +913,16 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
     Dim z As CProvFilterElement, z1 As CProvFilterElement, ProvFilter As New Collection
     
     
-    Set db = OpenTheDatabase
+    Set db = OpenTheDatabase(True)
     
     XML.async = False
     XML.resolveExternals = False
     
-    nome = FileSystem.Dir(Config.XMLANBIMAPath + pasta + "\*" + Format(d, "_YYYYMMDD_") + "*.xml")
+    Nome = FileSystem.Dir(Config.XMLANBIMAPath + pasta + "\*" + Format(d, "_YYYYMMDD_") + "*.xml")
     
     'Lê o provfilter
-    Set rs = db.Execute("SELECT * FROM TPROVFILTER WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1  AND DT_DELETED<=" + SQLBaseDate + ")")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TPROVFILTER WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1  AND DT_DELETED<=" + SQLBaseDate + ")", db, adOpenForwardOnly, adLockReadOnly)
     Set ProvFilter = New Collection
     While Not rs.EOF
         Set z = New CProvFilterElement
@@ -917,12 +936,14 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
         rs.MoveNext
     Wend
     
-    If nome = "" And Notify Then MsgBox ("Arquivo XML para importação da data " + Format(d, "dd-MMM-yy") + " não encontrado na pasta " + pasta)
+    If Nome = "" And Notify Then MsgBox ("Arquivo XML para importação da data " + Format(d, "dd-MMM-yy") + " não encontrado na pasta " + pasta)
     
-    While nome <> ""
+    While Nome <> ""
         
-        If Not XML.Load(Config.XMLANBIMAPath + pasta + "\" + nome) Then
-            If Notify Then MsgBox ("Arquivo XML " + Chr(13) + nome + Chr(13) + " não decifrado." + Chr(13) + XML.parseError.reason + Chr(13) + "Linha " + Str(XML.parseError.Line))
+        DoEvents
+        
+        If Not XML.Load(Config.XMLANBIMAPath + pasta + "\" + Nome) Then
+            If Notify Then MsgBox ("Arquivo XML " + Chr(13) + Nome + Chr(13) + " não decifrado." + Chr(13) + XML.parseError.reason + Chr(13) + "Linha " + Str(XML.parseError.Line))
         Else
             'Lê o XML
             
@@ -939,7 +960,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                     End If
                     
                     If Not noh.selectSingleNode("header/nome") Is Nothing _
-                        Then nome = noh.selectSingleNode("header/nome").Text
+                        Then Nome = noh.selectSingleNode("header/nome").Text
                     
                     If noh.selectSingleNode("header/patliq") Is Nothing _
                         Then pling = 1 _
@@ -958,11 +979,13 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
 
                 
                 'Busca o fundo no database e obtém o ID
-                    Set rs = db.Execute("SELECT * FROM TFUNDOS WHERE CNPJ='" + CNPJ + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")")
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TFUNDOS WHERE CNPJ='" + CNPJ + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
                     If Not rs.EOF Then
                         fundoid = rs("ID")
                     Else
-                        Set rs = db.Execute("SELECT * FROM TFUNDOS WHERE NOME='" + nome + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")")
+                        Set rs = New ADODB.Recordset
+                        Call rs.open("SELECT * FROM TFUNDOS WHERE NOME='" + Nome + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
                         If Not rs.EOF Then fundoid = rs("ID") Else fundoid = -1
                     End If
                                     
@@ -976,7 +999,8 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                         TPL = 0
                         
                         For Each noh2 In noh.childNodes
-                        
+                                                    
+                            DoEvents
                             '---valores default
                                 di = LongTimeAgo
                                 dv = LongTimeAgo
@@ -1140,19 +1164,19 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                         If TDesp <> 0 Then db.Execute ("INSERT INTO TPOSICLAYOUT2 (FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX],CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA) VALUES (" + Str(fundoid) + ", 'DESPESA', 'DESPESA', 'DESPESA'," + Str(TDesp) + ", " + Str(TDesp) + ", " + SQLD(d) + ",'1990-01-01','1990-01-01','',0,0,'','" + pasta + "',0)")
                         TPL = TPL + TProv + TDesp
                         If Abs(TPL - plind) > 0.05 * plind Then
-                            If Notify Then MsgBox ("Fundo " + nome + " inconsistente na importação XML:" + Chr(13) + Format(TPL, "###,###,##0") + " x " + Format(plind, "###,###,##0"))
-                            WriteLogError "Importação PL inconsistente", nome
+                            If Notify Then MsgBox ("Fundo " + Nome + " inconsistente na importação XML:" + Chr(13) + Format(TPL, "###,###,##0") + " x " + Format(plind, "###,###,##0"))
+                            WriteLogError "Importação PL inconsistente", Nome
                         End If
                         
                     Else
-                        If Notify Then MsgBox (nome + " nao encontrado")
-                        WriteLogError "Fundo não encontrado durante Importação", nome
+                        If Notify Then MsgBox (Nome + " nao encontrado")
+                        WriteLogError "Fundo não encontrado durante Importação", Nome
                     End If
                     
             Next noh 'proximo fundo
         End If 'XML.Parse
         
-        nome = FileSystem.Dir()
+        Nome = FileSystem.Dir()
 
     Wend
 End Sub
@@ -1161,11 +1185,16 @@ End Sub
 Private Function ConsultaPapelNaBase(db As ADODB.Connection, ID As String) As ADODB.Recordset
     'Procura o papel na base (db aberto) e no Alias
     Dim r As ADODB.Recordset, R1 As ADODB.Recordset
-    Set r = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + ID + "'")
+    Set r = New ADODB.Recordset
+    Call r.open("SELECT * FROM TPAPEL WHERE ID='" + ID + "'", db, adOpenForwardOnly, adLockReadOnly)
     If r.EOF Then
         'Procura tb na lista de alias
-        Set R1 = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + ID + "'")
-        If Not R1.EOF Then Set r = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(R1("TOID")) + "'")
+        Set R1 = New ADODB.Recordset
+        Call R1.open("SELECT * FROM TAKA WHERE FROMID='" + ID + "'", db, adOpenForwardOnly, adLockReadOnly)
+        If Not R1.EOF Then
+            Set r = New ADODB.Recordset
+            Call r.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(R1("TOID")) + "'", db, adOpenForwardOnly, adLockReadOnly)
+        End If
     End If
     Set ConsultaPapelNaBase = r
 End Function
@@ -1183,9 +1212,7 @@ Public Sub Layt22MainParaData(d As Date)
     Dim SelectOrder As String
     
     
-    Set db = OpenTheDatabase
-    
-    'Set rs = db.Execute("SELECT * FROM TPOSICLAYOUT2 WHERE DATA=" + SQLD(d) + " ORDER BY FUNDO")
+    Set db = OpenTheDatabase(True)
     
     SelectOrder = "SELECT FUNDO, PAPEL_ISIN, SUM(QUANT) AS SQ, SUM(VALOR) AS SV, DATA, PAPEL_COD," + _
                   " MAX(TIPO) AS TIPO1, MAX(DTVENC) AS DTVENC1, MIN(DTISSUE) AS DTISSUE1, MAX([INDEX]) AS INDEX1, MIN(CUPOM) AS CUPOM1, MIN(PINDEX) AS PINDEX1, CNPJISSUE, IMPORTFOLDER, COMPROMISSADA" + _
@@ -1195,7 +1222,8 @@ Public Sub Layt22MainParaData(d As Date)
                   " ORDER BY FUNDO"
                   
     
-    Set rs = db.Execute(SelectOrder)
+    Set rs = New ADODB.Recordset
+    Call rs.open(SelectOrder, db, adOpenForwardOnly, adLockReadOnly)
     
     fvez = 0
     
@@ -1209,84 +1237,101 @@ Public Sub Layt22MainParaData(d As Date)
                 
         '---------------------------------------------< Tenta achar o papel já existente (no database)
         PapelAchado = False
-                
+        Call FStart.Say("Importando posição XML " & d & " Fundo: " & rs("fundo") & " Papel: " & rs("PAPEL_ISIN"))
         If rs("COMPROMISSADA") Then
             'É compromissada
-            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='OVER'")
-            If rs1.EOF Then Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='COMPROMISSADA'")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TPAPEL WHERE ID='OVER'", db, adOpenForwardOnly, adLockReadOnly)
+            If rs1.EOF Then
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT * FROM TPAPEL WHERE ID='COMPROMISSADA'", db, adOpenForwardOnly, adLockReadOnly)
+            End If
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then
             'Procura o papel na TPAPEL pelo ISIN = ISIN
-            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ISIN='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TPAPEL WHERE ISIN='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then
             'Procura o papel na TPAPEL por ID = ISIN
-            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado Then
             'Procura no AKA por FromID = ISIN
-            Set rs2 = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs2 = New ADODB.Recordset
+            Call rs2.open("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             If rs2.EOF Then
                 PapelAchado = False
             Else
-                Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'", db, adOpenForwardOnly, adLockReadOnly)
                 PapelAchado = Not rs1.EOF
             End If
         End If
         
         If Not PapelAchado And CritS(rs("TIPO1")) = "cotas" Then
             'Verifica, se for fundo, por CNPJ = CNPJISSUE
-            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE CNPJ<>'' AND CNPJ='" + CritS(rs("CNPJISSUE")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TPAPEL WHERE CNPJ<>'' AND CNPJ='" + CritS(rs("CNPJISSUE")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado And CritS(rs("TIPO1")) = "cotas" Then
             'Verifica se é um dos fundos da casa por CNPJ=CNPJISSUE
-            Set rs2 = db.Execute("SELECT * FROM TFUNDOS WHERE CNPJ='" + CritS(rs("CNPJISSUE")) + "'")
+            Set rs2 = New ADODB.Recordset
+            Call rs2.open("SELECT * FROM TFUNDOS WHERE CNPJ='" + CritS(rs("CNPJISSUE")) + "'", db, adOpenForwardOnly, adLockReadOnly)
             If rs2.EOF Then
                 PapelAchado = False
             Else
-                Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("IDTITULO")) + "'")
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("IDTITULO")) + "'", db, adOpenForwardOnly, adLockReadOnly)
                 PapelAchado = Not rs1.EOF
             End If
         End If
         
         If Not PapelAchado And CritS(rs("TIPO1")) = "cotas" Then
             'Procura, se fundo, no AKA por FromID = CNPJISSUE
-            Set rs2 = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("CNPJISSUE")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs2 = New ADODB.Recordset
+            Call rs2.open("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("CNPJISSUE")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             If rs2.EOF Then
                 PapelAchado = False
             Else
-                Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'", db, adOpenForwardOnly, adLockReadOnly)
                 PapelAchado = Not rs1.EOF
             End If
         End If
             
         If Not PapelAchado Then
             'Tenta achar por ID = Papel_Cod
-            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado Then
             'Tenta achar por CodCetip = Papel_Cod
-            Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE CODCETIP='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TPAPEL WHERE CODCETIP='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             PapelAchado = Not rs1.EOF
         End If
         
         If Not PapelAchado Then
             'Procura, se fundo, no AKA por FromID = Papel_Cod
-            Set rs2 = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")")
+            Set rs2 = New ADODB.Recordset
+            Call rs2.open("SELECT * FROM TAKA WHERE FROMID='" + CritS(rs("PAPEL_COD")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             If rs2.EOF Then
                 PapelAchado = False
             Else
-                Set rs1 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'")
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs2("TOID")) + "'", db, adOpenForwardOnly, adLockReadOnly)
                 PapelAchado = Not rs1.EOF
             End If
         End If
@@ -1306,9 +1351,9 @@ Public Sub Layt22MainParaData(d As Date)
             
                 pp.ID = "OVER"
                 pp.ISIN = "OVER"
-                pp.nome = "COMPROMISSADA"
+                pp.Nome = "COMPROMISSADA"
                 pp.Status = "AUTO_TIPO2"
-                s2 = "FALSE"
+                s2 = "0"
                 pp.Dt_Emissao = Now()
                 pp.Dt_Venc = Now()
                 pp.Index = "CDI+"
@@ -1328,12 +1373,14 @@ Public Sub Layt22MainParaData(d As Date)
                 
                 
                 'verifica se ID já existe e cria ID unica
-                    Set rs2 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + pp.ID + "'")
+                    Set rs2 = New ADODB.Recordset
+                    Call rs2.open("SELECT * FROM TPAPEL WHERE ID='" + pp.ID + "'", db, adOpenForwardOnly, adLockReadOnly)
                     If Not rs2.EOF Then
                         i = 0
                         While Not rs2.EOF
                             i = i + 1
-                            Set rs2 = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + pp.ID + "(" + Trim(Str(i)) + ")'")
+                            Set rs2 = New ADODB.Recordset
+                            Call rs2.open("SELECT * FROM TPAPEL WHERE ID='" + pp.ID + "(" + Trim(Str(i)) + ")'", db, adOpenForwardOnly, adLockReadOnly)
                         Wend
                         pp.ID = pp.ID + "(" + Trim(Str(i)) + ")"
                         WriteLogError "Papel importado com ID provavelmente já existente", pp.ID
@@ -1341,9 +1388,9 @@ Public Sub Layt22MainParaData(d As Date)
                 
                 'Continua a criação do papel
                 'Coloca os defaults
-                pp.nome = "Unknown (" + pp.ID + ")"
+                pp.Nome = "Unknown (" + pp.ID + ")"
                 pp.Status = "AUTO_TIPO2"
-                s2 = "FALSE" 'eh fundo?
+                s2 = "0" 'eh fundo?
                 pp.Dt_Emissao = Now()
                 pp.Dt_Venc = Now()
                 pp.Index = "CDI+"
@@ -1454,14 +1501,14 @@ Public Sub Layt22MainParaData(d As Date)
                         pp.Class_Rent = "OVER"
                         pp.Tipo = "FUTUROS"
                         pp.Dt_Venc = CritD(rs("DTVENC1"))
-                        pp.nome = "Fut" + pp.CodCetip
+                        pp.Nome = "Fut" + pp.CodCetip
                         
                         
                     Case "imoveis"
                         pp.Class_Liq = "FIINLIST"
                         pp.Class_Rent = "PERP"
                         pp.Tipo = "IMOVEL"
-                        pp.nome = "Imovel " + pp.CodCetip
+                        pp.Nome = "Imovel " + pp.CodCetip
                     
                 End Select
                 
@@ -1475,13 +1522,13 @@ Public Sub Layt22MainParaData(d As Date)
             
             'Tenta achar o Nome crédito pelo CNPJ
             If pp.CNPJ <> "" Then
-                Set rs3 = db.Execute("SELECT * FROM TCNPJNOME WHERE CNPJ='" + pp.CNPJ + "'")
+                Set rs3 = New ADODB.Recordset
+                Call rs3.open("SELECT * FROM TCNPJNOME WHERE CNPJ='" + pp.CNPJ + "'", db, adOpenForwardOnly, adLockReadOnly)
                 If Not rs3.EOF Then pp.NameCr = rs3("NOMECREDITO")
             End If
-            
             db.Execute ("INSERT INTO TPAPEL (NOME, ID, STATUS, FUNDO, CLASS_LIQ, CLASS_RENTAB, DATA_EMISSAO, DATA_VENCTO, " + _
                 "[INDEX], COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO) VALUES " + _
-                "('" + pp.nome + "', '" + _
+                "('" + pp.Nome + "', '" + _
                 pp.ID + "','" + _
                 pp.Status + "', '" + _
                 s2 + "', '" + _

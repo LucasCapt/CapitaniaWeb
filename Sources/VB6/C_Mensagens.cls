@@ -28,7 +28,8 @@ Private Function SubCtptAlto() As String
     Set db = OpenTheDatabase
 
     m = "CONTRAPARTES COM RISCO DE COMPLIANCE ALTO" + vbCr + FitString("Contraparte", 24, "L") + FitString("Razão Social", 24, "L") + FitString("Atualização", 12) + vbCr
-    Set rs = db.Execute("SELECT * FROM TCTPT WHERE PERFILRISCO='ALTO'")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TCTPT WHERE PERFILRISCO='ALTO'", db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
         m = m + FitString(rs("NOME"), 24, "L") + FitString(rs("RAZAOSOCIAL"), 24, "L") + FitString(rs("ATUALIZADO"), 12) + vbCr
         rs.MoveNext
@@ -59,7 +60,7 @@ Private Function SubMaiores() As String
             Then days4 = Format(x.PosicTotalV / x.adtvClasseCond / 0.2, "##0") _
             Else days4 = "n.a."
             
-        m = m + FitString(x.nome, 24, "L") + " " + _
+        m = m + FitString(x.Nome, 24, "L") + " " + _
                 FitString(x.CodCetip, 8, "L") + " " + _
                 FitString(FNumkMM(x.PosicTotalV), 12) + " " + _
                 FitString(days2, 12) + _
@@ -80,14 +81,14 @@ Private Function SubLim() As String
     Dim m As String, f As CFundo, b As CBook, r As CRegra, RR As CRuleResult
     
     Set f = Fundos.search(Config.ConcentrationFundID)
-    If f Is Nothing Then saux = "?" Else saux = f.nome
+    If f Is Nothing Then saux = "?" Else saux = f.Nome
     m = "LIMITES DE CRÉDITO EM " + saux + ":" + vbCr + FitString("Regra", 24, "L") + FitString("Limite", 12) + FitString("Posição", 12) + FitString("Delta", 12) + "Compliant?" + vbCr
     
     For Each b In f.MyBooks
         For Each r In b.c
             If r.Escopo = "LIM" Then
                 Set RR = f.ComputeRule(r)
-                m = m + FitString(r.nome, 24, "L") + FitString(Format(r.Limite / 1000000#, "##0.0"), 12) + FitString(Format(RR.MaxOut / 1000000#, "##0.0"), 12) + FitString(Format((r.Limite - plsob) / 1000000#, "##0.0"), 12) + "     " + f.IAmCompliantWithRule(r, "LIM") + vbCr
+                m = m + FitString(r.Nome, 24, "L") + FitString(Format(r.Limite / 1000000#, "##0.0"), 12) + FitString(Format(RR.MaxOut / 1000000#, "##0.0"), 12) + FitString(Format((r.Limite - plsob) / 1000000#, "##0.0"), 12) + "     " + f.IAmCompliantWithRule(r, "LIM") + vbCr
             End If
         Next r
     Next b
@@ -111,11 +112,13 @@ Private Function SubPTC() As String
     '---- Reporta trades não endereçados
         N = 0
         Set db = OpenTheDatabase
-            Set rs = db.Execute("SELECT MAX(DATARUN) AS MAXDATE FROM THISTTRADEERRS WHERE DATARUN>" + SQLD(Now() - 1))
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT MAX(DATARUN) AS MAXDATE FROM THISTTRADEERRS WHERE DATARUN>" + SQLD(Now() - 1), db, adOpenForwardOnly, adLockReadOnly)
             If Not rs.EOF Then
                 If Not IsNull(rs("MAXDATE")) Then
                     mxd = rs("MAXDATE")
-                    Set rs = db.Execute("SELECT * FROM THISTTRADEERRS WHERE DATARUN=" + SQLLongTime(mxd) + " AND ADDR<>'OK'")
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM THISTTRADEERRS WHERE DATARUN=" + SQLLongTime(mxd) + " AND ADDR<>'OK'", db, adOpenForwardOnly, adLockReadOnly)
                     If rs.EOF Then
                         m = m + vbCr + "0 erros de endereçamento" + vbCr
                     Else
@@ -134,7 +137,7 @@ Private Function SubPTC() As String
         For Each f In Fundos.c
             If f.area = "ASSET" Then
                 If Not f.PTCExecuted Then f.PreTradeCompliance
-                m = m + vbCr + FitString(f.nome, 24, "L") + " (" + Format(f.PTCNTrades, "000") + " trades) "
+                m = m + vbCr + FitString(f.Nome, 24, "L") + " (" + Format(f.PTCNTrades, "000") + " trades) "
                 If f.PTCResult < 2 Or f.PTCNTrades = 0 Then
                     m = m + "OK"
                 Else
@@ -143,7 +146,7 @@ Private Function SubPTC() As String
                         If u.Result > 1 Then
                             If Not u.MyTrade Is Nothing And Not u.regra Is Nothing Then
                                 m = m + vbCr + Space(38) + u.MyTrade.Extenso + vbCr + _
-                                                    Space(38) + u.regra.nome + vbCr + _
+                                                    Space(38) + u.regra.Nome + vbCr + _
                                                     Space(38) + u.regra.LimiteExtenso + "  (" + FormatLimit(u.PLSubA, u.regra) + " -> " + FormatLimit(u.PLSubB, u.regra) + ")" + "  {" + FNumkMM(u.DeltaA) + " -> " + FNumkMM(u.DeltaB) + "}" + vbCr
                             Else
                                 m = m + Space(38) + "?" + vbCr
@@ -172,7 +175,8 @@ Private Function SubErrors() As String
     m = ""
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TLOGERRO WHERE DATAHORA>=#" + Format(TimeInit, "MM/DD/YYYY HH:MM:SS") + "#")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TLOGERRO WHERE DATAHORA>=" + SQLD(TimeInit), db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
         m = m + vbCr + Format(rs("DATAHORA"), "MM/DD/YYYY HH:MM:SS") + " " + FitString(rs("MSGERRO"), 45, "L") + FitString(rs("ITEM"), 35, "L")
         rs.MoveNext
@@ -195,15 +199,18 @@ Private Function SubRisk(area As String, qual As String) As String
     
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLBaseDate + " AND AREA='" + area + "' ORDER BY VAR DESC")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLBaseDate + " AND AREA='" + area + "' ORDER BY VAR DESC", db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
         If rs("FUNDSTATUS") <> "INV" Then
             Select Case qual
             Case "GER1"
                 hh = " AND VALORPROP<>'Tesouro' AND VALORPROP<>'BNY Mellon' AND VALORPROP<>'BNYMellon' AND VALORPROP<>'Caixa'"
-                Set rs1 = db.Execute("SELECT MAX(CONCENTRACAO) AS MAXCONC FROM TCONCENTRA WHERE NOME='" + rs("FUNDO") + "' AND DATA=" + SQLBaseDate + " AND PROPRIEDADE='" + Config.ConcentrationProp1 + "' " + hh)
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT MAX(CONCENTRACAO) AS MAXCONC FROM TCONCENTRA WHERE NOME='" + rs("FUNDO") + "' AND DATA=" + SQLBaseDate + " AND PROPRIEDADE='" + Config.ConcentrationProp1 + "' " + hh, db, adOpenForwardOnly, adLockReadOnly)
                 If Not rs1.EOF Then h1 = Format(CritNN(rs1("MAXCONC")), "##0%") Else h1 = "-"
-                Set rs1 = db.Execute("SELECT MAX(CONCENTRACAO) AS MAXCONC FROM TCONCENTRA WHERE NOME='" + rs("FUNDO") + "' AND DATA=" + SQLBaseDate + " AND PROPRIEDADE='" + Config.ConcentrationProp2 + "' " + hh)
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT MAX(CONCENTRACAO) AS MAXCONC FROM TCONCENTRA WHERE NOME='" + rs("FUNDO") + "' AND DATA=" + SQLBaseDate + " AND PROPRIEDADE='" + Config.ConcentrationProp2 + "' " + hh, db, adOpenForwardOnly, adLockReadOnly)
                 If Not rs1.EOF Then h2 = Format(CritNN(rs1("MAXCONC")), "##0%") Else h2 = "-"
                 m = m + vbCr + _
                       FitString(rs("FUNDO"), 20, "L") + _
@@ -246,7 +253,8 @@ Private Function SubLiquidity() As String
     m1 = "": m2 = ""
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLBaseDate + " ORDER BY VAR DESC")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLBaseDate + " ORDER BY VAR DESC", db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
         If Fundos.TypeReportsLiquidity(rs("FUNDTYPE"), rs("AREA")) Then
             If rs("FUNDSTATUS") <> "INV" Then
@@ -297,7 +305,8 @@ Private Function subCashReport() As String
     "FUNDO                      DISP MM  CASH MM  %CASH    Free MM  %Free    3mLiq    3mReq    3mCASHFree  "
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TCASHREPORTHIST WHERE DATA=" + SQLBaseDate)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TCASHREPORTHIST WHERE DATA=" + SQLBaseDate, db, adOpenForwardOnly, adLockReadOnly)
     t1 = 0
     t2 = 0
     While Not rs.EOF
@@ -329,7 +338,8 @@ Private Function subLiqStress(qual As String) As String
     "FUNDO                        Saque Stress   Liq Dispo.   Liq Req.     Percentile"
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLBaseDate + " ORDER BY FUNDO")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLBaseDate + " ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
         If Fundos.TypeReportsLiquidity(rs("FUNDTYPE"), rs("AREA")) Then
             m = m + vbCr + FitString(rs("Fundo"), 24, "L") + _
@@ -358,7 +368,8 @@ Private Function subCompliance(qual As String) As String
     
     Set db = OpenTheDatabase
     n1 = 0: n2 = 0: n3 = 0: n4 = 0
-    Set rs = db.Execute("SELECT * FROM THISTCOMPBREACHES WHERE DATA=" + SQLBaseDate)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTCOMPBREACHES WHERE DATA=" + SQLBaseDate, db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
             If rs("TIPOLIMITE") = "V" Then
                 fml = FNumkMM(rs("ALOCACAO"))
@@ -415,15 +426,18 @@ Private Function SubConcentra() As String
     Dim db As ADODB.Connection, rs1 As ADODB.Recordset, rs2 As ADODB.Recordset, rs3 As ADODB.Recordset, m As String, f As CFundo, saux As String
 
     Set f = Fundos.search(Config.ConcentrationFundID)
-    If f Is Nothing Then saux = "?" Else saux = f.nome
+    If f Is Nothing Then saux = "?" Else saux = f.Nome
     m = "CONCENTRACAO EM " + saux + ":" + vbCr + _
         FitString(Config.ConcentrationProp1, 24, "L") + FitString(Config.ConcentrationProp2, 24, "L") + FitString(Config.ConcentrationProp3, 24, "L")
         
     
     Set db = OpenTheDatabase
-    Set rs1 = db.Execute("SELECT * FROM TCONCENTRA WHERE DATA=" + SQLBaseDate + " AND NOME='" + saux + "' AND PROPRIEDADE = '" + Config.ConcentrationProp1 + "' ORDER BY CONCENTRACAO DESC")
-    Set rs2 = db.Execute("SELECT * FROM TCONCENTRA WHERE DATA=" + SQLBaseDate + " AND NOME='" + saux + "' AND PROPRIEDADE = '" + Config.ConcentrationProp2 + "' ORDER BY CONCENTRACAO DESC")
-    Set rs3 = db.Execute("SELECT * FROM TCONCENTRA WHERE DATA=" + SQLBaseDate + " AND NOME='" + saux + "' AND PROPRIEDADE = '" + Config.ConcentrationProp3 + "' ORDER BY CONCENTRACAO DESC")
+    Set rs1 = New ADODB.Recordset
+    Call rs1.open("SELECT * FROM TCONCENTRA WHERE DATA=" + SQLBaseDate + " AND NOME='" + saux + "' AND PROPRIEDADE = '" + Config.ConcentrationProp1 + "' ORDER BY CONCENTRACAO DESC", db, adOpenForwardOnly, adLockReadOnly)
+    Set rs2 = New ADODB.Recordset
+    Call rs2.open("SELECT * FROM TCONCENTRA WHERE DATA=" + SQLBaseDate + " AND NOME='" + saux + "' AND PROPRIEDADE = '" + Config.ConcentrationProp2 + "' ORDER BY CONCENTRACAO DESC", db, adOpenForwardOnly, adLockReadOnly)
+    Set rs3 = New ADODB.Recordset
+    Call rs3.open("SELECT * FROM TCONCENTRA WHERE DATA=" + SQLBaseDate + " AND NOME='" + saux + "' AND PROPRIEDADE = '" + Config.ConcentrationProp3 + "' ORDER BY CONCENTRACAO DESC", db, adOpenForwardOnly, adLockReadOnly)
     
     While (Not rs1.EOF) Or (Not rs2.EOF) Or (Not rs3.EOF)
         m = m + vbCr
@@ -460,11 +474,14 @@ Private Function subAML() As String
     
     Set db = OpenTheDatabase
     m = "AML NOS TRADES em " + Format(BaseDate, "dd-MMM-yyyy")
-    Set rs1 = db.Execute("SELECT COUNT(1) AS NORMS FROM THistAML WHERE DATA=" + SQLBaseDate + " AND COMPLIANT='OK'")
-    Set rs2 = db.Execute("SELECT COUNT(1) AS TOTAIS FROM THistAML WHERE DATA=" + SQLBaseDate)
+    Set rs1 = New ADODB.Recordset
+    Call rs1.open("SELECT COUNT(1) AS NORMS FROM THistAML WHERE DATA=" + SQLBaseDate + " AND COMPLIANT='OK'", db, adOpenForwardOnly, adLockReadOnly)
+    Set rs2 = New ADODB.Recordset
+    Call rs2.open("SELECT COUNT(1) AS TOTAIS FROM THistAML WHERE DATA=" + SQLBaseDate, db, adOpenForwardOnly, adLockReadOnly)
     If Not rs1.EOF Then m = m + vbCr + Str(rs1("NORMS")) + " trades normais/" + Str(rs2("TOTAIS")) + " trades totais"
     
-    Set rs1 = db.Execute("SELECT * FROM THistAML WHERE DATA=" + SQLBaseDate + " AND COMPLIANT<>'OK'")
+    Set rs1 = New ADODB.Recordset
+    Call rs1.open("SELECT * FROM THistAML WHERE DATA=" + SQLBaseDate + " AND COMPLIANT<>'OK'", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs1.EOF Then rs1.MoveFirst
     While Not rs1.EOF
         m = m + vbCr + rs1("COMPLIANT") + " Fundo:" + rs1("Fundo") + " Ativo:" + rs1("Ativo") + " " + rs1("COMENT")
@@ -482,10 +499,13 @@ Private Function subRateio() As String
     
     Set db = OpenTheDatabase
     m = "Conformidade da Divisão e Alocação de ordens em " + Format(BaseDate, "dd-MMM-yyyy")
-    Set rs1 = db.Execute("SELECT COUNT(1) AS NORMS FROM THistAlloc WHERE DATA=" + SQLBaseDate + " AND (COMPLIANT='OK' OR COMPLIANT = '(OK)')")
-    Set rs2 = db.Execute("SELECT COUNT(1) AS TOTAIS FROM THistAlloc WHERE DATA=" + SQLBaseDate)
+    Set rs1 = New ADODB.Recordset
+    Call rs1.open("SELECT COUNT(1) AS NORMS FROM THistAlloc WHERE DATA=" + SQLBaseDate + " AND (COMPLIANT='OK' OR COMPLIANT = '(OK)')", db, adOpenForwardOnly, adLockReadOnly)
+    Set rs2 = New ADODB.Recordset
+    Call rs2.open("SELECT COUNT(1) AS TOTAIS FROM THistAlloc WHERE DATA=" + SQLBaseDate, db, adOpenForwardOnly, adLockReadOnly)
     If Not rs1.EOF Then m = m + vbCr + Str(rs1("NORMS")) + " alocações conformes/" + Str(rs2("TOTAIS")) + " alocações totais"
-    Set rs1 = db.Execute("SELECT * FROM THistAlloc WHERE DATA=" + SQLBaseDate + " AND COMPLIANT<>'OK' AND COMPLIANT <> '(OK)'")
+    Set rs1 = New ADODB.Recordset
+    Call rs1.open("SELECT * FROM THistAlloc WHERE DATA=" + SQLBaseDate + " AND COMPLIANT<>'OK' AND COMPLIANT <> '(OK)'", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs1.EOF Then rs1.MoveFirst
     While Not rs1.EOF
         m = m + vbCr + rs1("COMPLIANT") + " Fundo:" + rs1("Fundo") + " Ativo:" + rs1("Ativo") + " " + Str(rs1("PUFUNDO")) + " x " + Str(rs1("PUGERAL"))
@@ -514,6 +534,7 @@ Private Function subStress() As String
     Dim i1 As Integer, i2 As Integer, i3 As Integer, i4 As Integer, i5 As Variant, FundoDaVez As String
     Dim LC As Integer 'largura da coluna
     Dim t0 As Date, td As Double, N As Integer
+    Dim rs As ADODB.Recordset
     
     t0 = Now()
     N = 0
@@ -524,16 +545,21 @@ Private Function subStress() As String
     m = "CENÁRIOS DE STRESS"
     m = m + vbCr + FitString("FUNDO", 24, "L") + FitString(Config.RStress1, LC, "R") + FitString(Config.RStress2, LC, "R") + _
                  FitString(Config.RStress3, LC, "R") + FitString(Config.RStress4, LC, "R") + FitString(Config.RStress5, LC, "R") + vbCr
-                 
-    Set rs = db.Execute("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress1 + "' ORDER BY FUNDO")
+           
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress1 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
     If rs.RecordCount > 0 Then a1 = rs.GetRows(rs.RecordCount) Else a1 = ArrayNulo
-    Set rs = db.Execute("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress2 + "' ORDER BY FUNDO")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress2 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
     If rs.RecordCount > 0 Then a2 = rs.GetRows(rs.RecordCount) Else a2 = ArrayNulo
-    Set rs = db.Execute("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress3 + "' ORDER BY FUNDO")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress3 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
     If rs.RecordCount > 0 Then a3 = rs.GetRows(rs.RecordCount) Else a3 = ArrayNulo
-    Set rs = db.Execute("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress4 + "' ORDER BY FUNDO")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress4 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
     If rs.RecordCount > 0 Then a4 = rs.GetRows(rs.RecordCount) Else a4 = ArrayNulo
-    Set rs = db.Execute("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress5 + "' ORDER BY FUNDO")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress5 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
     If rs.RecordCount > 0 Then a5 = rs.GetRows(rs.RecordCount) Else a5 = ArrayNulo
     i1 = 1: i2 = 1: i3 = 1: i4 = 1: i5 = 1
     
@@ -617,7 +643,7 @@ Private Function subIRB() As String
     m = m + vbCr + FitString("Nome", 32, "L") + FitString("Score", 16, "L") + FitString("ScoreW-1", 16, "L") + FitString("Action", 16, "L")
     For Each u In CrNames.c
         If u.RatingAction = "UP" Or u.RatingAction = "DOWN" Then _
-            m = m + vbCr + FitString(u.nome, 32, "L") + _
+            m = m + vbCr + FitString(u.Nome, 32, "L") + _
                         FitString(u.ScoreNRating, 16, "L") + _
                         FitString(u.ScoreNRatingW_1, 16, "L") + _
                         FitString(u.RatingAction, 16, "L")
@@ -645,17 +671,20 @@ Private Function SubPL() As String
     d1 = LongTimeAgo: d2 = LongTimeAgo: d3 = LongTimeAgo
     While i > -5
         If d1 = LongTimeAgo Then
-            Set rs = db.Execute("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLD(BaseDate + i))
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLD(BaseDate + i), db, adOpenForwardOnly, adLockReadOnly)
             If Not rs.EOF Then d1 = BaseDate + i
         End If
         
         If d2 = LongTimeAgo Then
-            Set rs = db.Execute("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLD(BaseDate - 7 + i))
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLD(BaseDate - 7 + i), db, adOpenForwardOnly, adLockReadOnly)
             If Not rs.EOF Then d2 = BaseDate - 7 + i
         End If
         
         If d3 = LongTimeAgo Then
-            Set rs = db.Execute("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLD(DateSerial(Year(BaseDate), Month(BaseDate) - 1, Day(BaseDate)) + i))
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT * FROM THISTRISK WHERE DATARUN = " + SQLD(DateSerial(Year(BaseDate), Month(BaseDate) - 1, Day(BaseDate)) + i), db, adOpenForwardOnly, adLockReadOnly)
             If Not rs.EOF Then d3 = DateSerial(Year(BaseDate), Month(BaseDate) - 1, Day(BaseDate)) + i
         End If
         
@@ -668,10 +697,12 @@ Private Function SubPL() As String
         If f.Favorit_Cash Or f.ID = Config.ConcentrationFundID Then
             'Põe d1
                 If d1 > LongTimeAgo Then
-                    Set rs = db.Execute("SELECT * FROM THISTRISK WHERE FUNDO='" + f.nome + "' AND DATARUN=" + SQLD(d1))
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + f.Nome + "' AND DATARUN=" + SQLD(d1), db, adOpenForwardOnly, adLockReadOnly)
                     i = 0
                     While rs.EOF And i > -5
-                        Set rs = db.Execute("SELECT * FROM THISTRISK WHERE FUNDO='" + f.nome + "' AND DATARUN=" + SQLD(d1 + i))
+                        Set rs = New ADODB.Recordset
+                        Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + f.Nome + "' AND DATARUN=" + SQLD(d1 + i), db, adOpenForwardOnly, adLockReadOnly)
                         i = i - 1
                     Wend
                     If Not rs.EOF Then
@@ -682,10 +713,12 @@ Private Function SubPL() As String
             
             'Põe d2
                 If d2 > LongTimeAgo Then
-                    Set rs = db.Execute("SELECT * FROM THISTRISK WHERE FUNDO='" + f.nome + "' AND DATARUN=" + SQLD(d2))
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + f.Nome + "' AND DATARUN=" + SQLD(d2), db, adOpenForwardOnly, adLockReadOnly)
                     i = 0
                     While rs.EOF And i > -5
-                        Set rs = db.Execute("SELECT * FROM THISTRISK WHERE FUNDO='" + f.nome + "' AND DATARUN=" + SQLD(d2 + i))
+                        Set rs = New ADODB.Recordset
+                        Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + f.Nome + "' AND DATARUN=" + SQLD(d2 + i), db, adOpenForwardOnly, adLockReadOnly)
                         i = i - 1
                     Wend
                     If Not rs.EOF Then
@@ -696,10 +729,12 @@ Private Function SubPL() As String
                 
             'Põe d3
                 If d3 > LongTimeAgo Then
-                    Set rs = db.Execute("SELECT * FROM THISTRISK WHERE FUNDO='" + f.nome + "' AND DATARUN=" + SQLD(d3))
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + f.Nome + "' AND DATARUN=" + SQLD(d3), db, adOpenForwardOnly, adLockReadOnly)
                     i = 0
                     While rs.EOF And i > -5
-                        Set rs = db.Execute("SELECT * FROM THISTRISK WHERE FUNDO='" + f.nome + "' AND DATARUN=" + SQLD(d3 + i))
+                        Set rs = New ADODB.Recordset
+                        Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + f.Nome + "' AND DATARUN=" + SQLD(d3 + i), db, adOpenForwardOnly, adLockReadOnly)
                         i = i - 1
                     Wend
                     If Not rs.EOF Then
@@ -708,7 +743,7 @@ Private Function SubPL() As String
                     End If
                 End If
                 
-            m = m + FitString(f.nome, 28, "L") + s1 + s2 + s3 + s11 + s12 + s13 + vbCr
+            m = m + FitString(f.Nome, 28, "L") + s1 + s2 + s3 + s11 + s12 + s13 + vbCr
             
             N = N + 1
         End If 'Se fundo = favorito ou Consolidado

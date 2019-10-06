@@ -117,7 +117,7 @@ End Function
 Public Sub Init()
     Dim db As ADODB.Connection, rs As ADODB.Recordset, u As CCrise, d As Date, y As CRiskLiqStressElement
     
-    Set db = OpenTheDatabase
+    Set db = OpenTheDatabase(True)
 
     'Defaults
         Lambda = Config.EWMA
@@ -152,11 +152,13 @@ Public Sub Init()
         StressIdio = StressIFIX / VolIFIX * VolIdio
         
     'Lê as crises
-    Set rs = db.Execute("SELECT * FROM TCRISES ORDER BY DT_INI")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TCRISES ORDER BY DT_INI", db, adOpenForwardOnly, adLockReadOnly)
     Set Crises = New Collection
     While Not rs.EOF
+        DoEvents
         Set u = New CCrise
-        u.nome = CritS(rs("NOME"))
+        u.Nome = CritS(rs("NOME"))
         u.Ini = CritD(rs("DT_INI"))
         u.Fim = CritD(rs("DT_FIM"))
         u.Populate db
@@ -166,10 +168,13 @@ Public Sub Init()
     
     'Lê o gabarito de stress de liquidez
     Set LiqStressReq = New Collection
-    Set rs = db.Execute("SELECT MAX(DATA) AS MAXDATE FROM TLIQGABARITO")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT MAX(DATA) AS MAXDATE FROM TLIQGABARITO", db, adOpenForwardOnly, adLockReadOnly)
     d = rs("MAXDATE")
-    Set rs = db.Execute("SELECT * FROM TLIQGABARITO ORDER BY PERCENTIL, MESES")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TLIQGABARITO ORDER BY PERCENTIL, MESES", db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
+        DoEvents
         Set y = New CRiskLiqStressElement
         y.Lreq = CritNN(rs("LREQ"))
         y.Meses = CritNN(rs("MESES"))
@@ -187,7 +192,8 @@ Private Sub TrataSerie(DBName As String, vetor As Variant, Processo As String, _
     Dim rs As ADODB.Recordset, d As Date, Incompleta As Boolean, UltData As Date
     
     'Lê Database para o vetor
-        Set rs = db.Execute("SELECT * FROM TFACTORHIST WHERE FACTORID='" + DBName + "' AND DATA<=" + SQLBaseDate + " AND DATA >=" + SQLD(BaseDate - 720) + " ORDER BY DATA")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TFACTORHIST WHERE FACTORID='" + DBName + "' AND DATA<=" + SQLBaseDate + " AND DATA >=" + SQLD(BaseDate - 720) + " ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
         i = 0
         While Not rs.EOF
             i = i + 1
@@ -243,8 +249,9 @@ Public Function VaRHistory(Fundo As CFundo, Optional dtcorte As Date = LongTimeA
         End If
         
         Set db = OpenTheDatabase
-        Set rs = db.Execute("SELECT * FROM THISTRISK WHERE FUNDO='" + Fundo.nome + _
-            "' AND DATAINFO<=" + SQLBaseDate + " AND DATAINFO>=" + SQLD(d) + " AND FUNDSTATUS<>'INV' ORDER BY DATAINFO")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + Fundo.Nome + _
+            "' AND DATAINFO<=" + SQLBaseDate + " AND DATAINFO>=" + SQLD(d) + " AND FUNDSTATUS<>'INV' ORDER BY DATAINFO", db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then rs.MoveFirst
         While Not rs.EOF
             Set u = New CRiskHistoryElement
@@ -269,10 +276,12 @@ Public Function FundPerformance(Fundo As CFundo, DataIni As Date, DataFim As Dat
     Dim db As ADODB.Connection, rs As ADODB.Recordset, q1 As Double, q2 As Double
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TQUOTAS WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA <=" + SQLD(DataIni) + " ORDER BY DATA DESC")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TQUOTAS WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA <=" + SQLD(DataIni) + " ORDER BY DATA DESC", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then
         q1 = rs("QUOTA")
-        Set rs = db.Execute("SELECT * FROM TQUOTAS WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA <=" + SQLD(DataFim) + " ORDER BY DATA DESC")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TQUOTAS WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA <=" + SQLD(DataFim) + " ORDER BY DATA DESC", db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF And q1 > 0 Then
             q2 = rs("QUOTA")
             FundPerformance = q2 / q1 - 1

@@ -26,7 +26,8 @@ Public Sub ReadDB(FromDate As Date, Optional f As Form)
     
     'Lê Ctpts
         Set cctpts = New Collection
-        Set rs = db.Execute("SELECT * FROM TCTPT")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TCTPT", db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then rs.MoveFirst
         While Not rs.EOF
             Set y = New CCtpt
@@ -51,7 +52,8 @@ Public Sub ReadDB(FromDate As Date, Optional f As Form)
     'Lê Trades
         Set CTrades = New Collection
         Set CTodayTrades = New Collection
-        Set rs = db.Execute("SELECT * FROM TTRADES WHERE DATA >= " + SQLD(FromDate) + " AND DATA <=" + SQLBaseDate + " ORDER BY FUNDO, ATIVO, CV")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TTRADES WHERE DATA >= " + SQLD(FromDate) + " AND DATA <=" + SQLBaseDate + " ORDER BY FUNDO, ATIVO, CV", db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then rs.MoveFirst
         While Not rs.EOF
             Set x = New CTrade
@@ -126,7 +128,8 @@ Public Sub ChecaAML()
             If x.BandaHigh = 0 And x.BandaLow = 0 Then
 
                 'Determina bandahigh e bandalow para o ativo pelo registro de pricing externo
-                    Set rs = db.Execute("SELECT * FROM TPRICING WHERE DATAOBS = " + SQLBaseDate + " AND ATIVO='" + x.Ativo + "'")
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TPRICING WHERE DATAOBS = " + SQLBaseDate + " AND ATIVO='" + x.Ativo + "'", db, adOpenForwardOnly, adLockReadOnly)
                     If Not rs.EOF Then
                         bh0 = rs("PRECO") * 1.01
                         bl0 = rs("PRECO") * 0.99
@@ -137,7 +140,8 @@ Public Sub ChecaAML()
                     End If
             
                 'Determina bandahigh e bandalow para o ativo pela regressão de trades passados
-                    Set rs = db.Execute("SELECT * FROM TTRADES WHERE DATA <= " + SQLBaseDate + " AND DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "# AND ATIVO='" + x.Ativo + "' ORDER BY DATA DESC")
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TTRADES WHERE DATA <= " + SQLBaseDate + " AND DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "# AND ATIVO='" + x.Ativo + "' ORDER BY DATA DESC", db, adOpenForwardOnly, adLockReadOnly)
                     N = 0
                     While Not rs.EOF And N < 250
                         If rs("PU") > 0 Then
@@ -235,8 +239,10 @@ Public Sub ChecaRateio()
     Set cAlloc = New Collection
     
      'Determina o PU médio por fundo
-        Set rs = db.Execute("SELECT ATIVO, FUNDO, CV, sum(QUANT) as q1, sum(PU*QUANT) as s1, sum(TAXA*QUANT) as t1 FROM TTRADES WHERE DATA = " + SQLBaseDate + " GROUP BY ATIVO, FUNDO, CV")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT ATIVO, FUNDO, CV, sum(QUANT) as q1, sum(PU*QUANT) as s1, sum(TAXA*QUANT) as t1 FROM TTRADES WHERE DATA = " + SQLBaseDate + " GROUP BY ATIVO, FUNDO, CV", db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
+            DoEvents
             Set x = New CAlocacao
             x.Ativo = rs("ATIVO")
             x.Fundo = rs("FUNDO")
@@ -249,7 +255,8 @@ Public Sub ChecaRateio()
         Wend
     
     'Determina a alocacao geral média (todos os fundos)
-        Set rs = db.Execute("SELECT ATIVO, CV, sum(QUANT) as q1, sum(PU*QUANT) as s1, sum(TAXA*QUANT) as t1 FROM TTRADES WHERE DATA = " + SQLBaseDate + " GROUP BY ATIVO, CV")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT ATIVO, CV, sum(QUANT) as q1, sum(PU*QUANT) as s1, sum(TAXA*QUANT) as t1 FROM TTRADES WHERE DATA = " + SQLBaseDate + " GROUP BY ATIVO, CV", db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
             For Each x In cAlloc
                 If x.Ativo = rs("ATIVO") And x.CV = rs("CV") Then

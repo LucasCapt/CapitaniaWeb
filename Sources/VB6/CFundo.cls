@@ -12,7 +12,7 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Public ID As Long
-Public nome As String
+Public Nome As String
 Public nomeLiq As String
 Public nomeBlotter As String
 Public Tipo As String
@@ -209,7 +209,7 @@ Public Function IncluiPosic(Papel As String, Valor As Double, Quant As Double, O
     x.LiqConstraint = 0 'Só é usado na consolidação
     
     If x.Papel.Status <> "LIBERADO" And Me.area <> "EXTERNO" Then
-        WriteLogError "Papel não liberado", x.Papel.nome + " (" + Me.nome + ")"
+        WriteLogError "Papel não liberado", x.Papel.Nome + " (" + Me.Nome + ")"
     End If
         
     If Ordena And MyPosics.Count > 0 Then
@@ -241,14 +241,14 @@ Property Get MyConcentration(ppi As Integer) As Collection
         ppv = x.Papel.PropV(ppi)
         achou = False
         For Each y In b
-            If y.nome = ppv Then
+            If y.Nome = ppv Then
                 y.Valor = y.Valor + x.Valor
                 achou = True
             End If
         Next y
         If Not achou Then
             Set y = New CNomeValor
-            y.nome = ppv
+            y.Nome = ppv
             y.Valor = x.Valor
             b.Add y
         End If
@@ -314,7 +314,7 @@ Public Sub L_MyPosicConsol(a As Collection, pl As Double)
             If x.Papel.MyFundo.area <> "EXTERNO" Then
                 If x.Papel.MyFundo Is Me Then
                     b.Add x
-                    WriteLogError "Fundo investindo nele próprio", Me.nome
+                    WriteLogError "Fundo investindo nele próprio", Me.Nome
                 Else
                     x.Papel.MyFundo.L_MyPosicConsol b1, PLb
                     For Each y In b1
@@ -378,7 +378,7 @@ Public Sub L_MyPosicsAberta(ByRef a As Collection, ByRef pl As Double)
                             b.Add z
                         Next y
                     Else
-                        WriteLogError "PL zerado em consolidação de carteira", x.Papel.MyFundo.nome
+                        WriteLogError "PL zerado em consolidação de carteira", x.Papel.MyFundo.Nome
                     End If 'pl do investido>0
                 End If 'fundo not me
                 
@@ -480,7 +480,7 @@ End Property
 Property Get MeusLivros() As String
     Dim a As String, x As CBook
     For Each x In MyBooks
-        a = a + x.nome + ", "
+        a = a + x.Nome + ", "
     Next x
     If a <> "" Then a = Left(a, Len(a) - 2)
     MeusLivros = a
@@ -519,7 +519,7 @@ Public Function ComputeRule(x As CRegra, Optional ForceCart As Collection = Noth
 
     'Verifica se é necessária a propriedade de 'Emissão'
     If x.Lim_Ref = "ISSUEV" Or x.Lim_Ref = "ISSUEQ" _
-        Then issuepropk = Props.SearchIndexByName(x.Issue_Prop.nome) _
+        Then issuepropk = Props.SearchIndexByName(x.Issue_Prop.Nome) _
         Else issuepropk = 0
 
     If x.Por And Not x.Por_Prop Is Nothing Then '------------------------------------------------------
@@ -547,7 +547,7 @@ Public Function ComputeRule(x As CRegra, Optional ForceCart As Collection = Noth
 
                 'Idx contém o índice da classe no vetor
                 'Acrescenta o nome do papel
-                ClassPp(idx) = ClassPp(idx) + "[" + p.Papel.nome + "] "
+                ClassPp(idx) = ClassPp(idx) + "[" + p.Papel.Nome + "] "
 
                 'Soma quantidade ou valor, conforme for a regra
                 If x.Lim_Ref = "ISSUEV" Then
@@ -605,7 +605,7 @@ Public Function ComputeRule(x As CRegra, Optional ForceCart As Collection = Noth
                             Element.Valor = DeltaW
                         End If
                         
-                        Element.nome = ClassPp(i)
+                        Element.Nome = ClassPp(i)
                         
                         If denom = 0 _
                             Then Element.NomeAlt = "(**%)" _
@@ -628,7 +628,7 @@ Public Function ComputeRule(x As CRegra, Optional ForceCart As Collection = Noth
         PLRegra = 0
         For Each p In subportfolio
             PLRegra = PLRegra + p.Valor
-            Element.nome = Element.nome + "[" + p.Papel.nome + "] "
+            Element.Nome = Element.Nome + "[" + p.Papel.Nome + "] "
         Next p
         
         Select Case x.Lim_Ref
@@ -638,7 +638,7 @@ Public Function ComputeRule(x As CRegra, Optional ForceCart As Collection = Noth
                 denom = 1
             Case Else
                 'A regra possui ISSUEV ou ISSUEQ, que na verdade são impossíveis sem o POR
-                WriteLogError "Teste de regra incompatível (ISSUE s/ POR)", x.nome
+                WriteLogError "Teste de regra incompatível (ISSUE s/ POR)", x.Nome
         End Select
         
         Delta = m * (PLRegra - denom * x.Limite)
@@ -716,7 +716,7 @@ End Property
 Property Get SearchPositOn(x As String) As CPosic
     Dim p As CPosic
     For Each p In MyPosics
-        If p.Papel.nome = x Then Set SearchPositOn = p
+        If p.Papel.Nome = x Then Set SearchPositOn = p
     Next p
 End Property
 
@@ -726,8 +726,9 @@ Public Sub WriteDB()
     
     If MainStatus = "LIVE" Then
         
-        Set db = OpenTheDatabase
-        Set rs = db.Execute("SELECT * FROM TFUNDOS WHERE ID=" + Str(Me.ID))
+        Set db = OpenTheDatabase(True)
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TFUNDOS WHERE ID=" + Str(Me.ID), db, adOpenForwardOnly, adLockReadOnly)
         
         'If Me.OverrideLimit Then u = "TRUE" Else u = "FALSE"
         'If Me.LimCredReg Then u2 = "TRUE" Else u2 = "FALSE"
@@ -747,7 +748,7 @@ Public Sub WriteDB()
                 "FAVORIT_MKT, TOLERANCIA1, TOLERANCIA2, LIM_DUR, NOMEBLOTTER, RULE_NODAYTRD, RULE_NOCRSSTRD) " + _
                 "VALUES " + _
                 "(" + Str(Me.ID) + ", '" + _
-                Me.nome + "', '" + Me.CNPJ + "','" + Me.qualif + "', '" + Me.IDTitulo + "','" + Me.Consol + _
+                Me.Nome + "', '" + Me.CNPJ + "','" + Me.qualif + "', '" + Me.IDTitulo + "','" + Me.Consol + _
                 "','" + Me.Tipo + "'," + Str(Me.PrazoResgate) + ", '" + Me.nomeLiq + "', '" + Me.LiqMethod + _
                 "'," + Str(Me.CaixaMandato) + ", " + u + ", " + Str(Me.LIM_VaR) + ", " + Str(Me.LIM_Stress) + _
                 ", " + Str(Me.LIM_EL) + ", " + Str(Me.LIM_UL) + ", " + "'" + Me.Concentracao + "','" + Me.tipo409 + _
@@ -784,7 +785,7 @@ Public Function tempapel(ID As String) As Boolean
 End Function
 
 
-Public Sub PapelValues(nome As String, Consol As Boolean, ByRef Valor As Double, ByRef Quant As Double)
+Public Sub PapelValues(Nome As String, Consol As Boolean, ByRef Valor As Double, ByRef Quant As Double)
     'Esta sub opera por NOME, dada a possibilidade de 2 registros com mesmo NOME
     'É usada na maioria das telas informativas de posição consolidada
     Dim p As CPosic, a As Double, g As Collection
@@ -792,7 +793,7 @@ Public Sub PapelValues(nome As String, Consol As Boolean, ByRef Valor As Double,
     Quant = 0
     If Consol Then Set g = MyPosicConsol Else Set g = MyPosics
     For Each p In g
-        If p.Papel.nome = nome Then
+        If p.Papel.Nome = Nome Then
             Valor = Valor + p.Valor
             Quant = Quant + p.Quant
         End If
@@ -866,7 +867,7 @@ Property Get Disp() As Double
         If Not x.Papel.Fundo Then
             If x.Papel.ehcaixa Then cx = cx + x.Valor
         ElseIf x.Papel.MyFundo Is Nothing Then
-            WriteLogError "Fundo não encontrado", x.Papel.nome
+            WriteLogError "Fundo não encontrado", x.Papel.Nome
         ElseIf x.Papel.MyFundo.PrazoResgate < 2 Then
             If x.Papel.MyFundo.area = "EXTERNO" Or x.Papel.MyFundo Is Me Then
                 cx = cx + x.Valor
@@ -1160,7 +1161,8 @@ Public Function GetAllQuotasFrom(d As Date) As Collection
     Dim db As ADODB.Connection, rs As ADODB.Recordset, a As New Collection, u As CNomeValor
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TQUOTAS WHERE FUNDO = " + Str(Me.ID) + "AND DATA>=" + SQLD(d) + " AND DATA<=" + SQLBaseDate + " ORDER BY DATA")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TQUOTAS WHERE FUNDO = " + Str(Me.ID) + "AND DATA>=" + SQLD(d) + " AND DATA<=" + SQLBaseDate + " ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
         Set u = New CNomeValor
         u.Data = rs("DATA")
@@ -1547,7 +1549,7 @@ Public Function CarteiraSimulada(qual As String, Optional Trade As CTrade = Noth
                                 a.Add z
                             Next y
                         Else
-                            WriteLogError "PL zerado em consolidação de carteira", x.Papel.MyFundo.nome
+                            WriteLogError "PL zerado em consolidação de carteira", x.Papel.MyFundo.Nome
                         End If 'pl do investido>0
                     End If 'not me
                 Else
@@ -1619,7 +1621,7 @@ End Function
 Public Function QL(ccc As Collection) As Double
     aaa = 0
     For Each kkk In ccc
-        If InStr(kkk.Papel.nome, "Light") > 0 Then aaa = aaa + kkk.Quant
+        If InStr(kkk.Papel.Nome, "Light") > 0 Then aaa = aaa + kkk.Quant
     Next kkk
     QL = aaa
 End Function
@@ -1682,7 +1684,7 @@ Private Function ComparaCompliance(p1 As Collection, c1 As Collection, p2 As Col
             Set RR1 = New CRuleResult
             Set RR2 = New CRuleResult
             
-            u.Book = b.nome
+            u.Book = b.Nome
             
             If r.Aberta Then
                 Set RR1 = ComputeRule(r, c1)

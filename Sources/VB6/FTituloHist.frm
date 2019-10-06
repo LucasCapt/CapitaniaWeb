@@ -44,8 +44,9 @@ Public Sub showfor(x As CPapel)
     Dim datas(1000) As Date, N As Integer
     
     
-    Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT DISTINCT DATA FROM TPAPELPROP WHERE PAPEL = '" + x.ID + "' AND DATA <=" + SQLBaseDate + " ORDER BY DATA")
+    Set db = OpenTheDatabase(True)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT DISTINCT DATA FROM TPAPELPROP WHERE PAPEL = '" + x.ID + "' AND DATA <=" + SQLBaseDate + " ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     N = 0
     While Not rs.EOF
@@ -54,7 +55,7 @@ Public Sub showfor(x As CPapel)
         rs.MoveNext
     Wend
     
-    Me.Label1 = x.nome + " (" + x.ID + ")"
+    Me.Label1 = x.Nome + " (" + x.ID + ")"
     Grid.Cols = N + 1
     For i = 1 To N
         Grid.TextMatrix(0, i) = Format(datas(i), "dd-MMM-yyyy")
@@ -62,10 +63,11 @@ Public Sub showfor(x As CPapel)
     Next i
     Grid.Rows = 1
     For i = 1 To Props.c.Count
-        Grid.AddItem Props.c(i).nome
+        Grid.AddItem Props.c(i).Nome
     Next i
     
-    Set rs = db.Execute("SELECT * FROM TPAPELPROP WHERE PAPEL='" + x.ID + "' AND DATA <=" + SQLBaseDate + " ORDER BY PROPRIEDADE, DATA")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TPAPELPROP WHERE PAPEL='" + x.ID + "' AND DATA <=" + SQLBaseDate + " ORDER BY PROPRIEDADE, DATA", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         i = Props.SearchIndex(rs("PROPRIEDADE"))

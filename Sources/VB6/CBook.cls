@@ -22,7 +22,8 @@ Public Sub ReadRulesDB()
     Set c = New Collection
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TBOOKREGRA WHERE RULEBOOK=" + Str(ID))
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TBOOKREGRA WHERE RULEBOOK=" + Str(ID), db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         Set x = Regras.search(rs("Regra"))
@@ -53,7 +54,8 @@ Public Sub WriteDB()
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.Execute("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(Me.ID))
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(Me.ID), db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then
             dtcriado = rs("DT_CREATED")
             db.Execute ("DELETE FROM TRULEBOOKS WHERE ID=" + Str(Me.ID))

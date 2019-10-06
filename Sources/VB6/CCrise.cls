@@ -43,15 +43,19 @@ End Sub
 Private Function ChangeInRiskFactor(nome As String, db As ADODB.Connection) As Double
     Dim rs As ADODB.Recordset, mxdata As Date, a As Double
     
-    Set rs = db.Execute("SELECT MAX(DATA) AS MAXDATE FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA<=" + SQLD(Ini))
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT MAX(DATA) AS MAXDATE FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA<=" + SQLD(Ini), db, adOpenForwardOnly, adLockReadOnly)
     If Not IsNull(rs("MAXDATE")) Then
         mxdata = rs("MAXDATE")
-        Set rs = db.Execute("SELECT * FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA=" + SQLD(mxdata))
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA=" + SQLD(mxdata), db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then
             a = rs("VALOR")
-            Set rs = db.Execute("SELECT MAX(DATA) AS MAXDATE FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA<=" + SQLD(Fim))
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT MAX(DATA) AS MAXDATE FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA<=" + SQLD(Fim), db, adOpenForwardOnly, adLockReadOnly)
             If Not IsNull(rs("MAXDATE")) And a > 0 Then
-                Set rs = db.Execute("SELECT * FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA=" + SQLD(mxdata))
+                Set rs = New ADODB.Recordset
+                Call rs.open("SELECT * FROM TFACTORHIST WHERE FACTORID='" + nome + "' AND DATA=" + SQLD(mxdata), db, adOpenForwardOnly, adLockReadOnly)
                 If Not rs.EOF Then
                     ChangeInRiskFactor = rs("VALOR") / a - 1
                 Else

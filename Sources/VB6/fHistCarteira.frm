@@ -122,8 +122,9 @@ Public Sub newrefresh()
             
             If Combo1 = "==TODOS==" Then u = "" Else u = "FUNDO=" + Str(Fundo.ID) + " AND"
             
-            Set rs = db.Execute("SELECT DATA, SUM(VALOR) AS TVAL FROM QPOSICPAPEL WHERE " + _
-                u + " NOME='" + Combo2 + "' AND DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# GROUP BY DATA ORDER BY DATA")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT DATA, SUM(VALOR) AS TVAL FROM QPOSICPAPEL WHERE " + _
+                u + " NOME='" + Combo2 + "' AND DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# GROUP BY DATA ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             
         
         If Not rs.EOF Then

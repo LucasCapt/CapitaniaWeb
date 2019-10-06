@@ -184,13 +184,16 @@ Private Sub Command2_Click()
                     Grid.AddItem u.nome
                     N = N + 1
                     AkasToDel(N) = u.nome
-                    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE PAPEL='" + AkasToDel(N) + "'")
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TPOSIC WHERE PAPEL='" + AkasToDel(N) + "'", db, adOpenForwardOnly, adLockReadOnly)
                     If rs.EOF Then Grid.TextMatrix(N, 1) = "" Else Grid.TextMatrix(N, 1) = "X"
                     
-                    Set rs = db.Execute("SELECT * FROM TPAPELPROP WHERE PAPEL='" + AkasToDel(N) + "'")
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TPAPELPROP WHERE PAPEL='" + AkasToDel(N) + "'", db, adOpenForwardOnly)
                     If rs.EOF Then Grid.TextMatrix(N, 2) = "" Else Grid.TextMatrix(N, 2) = "X"
                     
-                    Set rs = db.Execute("SELECT * FROM TPAPEL WHERE ID='" + AkasToDel(N) + "'")
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TPAPEL WHERE ID='" + AkasToDel(N) + "'", db, adOpenForwardOnly, adLockReadOnly)
                     If rs.EOF Then Grid.TextMatrix(N, 3) = "" Else Grid.TextMatrix(N, 3) = "X"
                 End If
             Next u

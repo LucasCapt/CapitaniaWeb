@@ -153,7 +153,8 @@ Public Sub ReadConfig()
     Set db = OpenTheDatabase
     
     'Lê registro de configuração
-        Set rs = db.Execute("SELECT * FROM TCONFIG")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TCONFIG", db, adOpenForwardOnly, adLockReadOnly)
         HistFilePath = rs("HistFilePath")
         HistFileName = rs("HistFileName")
         HistFileTab = rs("HistFileTab")
@@ -256,7 +257,8 @@ Public Sub ReadConfig()
         Senha = CritS(rs("Senha"))
     
     'Lê a mailing list
-        Set rs = db.Execute("SELECT * FROM TMAILINGLIST")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TMAILINGLIST", db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
             MailerN = MailerN + 1
             MailerNome(MailerN) = rs("nome")
@@ -268,7 +270,8 @@ Public Sub ReadConfig()
         
     'Lê constantes de liquidez
         Set CLiqStress = New Collection
-        Set rs = db.Execute("SELECT * FROM TLIQSTRESS")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TLIQSTRESS", db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
             Set u = New CNomeValor
             u.nome = rs("TIPO409")
@@ -280,7 +283,8 @@ Public Sub ReadConfig()
         
     'Lê configurações das colunas do FFundo
         Set FFundoColumnNames = New Collection
-        Set rs = db.Execute("SELECT * FROM TConfigFFundoCols WHERE USERNAME='" + User.username + "'")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TConfigFFundoCols WHERE USERNAME='" + User.username + "'", db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
             Set u = New CNomeValor
             u.nome = rs("ColumnName")

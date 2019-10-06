@@ -82,7 +82,8 @@ Public Sub WriteDB()
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.Execute("SELECT * FROM TREGRAS WHERE ID=" + Str(Me.ID))
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TREGRAS WHERE ID=" + Str(Me.ID), db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then
             rs.Close
             db.Execute ("DELETE FROM TREGRAS WHERE ID=" + Str(Me.ID))

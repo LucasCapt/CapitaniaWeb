@@ -19,11 +19,13 @@ Private N As Integer
 Public Sub ReadDB()
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPapel
     
-    Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TSTRESS ORDER BY NOME")
+    Set db = OpenTheDatabase(True)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TSTRESS ORDER BY NOME", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     N = 0
     While Not rs.EOF
+        DoEvents
         N = N + 1
         Nomes(N) = rs("nome")
         Titulos(N) = rs("titulo")
@@ -40,13 +42,13 @@ Property Get ListaDeCenarios() As Collection
     Set a = New Collection
     If N > 0 Then
         Set u = New CNomeValor
-        u.nome = Nomes(1)
+        u.Nome = Nomes(1)
         a.Add u
     End If
     For i = 2 To N
         If Nomes(i) <> Nomes(i - 1) Then
             Set u = New CNomeValor
-            u.nome = Nomes(i)
+            u.Nome = Nomes(i)
             a.Add u
         End If
     Next i
@@ -58,7 +60,7 @@ Public Sub WriteDB()
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPapel
     If MainStatus = "LIVE" Then
         
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
         Ordena
         db.Execute ("DELETE FROM TSTRESS")
         For i = 1 To N
@@ -107,12 +109,12 @@ Public Sub FillGridColsWithNome(x As MSFlexGrid)
     Next i
 End Sub
 
-Public Sub FillGrid(nome As String, x As MSFlexGrid)
+Public Sub FillGrid(Nome As String, x As MSFlexGrid)
     Dim i As Integer, L As Integer
     L = 0
     x.Rows = 1
     For i = 1 To N
-        If Nomes(i) = nome Then
+        If Nomes(i) = Nome Then
             L = L + 1
             x.AddItem Format(Percent(i), "##0.00%")
             x.TextMatrix(L, 1) = Titulos(i)

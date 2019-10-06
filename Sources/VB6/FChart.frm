@@ -143,7 +143,8 @@ Public Sub newshow(qual As String)
             Label1 = "Papel"
             
             Set db = OpenTheDatabase
-            Set rs = db.Execute("SELECT DISTINCT ATIVO FROM TTRADES WHERE DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "#")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT DISTINCT ATIVO FROM TTRADES WHERE DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
             Combo1.Clear
             While Not rs.EOF
                 Combo1.AddItem rs("ATIVO")
@@ -247,21 +248,25 @@ Public Sub newrefresh()
             AdjustXScale
             Select Case Combo2
                 Case K_PropName1
-                    Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_LIQ AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_LIQ AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.CLASS_LIQ='" + Combo3 + "' " + _
-                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.CLASS_LIQ, TPOSIC.DATA ORDER BY TPOSIC.DATA")
+                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.CLASS_LIQ, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                 Case K_PropName2
-                    Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_RENTAB AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_RENTAB AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.CLASS_RENTAB='" + Combo3 + "' " + _
-                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.CLASS_RENTAB, TPOSIC.DATA ORDER BY TPOSIC.DATA")
+                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.CLASS_RENTAB, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                 Case K_PropName3
-                      Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                      Set rs = New ADODB.Recordset
+                      Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.INDEX='" + Combo3 + "' " + _
-                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.INDEX, TPOSIC.DATA ORDER BY TPOSIC.DATA")
+                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.INDEX, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                 Case K_PropName4
-                      Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                      Set rs = New ADODB.Recordset
+                      Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.NOME='" + Combo3 + "' " + _
-                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.INDEX, TPOSIC.DATA ORDER BY TPOSIC.DATA")
+                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.INDEX, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                 Case Else
                     'Qualquer propriedade
                     Set pp1 = Props.searchName(Combo2)
@@ -277,14 +282,16 @@ Public Sub newrefresh()
                         " GROUP BY TPOSIC.FUNDO, QLASTPROPVALUES.VALOR, TPOSIC.DATA " + _
                         " ORDER BY TPOSIC.DATA"
                         
-                        Set rs = db.Execute(selcommand)
+                        Set rs = New ADODB.Recordset
+                        Call rs.open(selcommand, db, adOpenForwardOnly, adLockReadOnly)
                     End If
             End Select
             
             If Combo5 = "%" Then _
-                Set rs2 = db.Execute("SELECT TPOSIC.DATA AS D1, TPOSIC.FUNDO AS F1, SUM(TPOSIC.VALOR) AS V1 " + _
+                Set rs2 = New ADODB.Recordset
+                Call rs2.open("SELECT TPOSIC.DATA AS D1, TPOSIC.FUNDO AS F1, SUM(TPOSIC.VALOR) AS V1 " + _
                         "FROM TPOSIC WHERE TPOSIC.FUNDO=" + Str(f.ID) + " " + _
-                        "AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPOSIC.DATA ORDER BY TPOSIC.DATA")
+                        "AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
             
             CreateSingleLineChart rs, "D1", "V1", rs2, (Combo5 = "%")
             setYaxisTo
@@ -296,14 +303,16 @@ Public Sub newrefresh()
             If Not f Is Nothing Then
                 
                 Set db = OpenTheDatabase
-                Set rs = db.Execute("SELECT TPOSIC.FUNDO AS F1, TPAPEL.NOME AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
+                Set rs = New ADODB.Recordset
+                Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.NOME AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
                       "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID or TPOSIC.PAPEL =TPAPEL.CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.NOME='" + Combo2 + "' " + _
-                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.NOME, TPOSIC.DATA ORDER BY TPOSIC.DATA")
+                      "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.NOME, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                       
                 If Combo5 = "%" Then _
-                    Set rs2 = db.Execute("SELECT TPOSIC.DATA AS D1, TPOSIC.FUNDO AS F1, SUM(TPOSIC.VALOR) AS V1 " + _
+                    Set rs2 = New ADODB.Recordset
+                    Call rs2.open("SELECT TPOSIC.DATA AS D1, TPOSIC.FUNDO AS F1, SUM(TPOSIC.VALOR) AS V1 " + _
                         "FROM TPOSIC WHERE TPOSIC.FUNDO=" + Str(f.ID) + " " + _
-                        "AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPOSIC.DATA ORDER BY TPOSIC.DATA")
+                        "AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                     
                 CreateSingleLineChart rs, "D1", "V1", rs2, (Combo5 = "%")
                 setYaxisTo
@@ -315,14 +324,16 @@ Public Sub newrefresh()
             AdjustXScale
             
             Set db = OpenTheDatabase
-            Set rs = db.Execute("SELECT DATA, FUNDO, SUM(VALOR) AS VALOR1 FROM TPOSIC WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " GROUP BY FUNDO, DATA ORDER BY DATA")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT DATA, FUNDO, SUM(VALOR) AS VALOR1 FROM TPOSIC WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " GROUP BY FUNDO, DATA ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             CreateSingleLineChart rs, "DATA", "VALOR1"
             
         Case "TRADE" '----------------------------------------------------< TRADES (x,y)  >
             ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
             
             Set db = OpenTheDatabase
-            Set rs = db.Execute("SELECT DATA, ATIVO, PU FROM TTRADES WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND ATIVO ='" + Combo1 + "' ORDER BY DATA")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT DATA, ATIVO, PU FROM TTRADES WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND ATIVO ='" + Combo1 + "' ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             If Not rs.EOF Then
                 MSChart1.RowCount = rs.RecordCount
                 MSChart1.ColumnCount = 2
@@ -352,7 +363,8 @@ Public Sub newrefresh()
             ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
             
             Set db = OpenTheDatabase
-            Set rs = db.Execute("SELECT DATA, FUNDO, QUOTA FROM TQUOTAS WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " ORDER BY DATA")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT DATA, FUNDO, QUOTA FROM TQUOTAS WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             CreateSingleLineChart rs, "DATA", "QUOTA"
             
         Case "RISCOCRD"
@@ -360,7 +372,8 @@ Public Sub newrefresh()
             ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
             
             Set db = OpenTheDatabase
-            Set rs = db.Execute("SELECT DATAINFO, FUNDO, CRD_EL1 FROM THISTRISK WHERE DATAINFO >=" + ds + " AND DATAINFO<=" + SQLBaseDate + " AND FUNDO ='" + f.nome + "' ORDER BY DATAINFO")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT DATAINFO, FUNDO, CRD_EL1 FROM THISTRISK WHERE DATAINFO >=" + ds + " AND DATAINFO<=" + SQLBaseDate + " AND FUNDO ='" + f.nome + "' ORDER BY DATAINFO", db, adOpenForwardOnly, adLockReadOnly)
             CreateSingleLineChart rs, "DATAINFO", "CRD_EL1"
             
     End Select

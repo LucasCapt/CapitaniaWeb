@@ -18,9 +18,11 @@ Public Sub ReadDB()
     Set c = New Collection
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TRULEBOOKS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TRULEBOOKS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1 AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
+        DoEvents
         Set x = New CBook
         x.ID = rs("ID")
         x.nome = rs("Nome")
@@ -52,7 +54,8 @@ Public Function Cria(x As String) As CBook
         
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT MAX(ID) AS MAXID FROM TRULEBOOKS")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT MAX(ID) AS MAXID FROM TRULEBOOKS", db, adOpenForwardOnly, adLockReadOnly)
     If rs.EOF() Then NextID = 1 Else NextID = rs("MAXID") + 1
     
     Set y = New CBook
@@ -65,7 +68,8 @@ Public Function Cria(x As String) As CBook
     
     If MainStatus = "LIVE" Then
         db.Execute ("INSERT INTO TRULEBOOKS (ID, NOME, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(NextID) + ", '" + x + "'," + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
-        Set rs = db.Execute("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(NextID))
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(NextID), db, adOpenForwardOnly, adLockReadOnly)
         If rs.EOF Then Set Cria = Nothing
     End If
     

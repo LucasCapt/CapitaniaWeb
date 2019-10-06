@@ -247,10 +247,12 @@ Dim db As ADODB.Connection, rs As ADODB.Recordset, N As Integer, SouOrfao As Boo
         
             'Verifica órfão
             SouOrfao = False
-            Set rs = db.Execute("SELECT * FROM TAKA WHERE FROMID='" + p.ID + "' OR TOID='" + p.ID + "'")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT * FROM TAKA WHERE FROMID='" + p.ID + "' OR TOID='" + p.ID + "'", db, adOpenForwardOnly, adLockReadOnly)
             If rs.EOF Then
                 'Pode ser... não tem registro na AKA
-                 Set rs = db.Execute("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "'")
+                 Set rs = New ADODB.Recordset
+                 Call rs.open("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "'", db, adOpenForwardOnly, adLockReadOnly)
                  If rs.EOF Then
                      'Papel é um órfão
                      OrfaoList.Add p, p.ID
@@ -262,10 +264,12 @@ Dim db As ADODB.Connection, rs As ADODB.Recordset, N As Integer, SouOrfao As Boo
             'Verifica Vencido (que não seja PERP nem OVER nem tenha estado em Carteira após Venc+7)
             If p.Dt_Venc < BaseDate - 92 And p.Class_Rent <> "PERP" And p.Class_Rent <> "OVER" Then
                 'Pode ser, mas checa se não esteve em nenhuma carteira após M-3
-                Set rs = db.Execute("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(p.Dt_Venc + 7) + ")")
+                Set rs = New ADODB.Recordset
+                Call rs.open("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(p.Dt_Venc + 7) + ")", db, adOpenForwardOnly, adLockReadOnly)
                 If rs.EOF Then
                     'Pode ser... não existe em AKA ou foi deletado da AKA até Venc+7
-                    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "' AND DATA>" + SQLD(p.Dt_Venc + 7))
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "' AND DATA>" + SQLD(p.Dt_Venc + 7), db, adOpenForwardOnly, adLockReadOnly)
                     If rs.EOF Then
                         VencidoList.Add p, p.ID
                     End If
@@ -275,10 +279,12 @@ Dim db As ADODB.Connection, rs As ADODB.Recordset, N As Integer, SouOrfao As Boo
             'Verifica passado (não utilizado há mais de 2 anos)
             If Not SouOrfao Then
                 'Não é órfão, mas pode estar passado
-                Set rs = db.Execute("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(BaseDate - 730) + ")")
+                Set rs = New ADODB.Recordset
+                Call rs.open("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(BaseDate - 730) + ")", db, adOpenForwardOnly, adLockReadOnly)
                 If rs.EOF Then
                     'Pode ser... não existe em AKA ou foi deletado da AKA até 2Y-1
-                    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "' AND DATA>" + SQLD(BaseDate - 730))
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TPOSIC WHERE PAPEL='" + p.ID + "' AND DATA>" + SQLD(BaseDate - 730), db, adOpenForwardOnly, adLockReadOnly)
                     If rs.EOF Then
                         PassadoList.Add p, p.ID
                     End If

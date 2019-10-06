@@ -156,7 +156,8 @@ Private Sub Combo1_lostfocus()
     If Not Fundo Is Nothing Then
         
         Set db = OpenTheDatabase
-        Set rs = db.Execute("SELECT MAX (DATA) AS MAXDATA FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID))
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT MAX (DATA) AS MAXDATA FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID), db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then
             Me.Combo4 = Str(Day(rs("MAXDATA")))
             Me.Combo2.ListIndex = Month(rs("MAXDATA")) - 1
@@ -178,7 +179,8 @@ Private Sub Command1_Click()
         If Not Fundo Is Nothing Then
             DataFrom = DateSerial(Val(Combo3), Combo2.ListIndex + 1, Val(Combo4))
             DataTo = DateSerial(Val(Combo5), Combo6.ListIndex + 1, Val(Combo7))
-            Set rs = db.Execute("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataTo))
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataTo), db, adOpenForwardOnly, adLockReadOnly)
             If rs.EOF Then
                 vai = True
             Else
@@ -189,7 +191,8 @@ Private Sub Command1_Click()
                     
                     Set db = OpenTheDatabase
                     db.Execute ("DELETE FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataTo))
-                    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataFrom))
+                    Set rs = New ADODB.Recordset
+                    Call rs.open("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(Fundo.ID) + " AND DATA =" + SQLD(DataFrom), db, adOpenForwardOnly, adLockReadOnly)
                     While Not rs.EOF
                         db.Execute ("INSERT INTO TPOSIC (FUNDO, PAPEL, ISIN, VALOR, DATA, TIPO, QUANT, BLOQUEADO) VALUES (" + _
                             Str(Fundo.ID) + ",'" + _

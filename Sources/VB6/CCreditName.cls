@@ -36,7 +36,8 @@ Public Sub WriteDB()
         db.Execute ("INSERT INTO TRATINGNAMES (ID, NOME, SETOR) VALUES ('" + Me.Cod + "','" + Me.nome + "','" + Me.setor + "')")
         db.Execute ("DELETE FROM TCNPJNOME WHERE NOMECREDITO='" + Me.Cod + "'")
         For Each u In CNPJ
-            Set rs = db.Execute("SELECT * FROM TCNPJNOME WHERE CNPJ='" + u.nome + "'")
+            Set rs = New ADODB.Recordset
+            Call rs.open("SELECT * FROM TCNPJNOME WHERE CNPJ='" + u.nome + "'", db, adOpenForwardOnly, adLockReadOnly)
             If rs.EOF _
                 Then db.Execute ("INSERT INTO TCNPJNOME (CNPJ, NOMECREDITO) VALUES ('" + u.nome + "','" + Me.Cod + "')") _
                 Else WriteLogError "CNPJ em Duplicidade. Não incluído", u.nome

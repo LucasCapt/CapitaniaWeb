@@ -39,7 +39,8 @@ Public Sub newrefresh()
     Dim db As ADODB.Connection, rs As ADODB.Recordset, f As CFundo, pfe As CProvFilterElement
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TPROVFILTER WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ")")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TPROVFILTER WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ")", db, adOpenForwardOnly, adLockReadOnly)
     
     'Lê para dentro de uma collection
     Set c = New Collection

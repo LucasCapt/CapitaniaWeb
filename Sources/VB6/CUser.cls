@@ -32,7 +32,8 @@ Public Sub ReadDB()
     username = Environ("username")
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TUSERS WHERE LOGIN='" + username + "'")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TUSERS WHERE LOGIN='" + username + "'", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then
         L_Cleared = True
         Imports = rs("IMPORTA")

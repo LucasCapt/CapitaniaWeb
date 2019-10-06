@@ -240,7 +240,8 @@ Public Function ThereIsPositionForDate(d As Date) As Boolean
     Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    Set rs = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
     ThereIsPositionForDate = Not (rs.EOF)
     
 End Function
@@ -253,7 +254,8 @@ Public Function TestaTrocaData(d As Date) As Boolean
         
         Set db = OpenTheDatabase
         'Procura Última Carteira
-        Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
         hacart = Not rs1.EOF
         
         
@@ -284,7 +286,8 @@ Public Function TestaTrocaData(d As Date) As Boolean
                 'Se usuário escolheu importar, tenta ler novamente arquivos
                 
                 Set db = OpenTheDatabase
-                Set rs1 = db.Execute("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d))
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT * FROM TPOSIC WHERE DATA=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
                 hacart = Not rs1.EOF
                 
                 If hacart Then
@@ -333,20 +336,19 @@ Public Sub ExitSimulation()
 End Sub
 
 
-Public Function OpenTheDatabase() As ADODB.Connection
+Public Function OpenTheDatabase(Optional ByVal pForceOpenConnection As Boolean = False) As ADODB.Connection
 
+    If (pForceOpenConnection) Then
+        If Not vConexao Is Nothing Then
+            Call vConexao.Close
+        End If
+        Set vConexao = Nothing
+    End If
+    
     If vConexao Is Nothing Then
-        'Let strConnection = "ODBC;DSN=db_capitania;UID=capitania\dev.capitania;=Capitania2019"
-        Let strconnection = "PROVIDER=SQLOLEDB;DATASOURCE=WIN10DEV;Initial Catalog=db_capitania;Trusted_connection=yes"
         Set vConexao = New ADODB.Connection
-        vConexao.Provider = "SQLOLEDB"
-        vConexao.Properties("Data Source").value = "WIN10DEV"
-        vConexao.Properties("Initial Catalog").value = "db_capitania"
-        'vConexao.Properties("User ID").value = "capitania\dev.capitania"
-        'vConexao.Properties("Password").value = "Capitania2019"
-        vConexao.Properties("Integrated Security").value = "SSPI"
-        
-        Call vConexao.open(strconnection)
+        Let vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Integrated Security=SSPI;DataTypeCompatibility=80"
+        Call vConexao.open(vConnectionString)
     End If
     
     Set OpenTheDatabase = vConexao
