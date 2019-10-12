@@ -43,7 +43,7 @@ Public Const K_PropName11 = "# ADTV"
 Public GeneralTimer As Double
 Public DebugFlag As Boolean
 Public LastErrorTime As Date            'Data da Última Revisão de erro
-Public NumErrors As Integer             'Número de erros desde a última revisão
+Public NumErrors As Double             'Número de erros desde a última revisão
 
 'Public Const Ver = "2.95"                '25-Mar-2019
 'Public Const Ver = "2.99"                '03-May-2019
@@ -70,7 +70,10 @@ Public NumErrors As Integer             'Número de erros desde a última revisão
 'Public Const Ver = "2.120"               '30-Jul-2019
 'Public Const Ver = "2.121"               '31-Jul-2019
 'Public Const Ver = "2.122"               '02-Aug-2019
-Public Const Ver = "2.123"               '13-Aug-2019
+'Public Const Ver = "2.123"               '13-Aug-2019
+'Public Const Ver = "2.125"               '18-Aug-2019
+'Public Const Ver = "2.126"               '09-Out-2019 'Alteração no FCreditRisk
+Public Const Ver = "2.127"               '10-Out-2019 'Alteração no MMath
 
 Sub Init()
     
@@ -85,7 +88,7 @@ Sub Init()
         BaseDate = Now()
         
     'Verifica ambiente de Teste
-        If FileExists("TestEnvironment.txt") Then DBFileName = "\\Capdc03\Tecnologia\DEVELOPER\ComplianceNew\EnquadramentoTest.accdb"
+        If FileExists("TestEnvironment.txt") Then DBFileName = "\\Capdc03\Tecnologia\DEVELOPER\Compliance\EnquadramentoTest.accdb"
         
     'Lê usuário
         User.ReadDB

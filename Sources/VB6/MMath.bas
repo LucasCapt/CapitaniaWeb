@@ -1,4 +1,7 @@
 Attribute VB_Name = "MMath"
+'V. 2.127 - Alterada a sub AtualizaErros(). Trocado CritN() por CritNN().
+
+
 Public Function CritString(x As String) As String
     Dim a As String, i As Integer
     For i = 1 To Len(x)
@@ -305,7 +308,7 @@ Public Sub AtualizaErros()
     If rs.EOF Then d = LongTimeAgo Else d = CritD(rs("LASTREVISION"))
     Set rs = New ADODB.Recordset
     Call rs.open("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
-    If rs.EOF Then NumErrors = 0 Else NumErrors = CritN(rs("NERROS"))
+    If rs.EOF Then NumErrors = 0 Else NumErrors = CritNN(rs("NERROS"))
 End Sub
 
 '-------------------------------------------------------------------------------------------------------------
