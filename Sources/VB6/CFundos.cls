@@ -48,8 +48,8 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
     While Not rs.EOF
         DoEvents
         Set x = New CFundo
-        x.Nome = rs("Nome")
-        Call FStart.Say("Lendo fundos... (" & x.Nome & ")")
+        x.nome = rs("Nome")
+        Call FStart.Say("Lendo fundos... (" & x.nome & ")")
                
         x.ID = rs("ID")
         x.CNPJ = rs("CNPJ")
@@ -87,7 +87,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             Dim vConexaoTemp As ADODB.Connection
             If (vConexaoTemp Is Nothing) Then
                 Set vConexaoTemp = New ADODB.Connection
-                vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Integrated Security=SSPI;DataTypeCompatibility=80"
+                vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
                 Call vConexaoTemp.open(vConnectionString)
             End If
             Set rs1 = New ADODB.Recordset
@@ -152,7 +152,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             'esta parte demora
             tt = Timer
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT * FROM THISTRISK WHERE FUNDO='" + x.Nome + "' AND DATARUN>=" + SQLD(BaseDate - 1440) + " AND DATARUN<=" + SQLBaseDate + " AND DAY(DATARUN)>26 ORDER BY DATARUN", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT * FROM THISTRISK WHERE FUNDO='" + x.nome + "' AND DATARUN>=" + SQLD(BaseDate - 1440) + " AND DATARUN<=" + SQLBaseDate + " AND DAY(DATARUN)>26 ORDER BY DATARUN", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
             NPL = 0
             If rs1.EOF Then
                 x.VolPL = 0
@@ -299,7 +299,7 @@ End Function
 Public Function searchName(x As String) As CFundo
     Dim y As CFundo
     For Each y In c
-        If y.Nome = x Then Set searchName = y
+        If y.nome = x Then Set searchName = y
     Next y
 End Function
 
@@ -334,7 +334,7 @@ Public Function Cria(x As String) As CFundo
         
         Set y = New CFundo
         y.ID = LastNumber + 1
-        y.Nome = x
+        y.nome = x
         c.Add y
         Set Cria = y
     End If
@@ -383,7 +383,7 @@ Public Sub FillComboListWithNomes(ByRef x As Object)
     Dim f As CFundo
     x.Clear
     For Each f In c
-        x.AddItem f.Nome
+        x.AddItem f.nome
     Next f
 End Sub
 
@@ -479,7 +479,7 @@ Public Sub BuscaErros()
     Dim f As CFundo
     For Each f In c
         If f.MyQuotas.Count = 0 And f.area <> "EXTERNO" And f.Tipo <> "CONS" And f.tipo409 <> "EXT" Then _
-            WriteLogError "Warn: Fundo sem histórico de quotas (??)", f.Nome
+            WriteLogError "Warn: Fundo sem histórico de quotas (??)", f.nome
     Next f
 End Sub
 
@@ -489,7 +489,7 @@ Public Sub PreTradeCompliance(Mandatory As Boolean, Optional Form1 As Form)
     t0 = Now()
     N = 0
     For Each f In c
-        If Not Form1 Is Nothing Then Form1.Say ("Executando Pré-Trade Compliance - " + f.Nome)
+        If Not Form1 Is Nothing Then Form1.Say ("Executando Pré-Trade Compliance - " + f.nome)
         If Not f.PTCExecuted Or Mandatory Then
             f.PreTradeCompliance
             N = N + 1

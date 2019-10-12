@@ -110,6 +110,7 @@ Class=CRiskLiqStressElement; CRiskLiqStressElement.cls
 Startup="Sub Main"
 HelpFile=""
 ExeName32="Compliance.exe"
+Path32="..\..\..\..\Executável"
 Command32=""
 Name="Project1"
 HelpContextID="0"

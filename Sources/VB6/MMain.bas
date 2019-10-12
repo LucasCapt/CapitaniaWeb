@@ -347,7 +347,7 @@ Public Function OpenTheDatabase(Optional ByVal pForceOpenConnection As Boolean =
     
     If vConexao Is Nothing Then
         Set vConexao = New ADODB.Connection
-        Let vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Integrated Security=SSPI;DataTypeCompatibility=80"
+        Let vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
         Call vConexao.open(vConnectionString)
     End If
     

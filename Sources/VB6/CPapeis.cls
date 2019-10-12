@@ -120,12 +120,12 @@ Private Function BuscaStartPapel(x As String) As Long
     lo = 1
     hi = PapelProp.Count
     i = (hi + lo) \ 2
-    While lo < hi And UCase(PapelProp(i).Nome) <> xu
-        If UCase(PapelProp(i).Nome) > xu Then hi = i - 1 Else lo = i + 1
+    While lo < hi And UCase(PapelProp(i).nome) <> xu
+        If UCase(PapelProp(i).nome) > xu Then hi = i - 1 Else lo = i + 1
         i = (hi + lo) \ 2
     Wend
-    If UCase(PapelProp(i).Nome) = xu Then
-        While UCase(PapelProp(i).Nome) = xu And i > 1
+    If UCase(PapelProp(i).nome) = xu Then
+        While UCase(PapelProp(i).nome) = xu And i > 1
             i = i - 1
         Wend
         i = i + 1
@@ -146,20 +146,20 @@ Public Sub ReadDB(Data1 As Date)
     'Lê toda a papelprop
     t0i = Now()
     Set PapelProp = New Collection
-    Set y = New CNomeValor: y.Nome = "": PapelProp.Add y 'cria header
+    Set y = New CNomeValor: y.nome = "": PapelProp.Add y 'cria header
     Set rs = New ADODB.Recordset
     Call rs.open("SELECT * FROM TPAPELPROP WHERE DATA<=" + SQLBaseDate + " ORDER BY PAPEL, PROPRIEDADE, DATA", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
         DoEvents
         Set y = New CNomeValor
-        y.Nome = rs("PAPEL")
+        y.nome = rs("PAPEL")
         y.Valor = rs("PROPRIEDADE")
         y.NomeAlt = rs("VALOR")
         PapelProp.Add y
         rs.MoveNext
     Wend
-    Set y = New CNomeValor: y.Nome = Chr(255): PapelProp.Add y 'cria trailer
+    Set y = New CNomeValor: y.nome = Chr(255): PapelProp.Add y 'cria trailer
     tt1 = tt1 + Now() - t0i
     
     
@@ -171,7 +171,7 @@ Public Sub ReadDB(Data1 As Date)
         DoEvents
         FStart.Say ("Lendo papéis... (" & rs("nome") & ")")
         Set x = New CPapel
-        x.Nome = rs("Nome")
+        x.nome = rs("Nome")
         x.ID = CritS(rs("ID"))
         x.ISIN = CritS(rs("ISIN"))
         x.CNPJ = CritS(rs("CNPJ"))
@@ -202,7 +202,7 @@ Public Sub ReadDB(Data1 As Date)
             t0i = Now()
             i = BuscaStartPapel(x.ID)
             If i > 0 Then
-                While PapelProp(i).Nome = x.ID And i < PapelProp.Count
+                While PapelProp(i).nome = x.ID And i < PapelProp.Count
                     DoEvents
                     x.colocprop Int(PapelProp(i).Valor), PapelProp(i).NomeAlt
                     i = i + 1
@@ -217,7 +217,7 @@ Public Sub ReadDB(Data1 As Date)
             Dim vConexaoTemp As ADODB.Connection
             If (vConexaoTemp Is Nothing) Then
                 Set vConexaoTemp = New ADODB.Connection
-                vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Integrated Security=SSPI;DataTypeCompatibility=80"
+                Let vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
                 Call vConexaoTemp.open(vConnectionString)
             End If
             Set rs1 = New ADODB.Recordset
@@ -266,7 +266,7 @@ Public Sub ReadDB(Data1 As Date)
     Set akaList = New Collection
     While Not rs.EOF
         Set y = New CNomeValor
-        y.Nome = rs("FromID")
+        y.nome = rs("FromID")
         y.NomeAlt = rs("ToID")
         akaList.Add y
         rs.MoveNext
@@ -309,7 +309,7 @@ Public Function search(x As String) As CPapel
         'Procura na AKA List
         h = ""
         For Each z In akaList
-            If z.Nome = x Then h = z.NomeAlt
+            If z.nome = x Then h = z.NomeAlt
         Next z
         If h <> "" Then Set r = RetrieveElement(Trim(h))
     End If
@@ -320,7 +320,7 @@ End Function
 Public Function searchName(x As String) As CPapel
     Dim y As CPapel
     For Each y In c
-        If UCase(y.Nome) = UCase(x) Then Set searchName = y
+        If UCase(y.nome) = UCase(x) Then Set searchName = y
     Next y
 End Function
 
@@ -355,11 +355,11 @@ Function IdentifierUsed(x As String) As Boolean
     a = Not (RetrieveElement(x) Is Nothing)
     If Not a Then
         For Each y In c
-            a = a Or (y.CodCetip = x) Or (y.ISIN = x) Or (UCase(y.Nome) = UCase(x))
+            a = a Or (y.CodCetip = x) Or (y.ISIN = x) Or (UCase(y.nome) = UCase(x))
         Next y
         If Not a Then
             For Each z In akaList
-                a = a Or (z.Nome = x)
+                a = a Or (z.nome = x)
             Next z
         End If
     End If
@@ -369,12 +369,12 @@ End Function
 
 Public Function Cria(x As String, Optional CreateStatus As String = "CRIADO_USER") As CPapel
     'Cria um papel com ID=x
-    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, p As CPapel, Nome As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, p As CPapel, nome As String
     
-    Nome = "Unknown (" + x + ")"
+    nome = "Unknown (" + x + ")"
     Set p = New CPapel
     p.ID = x
-    p.Nome = Nome
+    p.nome = nome
     p.Fundo = False
     p.Dt_Created = BaseDate
     p.Status = CreateStatus
@@ -411,9 +411,9 @@ Public Sub AKA(FromID As String, ToID As String)
         db.Execute ("INSERT INTO TAKA (FROMID, TOID, DT_CREATED, DT_DELETED, DELETED) VALUES ('" + FromID + "','" + ToID + "'," + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
         
     End If
-    y.Nome = FromID
+    y.nome = FromID
     y.NomeAlt = ToID
-    akaList.Add y, y.Nome
+    akaList.Add y, y.nome
     remove FromID
 End Sub
 
@@ -473,7 +473,7 @@ Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
             'Coloca no Database
                 db.Execute ("DELETE FROM TPAPEL WHERE ID='" + Obj.ID + "'")
                 db.Execute ("INSERT INTO TPAPEL (NOME, ID, STATUS, FUNDO, CLASS_LIQ, CLASS_RENTAB, DATA_EMISSAO, DATA_VENCTO, " + _
-                           "INDEX, COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO, CASHFLOW_ID) VALUES ('" + Obj.Nome + "', '" + Obj.ID + "','" + Obj.Status + "', " + s2 + ", '" + Obj.Class_Liq + "','" + Obj.Class_Rent + "'," + _
+                           "INDEX, COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO, CASHFLOW_ID) VALUES ('" + Obj.nome + "', '" + Obj.ID + "','" + Obj.Status + "', " + s2 + ", '" + Obj.Class_Liq + "','" + Obj.Class_Rent + "'," + _
                            se + " , " + sv + ",'" + Obj.Index + "', " + Str(Obj.Coupon) + ",'" + Obj.DayCount + "','" + Obj.Senior + "','" + Obj.NameCr + "'," + Str(Obj.Holdings) + ",'" + Obj.ISIN + "','" + Obj.CNPJ + "','" + Obj.CodCetip + "'," + SQLD(Obj.Dt_Created) + "," + SQLBaseDate + ",FALSE,'" + Obj.Tipo + "','" + Obj.IDFluxo + "')")
                            
             'Recoloca as propriedades
@@ -536,7 +536,7 @@ Public Sub FillComboWithNames(x As Object)
     Dim y As CPapel
     x.Clear
     For Each y In c
-        x.AddItem y.Nome
+        x.AddItem y.nome
     Next y
 End Sub
 
@@ -563,7 +563,7 @@ Public Sub FillComboWithID(x As Object)
         x.AddItem y.ID
     Next y
     For Each z In akaList
-        x.AddItem z.Nome
+        x.AddItem z.nome
     Next z
 End Sub
 
