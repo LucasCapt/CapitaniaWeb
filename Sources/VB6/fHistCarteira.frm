@@ -3,12 +3,12 @@ Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.Form fHistCarteira 
    Caption         =   "Histórico de Carteira"
-   ClientHeight    =   11250
+   ClientHeight    =   11130
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   7935
    LinkTopic       =   "Form1"
-   ScaleHeight     =   11250
+   ScaleHeight     =   11130
    ScaleWidth      =   7935
    StartUpPosition =   3  'Windows Default
    Begin VB.ComboBox Combo2 
@@ -124,7 +124,7 @@ Public Sub newrefresh()
             
             Set rs = New ADODB.Recordset
             Call rs.open("SELECT DATA, SUM(VALOR) AS TVAL FROM QPOSICPAPEL WHERE " + _
-                u + " NOME='" + Combo2 + "' AND DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# GROUP BY DATA ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
+                u + " NOME='" + Combo2 + "' AND DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " GROUP BY DATA ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             
         
         If Not rs.EOF Then

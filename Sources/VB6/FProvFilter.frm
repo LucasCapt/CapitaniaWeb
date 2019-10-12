@@ -40,7 +40,7 @@ Public Sub newrefresh()
     
     Set db = OpenTheDatabase
     Set rs = New ADODB.Recordset
-    Call rs.open("SELECT * FROM TPROVFILTER WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ")", db, adOpenForwardOnly, adLockReadOnly)
+    Call rs.open("SELECT * FROM TPROVFILTER WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1 AND DT_DELETED<=" + SQLBaseDate + ")", db, adOpenForwardOnly, adLockReadOnly)
     
     'Lê para dentro de uma collection
     Set c = New Collection
@@ -127,7 +127,7 @@ Public Sub Deletar()
     If Grid.Row > 0 Then
         If MsgBox("Confirma a exclusão do filtro de propriedade" + vbCr + Str(c(Grid.Row()).IDUnica) + Chr(10) + c(Grid.Row()).ProvCod + ": " + c(Grid.Row()).ProvData, vbYesNo) = vbYes Then
             Set db = OpenTheDatabase
-            db.Execute ("UPDATE TPROVFILTER SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE IDUNICA=" + Str(c(Grid.Row()).IDUnica))
+            db.Execute ("UPDATE TPROVFILTER SET DELETED=1, DT_DELETED=" + SQLBaseDate + " WHERE IDUNICA=" + Str(c(Grid.Row()).IDUnica))
             WriteLog ("DELETOU PROVISAO")
             MsgBox "As alterações só têm efeito durante importação de carteira." + vbCr + "Nada foi alterado nas carteiras atuais."
             newrefresh

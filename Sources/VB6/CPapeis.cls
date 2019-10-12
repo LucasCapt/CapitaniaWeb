@@ -335,7 +335,7 @@ Public Function IDdeISINNaBase(x As String) As String
     
     Set db = OpenTheDatabase(True)
     Set rs = New ADODB.Recordset
-    Call rs.open("SELECT * FROM TPAPEL WHERE ISIN='" + x + "' AND DT_CREATED<=" + SQLBaseDate + " AND (NOT DELETED OR DT_DELETED>=" + SQLBaseDate + ")", db, adOpenForwardOnly, adLockReadOnly)
+    Call rs.open("SELECT * FROM TPAPEL WHERE ISIN='" + x + "' AND DT_CREATED<=" + SQLBaseDate + " AND (DELETED =0 OR DT_DELETED>=" + SQLBaseDate + ")", db, adOpenForwardOnly, adLockReadOnly)
     If rs.EOF Then IDdeISINNaBase = "" Else IDdeISINNaBase = CritS(rs("ID"))
     
 End Function
@@ -381,7 +381,7 @@ Public Sub remove(ID As String)
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        db.Execute ("UPDATE TPAPEL SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID='" + ID + "'")
+        db.Execute ("UPDATE TPAPEL SET DELETED=1, DT_DELETED=" + SQLBaseDate + " WHERE ID='" + ID + "'")
         
     End If
     j = 1
@@ -399,7 +399,7 @@ Public Sub AKA(FromID As String, ToID As String)
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        db.Execute ("INSERT INTO TAKA (FROMID, TOID, DT_CREATED, DT_DELETED, DELETED) VALUES ('" + FromID + "','" + ToID + "'," + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
+        db.Execute ("INSERT INTO TAKA (FROMID, TOID, DT_CREATED, DT_DELETED, DELETED) VALUES ('" + FromID + "','" + ToID + "'," + SQLBaseDate + "," + SQLBaseDate + ",0)")
         
     End If
     y.nome = FromID
@@ -465,7 +465,7 @@ Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
                 db.Execute ("DELETE FROM TPAPEL WHERE ID='" + Obj.ID + "'")
                 db.Execute ("INSERT INTO TPAPEL (NOME, ID, STATUS, FUNDO, CLASS_LIQ, CLASS_RENTAB, DATA_EMISSAO, DATA_VENCTO, " + _
                            "INDEX, COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO, CASHFLOW_ID) VALUES ('" + Obj.nome + "', '" + Obj.ID + "','" + Obj.Status + "', " + s2 + ", '" + Obj.Class_Liq + "','" + Obj.Class_Rent + "'," + _
-                           se + " , " + sv + ",'" + Obj.Index + "', " + Str(Obj.Coupon) + ",'" + Obj.DayCount + "','" + Obj.Senior + "','" + Obj.NameCr + "'," + Str(Obj.Holdings) + ",'" + Obj.ISIN + "','" + Obj.CNPJ + "','" + Obj.CodCetip + "'," + SQLD(Obj.Dt_Created) + "," + SQLBaseDate + ",FALSE,'" + Obj.Tipo + "','" + Obj.IDFluxo + "')")
+                           se + " , " + sv + ",'" + Obj.Index + "', " + Str(Obj.Coupon) + ",'" + Obj.DayCount + "','" + Obj.Senior + "','" + Obj.NameCr + "'," + Str(Obj.Holdings) + ",'" + Obj.ISIN + "','" + Obj.CNPJ + "','" + Obj.CodCetip + "'," + SQLD(Obj.Dt_Created) + "," + SQLBaseDate + ",0,'" + Obj.Tipo + "','" + Obj.IDFluxo + "')")
                            
             'Recoloca as propriedades
                 For i = 1 To Props.c.Count

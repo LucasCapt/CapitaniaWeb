@@ -120,7 +120,7 @@ Private Sub CommandButton1_Click()
             Obj.IDFluxo = key
             If MainStatus = "LIVE" Then
                 db.Execute ("UPDATE TPAPEL SET CASHFLOW_ID='" + key + "' WHERE ID='" + Obj.ID + "'")
-                db.Execute ("UPDATE TFLUXOS SET DELETED = TRUE , DT_DELETED=" + SQLBaseDate + " WHERE IDFLUXO='" + key + "' AND NOT DELETED")
+                db.Execute ("UPDATE TFLUXOS SET DELETED = 1 , DT_DELETED=" + SQLBaseDate + " WHERE IDFLUXO='" + key + "' AND DELETED = 0")
             End If
             Obj.ResetCFlow
             For i = 1 To Grid.Rows - 1
@@ -131,7 +131,7 @@ Private Sub CommandButton1_Click()
                     SQLD(CDate(Grid.TextMatrix(i, 0))) + ", " + _
                     Str(Val_1(Grid.TextMatrix(i, 1))) + ", " + _
                     Str(Val_1(Grid.TextMatrix(i, 2))) + ", " + _
-                    SQLBaseDate + ",FALSE," + SQLBaseDate + ")")
+                    SQLBaseDate + ",0," + SQLBaseDate + ")")
             Next i
             Obj.CFFound = True
             Obj.FazFluxo
@@ -199,10 +199,10 @@ Private Function PasteCF() As Boolean
                 If j = 0 Then
                     b = convertedata(b)
                     If Not IsDate(b) Then
-                        MsgBox ("Possível erro no formato da data." + Chr(10) + "Copie datas no formato mm/dd/yyyy.")
+                        MsgBox ("Possível erro no formato da data." + Chr(10) + "Copie datas no formato dd/MM/yyyy.")
                         vai = False
                     ElseIf Year(CDate(b)) < 2000 Then
-                        MsgBox ("Possível erro no formato da data." + Chr(10) + "Copie datas no formato mm/dd/yyyy.")
+                        MsgBox ("Possível erro no formato da data." + Chr(10) + "Copie datas no formato dd/MM/yyyy.")
                         vai = False
                     End If
                 End If

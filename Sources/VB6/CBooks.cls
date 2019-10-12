@@ -67,7 +67,7 @@ Public Function Cria(x As String) As CBook
     Set Cria = y
     
     If MainStatus = "LIVE" Then
-        db.Execute ("INSERT INTO TRULEBOOKS (ID, NOME, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(NextID) + ", '" + x + "'," + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
+        db.Execute ("INSERT INTO TRULEBOOKS (ID, NOME, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(NextID) + ", '" + x + "'," + SQLBaseDate + "," + SQLBaseDate + ",0)")
         Set rs = New ADODB.Recordset
         Call rs.open("SELECT * FROM TRULEBOOKS WHERE ID=" + Str(NextID), db, adOpenForwardOnly, adLockReadOnly)
         If rs.EOF Then Set Cria = Nothing
@@ -106,7 +106,7 @@ Public Sub Deleta(x As CBook)
         
         If vai Then
             Set db = OpenTheDatabase
-            db.Execute ("UPDATE TRULEBOOKS SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
+            db.Execute ("UPDATE TRULEBOOKS SET DELETED=1, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
             'db.Execute ("DELETE FROM TBOOKREGRA WHERE RULEBOOK=" + Str(x.ID))
             
             

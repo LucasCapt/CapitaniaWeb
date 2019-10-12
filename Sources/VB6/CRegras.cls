@@ -94,7 +94,7 @@ Public Sub Exclui(x As CRegra)
         If MainStatus = "LIVE" Then
             
             Set db = OpenTheDatabase
-            db.Execute ("UPDATE TREGRAS SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
+            db.Execute ("UPDATE TREGRAS SET DELETED=1, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
             
         End If
         
@@ -124,7 +124,7 @@ Public Function Cria(x As String) As CRegra
         rs.Close
         
         order = "INSERT INTO TREGRAS (ID, NOME, MAXMIN, LIMITE, POR, POR_PROP, PARA, PARA_PROP, PARA_VALOR, WORKLOW, WARN, PARA_COMP, ABERTA, DELETED, DT_CREATED, DT_DELETED, ESCOPO, LIM_REF) " + _
-            "VALUES (" + Str(LastNumber + 1) + ", '" + x + "', 'MAX', 0, FALSE, 0, FALSE, 0, '', 0, 0, '', FALSE, FALSE, " + SQLBaseDate + "," + SQLBaseDate + ",'CTRL','PL')"
+            "VALUES (" + Str(LastNumber + 1) + ", '" + x + "', 'MAX', 0, FALSE, 0, FALSE, 0, '', 0, 0, '', 0, 0, " + SQLBaseDate + "," + SQLBaseDate + ",'CTRL','PL')"
         
         db.Execute order
         

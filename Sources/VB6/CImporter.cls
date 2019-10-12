@@ -90,7 +90,7 @@ End Sub
 
 Sub ImportaPricing(Level As Integer, Optional f As Form)
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, LastDate As Date, d As Date
-    Dim Nome As String, L As String, fdo As String, pp As String, vl As String
+    Dim nome As String, L As String, fdo As String, pp As String, vl As String
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("PRICING")) Then
     
@@ -114,12 +114,12 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
             While d <= Now() 'Importa para cada data após o 5o dia anterior ao último registrado
             
                 If Not f Is Nothing Then f.Say ("Checando pricing " + Format(d, "dd-MMM-yy"))
-                Nome = Config.PricingFilePrefix + Format(Year(d), "0000") + Format(Month(d), "00") + Format(Day(d), "00") + ".txt"
+                nome = Config.PricingFilePrefix + Format(Year(d), "0000") + Format(Month(d), "00") + Format(Day(d), "00") + ".txt"
                 
-                If FileExists(Nome) Then
+                If FileExists(nome) Then
                     '---------Importa da Planilha
                     If Not f Is Nothing Then f.Say ("Importando pricing " + Format(d, "dd-MMM-yy"))
-                    Open Nome For Input As 1
+                    Open nome For Input As 1
                     
                     If Not EOF(1) Then Line Input #1, L
                     
@@ -203,7 +203,7 @@ End Sub
 
 Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date, d As Date
-    Dim Nome As String, L As String, Ativo As String, preco As String, cvirg As Integer, i As Integer
+    Dim nome As String, L As String, Ativo As String, preco As String, cvirg As Integer, i As Integer
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("POSICAO")) Then
     
@@ -224,8 +224,8 @@ Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
                 If ForceLast Then d = LastDate Else d = LastDate + 1
                 While d <= Now()
                     If Not f Is Nothing Then f.Say ("Checando posição " + Format(d, "dd-MMM-yy"))
-                    Nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
-                    If FileExists(Nome) Then
+                    nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
+                    If FileExists(nome) Then
                         If Not f Is Nothing Then f.Say ("Importando posição TXT " + Format(d, "dd-MMM-yy"))
                         ImportaPosicaoParaData d, False
                     End If
@@ -247,14 +247,14 @@ End Sub
 
 Sub ImportaPosicaoParaData(d As Date, Optional Notify As Boolean = False)
     'Esta rotina importa apenas carteiras .txt
-    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date, Nome As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date, nome As String
     
     Set db = OpenTheDatabase(True)
-    Nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
-    If FileExists(Nome) Then
-        Open Nome For Input As 1
+    nome = Config.PosicFilePrefix + Format(Month(d), "00") + "." + Format(Day(d), "00") + "." + Format(Year(d), "0000") + ".txt"
+    If FileExists(nome) Then
+        Open nome For Input As 1
         'Limpa a base para a data d
-        db.Execute ("DELETE FROM TPOSIC WHERE DATA=#" + Format(d, "MM/DD/YYYY") + "#")
+        db.Execute ("DELETE FROM TPOSIC WHERE DATA=" + SQLD(d))
         Line Input #1, L 'Pula primeira linha)
         While Not EOF(1)
             Line Input #1, L
@@ -545,7 +545,7 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
                     vf = CritNN(rs1("Value"))
                     
                     db.Execute ("INSERT INTO TTRADES (DATA, HORA, HORA_MS, FUNDO, ATIVO, CV, QUANT, TAXA, PU, PRICEREF, PRICESRC, BROKER, PRODUTO, NOMEATIVO, VALFIN) VALUES ( " + _
-                    SQLD(d1) + ", #" + Format(Now(), "hh:mm:ss") + "#," + Str(Timer()) + ",'" + f1 + "','" + a1 + "','" + CV + "'," + Str(q1) + "," + Str(t1) + "," + Str(p1) + ",0,'','" + b1 + "','" + PR + "','" + NA + "'," + Str(vf) + ")")
+                    SQLD(d1) + ", '" + Format(Now(), "hh:mm:ss") + "'," + Str(Timer()) + ",'" + f1 + "','" + a1 + "','" + CV + "'," + Str(q1) + "," + Str(t1) + "," + Str(p1) + ",0,'','" + b1 + "','" + PR + "','" + NA + "'," + Str(vf) + ")")
                 
                 End If
                 rs1.MoveNext
@@ -588,7 +588,7 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
                         vf = ws.cells(i, 7)
                                                 
                         db.Execute ("INSERT INTO TTRADES (DATA, HORA, HORA_MS, FUNDO, ATIVO, CV, QUANT, TAXA, PU, PRICEREF, PRICESRC, BROKER, PRODUTO, NOMEATIVO, VALFIN) VALUES ( " + _
-                        SQLD(d1) + ", #" + Format(Now(), "hh:mm:ss") + "#," + Str(Timer()) + ",'" + f1 + "','" + a1 + "','" + CV + "'," + Str(q1) + "," + Str(t1) + "," + Str(p1) + ",0,'','" + b1 + "','" + PR + "','" + NA + "'," + Str(vf) + ")")
+                        SQLD(d1) + ", '" + Format(Now(), "hh:mm:ss") + "'," + Str(Timer()) + ",'" + f1 + "','" + a1 + "','" + CV + "'," + Str(q1) + "," + Str(t1) + "," + Str(p1) + ",0,'','" + b1 + "','" + PR + "','" + NA + "'," + Str(vf) + ")")
                         
                         i = i + 1
                     Wend
@@ -639,7 +639,7 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
                         Wend
                         If f1 <> "" And a1 <> "" And p1 <> 0 Then
                             db.Execute ("INSERT INTO TTRADES (DATA, HORA, HORA_MS, FUNDO, ATIVO, CV, QUANT, TAXA, PU, PRICEREF, PRICESRC, BROKER, PRODUTO) VALUES (" + _
-                            SQLD(d1) + ", #" + Format(Now(), "hh:mm:ss") + "#," + Str(Timer()) + ",'" + f1 + "','" + a1 + "','" + CV + "'," + Str(q1) + "," + Str(p1) + "," + Str(p1) + ",0,'','" + b1 + "','RV')")
+                            SQLD(d1) + ", '" + Format(Now(), "hh:mm:ss") + "'," + Str(Timer()) + ",'" + f1 + "','" + a1 + "','" + CV + "'," + Str(q1) + "," + Str(p1) + "," + Str(p1) + ",0,'','" + b1 + "','RV')")
                         End If
                     Wend
                     Close #1
@@ -892,7 +892,7 @@ Public Sub ImportaXMLANBIMAparaData(d As Date, Optional Notify As Boolean = Fals
     Set c = GetFolders(Config.XMLANBIMAPath)
     
     For Each y In c
-        ImportaXMLANBIMADePastaParaData y.Nome, d, Notify
+        ImportaXMLANBIMADePastaParaData y.nome, d, Notify
         DoEvents
     Next y
     
@@ -904,7 +904,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
     'Data d é a data do arquivo, não necessariamente da posição
 
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPosic, LastDate As Date
-    Dim fundoid As Integer, plind As Double, Nome As String, CNPJ As String, dtposic As Date, dtposicSt As String
+    Dim fundoid As Integer, plind As Double, nome As String, CNPJ As String, dtposic As Date, dtposicSt As String
     Dim XML As New DOMDocument, noh As IXMLDOMNode, noh2 As IXMLDOMNode, Root As IXMLDOMElement
     Dim pIsin As String, pCod As String, q1 As String, v1 As String
     Dim TDesp As Double, TProv As Double, TPL As Double, VResgatas As Double
@@ -918,7 +918,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
     XML.async = False
     XML.resolveExternals = False
     
-    Nome = FileSystem.Dir(Config.XMLANBIMAPath + pasta + "\*" + Format(d, "_YYYYMMDD_") + "*.xml")
+    nome = FileSystem.Dir(Config.XMLANBIMAPath + pasta + "\*" + Format(d, "_YYYYMMDD_") + "*.xml")
     
     'Lê o provfilter
     Set rs = New ADODB.Recordset
@@ -936,14 +936,14 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
         rs.MoveNext
     Wend
     
-    If Nome = "" And Notify Then MsgBox ("Arquivo XML para importação da data " + Format(d, "dd-MMM-yy") + " não encontrado na pasta " + pasta)
+    If nome = "" And Notify Then MsgBox ("Arquivo XML para importação da data " + Format(d, "dd-MMM-yy") + " não encontrado na pasta " + pasta)
     
-    While Nome <> ""
+    While nome <> ""
         
         DoEvents
         
-        If Not XML.Load(Config.XMLANBIMAPath + pasta + "\" + Nome) Then
-            If Notify Then MsgBox ("Arquivo XML " + Chr(13) + Nome + Chr(13) + " não decifrado." + Chr(13) + XML.parseError.reason + Chr(13) + "Linha " + Str(XML.parseError.Line))
+        If Not XML.Load(Config.XMLANBIMAPath + pasta + "\" + nome) Then
+            If Notify Then MsgBox ("Arquivo XML " + Chr(13) + nome + Chr(13) + " não decifrado." + Chr(13) + XML.parseError.reason + Chr(13) + "Linha " + Str(XML.parseError.Line))
         Else
             'Lê o XML
             
@@ -960,7 +960,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                     End If
                     
                     If Not noh.selectSingleNode("header/nome") Is Nothing _
-                        Then Nome = noh.selectSingleNode("header/nome").Text
+                        Then nome = noh.selectSingleNode("header/nome").Text
                     
                     If noh.selectSingleNode("header/patliq") Is Nothing _
                         Then pling = 1 _
@@ -985,7 +985,7 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                         fundoid = rs("ID")
                     Else
                         Set rs = New ADODB.Recordset
-                        Call rs.open("SELECT * FROM TFUNDOS WHERE NOME='" + Nome + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
+                        Call rs.open("SELECT * FROM TFUNDOS WHERE NOME='" + nome + "' AND (DELETED = 0 OR DT_DELETED>" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
                         If Not rs.EOF Then fundoid = rs("ID") Else fundoid = -1
                     End If
                                     
@@ -1164,19 +1164,19 @@ Public Sub ImportaXMLANBIMADePastaParaData(pasta As String, d As Date, Optional 
                         If TDesp <> 0 Then db.Execute ("INSERT INTO TPOSICLAYOUT2 (FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX],CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA) VALUES (" + Str(fundoid) + ", 'DESPESA', 'DESPESA', 'DESPESA'," + Str(TDesp) + ", " + Str(TDesp) + ", " + SQLD(d) + ",'1990-01-01','1990-01-01','',0,0,'','" + pasta + "',0)")
                         TPL = TPL + TProv + TDesp
                         If Abs(TPL - plind) > 0.05 * plind Then
-                            If Notify Then MsgBox ("Fundo " + Nome + " inconsistente na importação XML:" + Chr(13) + Format(TPL, "###,###,##0") + " x " + Format(plind, "###,###,##0"))
-                            WriteLogError "Importação PL inconsistente", Nome
+                            If Notify Then MsgBox ("Fundo " + nome + " inconsistente na importação XML:" + Chr(13) + Format(TPL, "###,###,##0") + " x " + Format(plind, "###,###,##0"))
+                            WriteLogError "Importação PL inconsistente", nome
                         End If
                         
                     Else
-                        If Notify Then MsgBox (Nome + " nao encontrado")
-                        WriteLogError "Fundo não encontrado durante Importação", Nome
+                        If Notify Then MsgBox (nome + " nao encontrado")
+                        WriteLogError "Fundo não encontrado durante Importação", nome
                     End If
                     
             Next noh 'proximo fundo
         End If 'XML.Parse
         
-        Nome = FileSystem.Dir()
+        nome = FileSystem.Dir()
 
     Wend
 End Sub
@@ -1351,7 +1351,7 @@ Public Sub Layt22MainParaData(d As Date)
             
                 pp.ID = "OVER"
                 pp.ISIN = "OVER"
-                pp.Nome = "COMPROMISSADA"
+                pp.nome = "COMPROMISSADA"
                 pp.Status = "AUTO_TIPO2"
                 s2 = "0"
                 pp.Dt_Emissao = Now()
@@ -1388,7 +1388,7 @@ Public Sub Layt22MainParaData(d As Date)
                 
                 'Continua a criação do papel
                 'Coloca os defaults
-                pp.Nome = "Unknown (" + pp.ID + ")"
+                pp.nome = "Unknown (" + pp.ID + ")"
                 pp.Status = "AUTO_TIPO2"
                 s2 = "0" 'eh fundo?
                 pp.Dt_Emissao = Now()
@@ -1501,14 +1501,14 @@ Public Sub Layt22MainParaData(d As Date)
                         pp.Class_Rent = "OVER"
                         pp.Tipo = "FUTUROS"
                         pp.Dt_Venc = CritD(rs("DTVENC1"))
-                        pp.Nome = "Fut" + pp.CodCetip
+                        pp.nome = "Fut" + pp.CodCetip
                         
                         
                     Case "imoveis"
                         pp.Class_Liq = "FIINLIST"
                         pp.Class_Rent = "PERP"
                         pp.Tipo = "IMOVEL"
-                        pp.Nome = "Imovel " + pp.CodCetip
+                        pp.nome = "Imovel " + pp.CodCetip
                     
                 End Select
                 
@@ -1528,7 +1528,7 @@ Public Sub Layt22MainParaData(d As Date)
             End If
             db.Execute ("INSERT INTO TPAPEL (NOME, ID, STATUS, FUNDO, CLASS_LIQ, CLASS_RENTAB, DATA_EMISSAO, DATA_VENCTO, " + _
                 "[INDEX], COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO) VALUES " + _
-                "('" + pp.Nome + "', '" + _
+                "('" + pp.nome + "', '" + _
                 pp.ID + "','" + _
                 pp.Status + "', '" + _
                 s2 + "', '" + _

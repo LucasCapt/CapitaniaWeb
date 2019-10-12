@@ -243,7 +243,7 @@ Private Sub B_OK_Click()
                     If vai Then
                         Set db = OpenTheDatabase
                         db.Execute ("INSERT INTO TPROVFILTER (FUNDO, PROV_COD, PROV_DATA, PP_ISIN, PP_COD, DESCR, PP_TIPO, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(Obj.Fundo) + ", '" + Obj.ProvCod + "', '" + _
-                        Obj.ProvData + "','" + Obj.PPISIN + "', '" + Obj.PPCod + "', '" + Obj.Descr + "', '" + Obj.PPTipo + "', " + SQLBaseDate + ", " + SQLBaseDate + ", FALSE)")
+                        Obj.ProvData + "','" + Obj.PPISIN + "', '" + Obj.PPCod + "', '" + Obj.Descr + "', '" + Obj.PPTipo + "', " + SQLBaseDate + ", " + SQLBaseDate + ", 0)")
                         WriteLog ("EDITOU PROVISAO NOVA")
                         Disclaimer
                         If FProvFilter.Visible Then FProvFilter.newrefresh

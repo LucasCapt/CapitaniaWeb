@@ -144,7 +144,7 @@ Public Sub newshow(qual As String)
             
             Set db = OpenTheDatabase
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT DISTINCT ATIVO FROM TTRADES WHERE DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT DISTINCT ATIVO FROM TTRADES WHERE DATA>=" + SQLD(BaseDate - 365), db, adOpenForwardOnly, adLockReadOnly)
             Combo1.Clear
             While Not rs.EOF
                 Combo1.AddItem rs("ATIVO")
@@ -242,7 +242,7 @@ Public Sub newrefresh()
             End If
             
         Case "HCOMP" '----------------------------------------------------< Histórico de Concentração >
-            ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
+            ds = SQLD(DateField4)
             
             Set db = OpenTheDatabase
             AdjustXScale
@@ -250,22 +250,22 @@ Public Sub newrefresh()
                 Case K_PropName1
                     Set rs = New ADODB.Recordset
                     Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_LIQ AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
-                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.CLASS_LIQ='" + Combo3 + "' " + _
+                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and TPAPEL.DELETED = 0) WHERE TPAPEL.CLASS_LIQ='" + Combo3 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.CLASS_LIQ, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                 Case K_PropName2
                     Set rs = New ADODB.Recordset
                     Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.CLASS_RENTAB AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
-                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.CLASS_RENTAB='" + Combo3 + "' " + _
+                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and TPAPEL.DELETED = 0) WHERE TPAPEL.CLASS_RENTAB='" + Combo3 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.CLASS_RENTAB, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                 Case K_PropName3
                       Set rs = New ADODB.Recordset
                       Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
-                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.INDEX='" + Combo3 + "' " + _
+                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and TPAPEL.DELETED = 0) WHERE TPAPEL.INDEX='" + Combo3 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.INDEX, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                 Case K_PropName4
                       Set rs = New ADODB.Recordset
                       Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.INDEX AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
-                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.NOME='" + Combo3 + "' " + _
+                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID OR TPOSIC.PAPEL=CODCETIP and TPAPEL.DELETED = 0) WHERE TPAPEL.NOME='" + Combo3 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.INDEX, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                 Case Else
                     'Qualquer propriedade
@@ -297,7 +297,7 @@ Public Sub newrefresh()
             setYaxisTo
             
         Case "HPOS" '----------------------------------------------------< Histórico de Posição em Papel >
-            ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
+            ds = SQLD(DateField4)
             Set f = Fundos.searchName(Combo1)
             AdjustXScale
             If Not f Is Nothing Then
@@ -305,7 +305,7 @@ Public Sub newrefresh()
                 Set db = OpenTheDatabase
                 Set rs = New ADODB.Recordset
                 Call rs.open("SELECT TPOSIC.FUNDO AS F1, TPAPEL.NOME AS P1, TPOSIC.DATA AS D1, SUM(TPOSIC.VALOR) AS V1 " + _
-                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID or TPOSIC.PAPEL =TPAPEL.CODCETIP and not TPAPEL.DELETED) WHERE TPAPEL.NOME='" + Combo2 + "' " + _
+                      "FROM TPOSIC INNER JOIN TPAPEL ON (TPOSIC.PAPEL = TPAPEL.ID or TPOSIC.PAPEL =TPAPEL.CODCETIP and TPAPEL.DELETED = 0) WHERE TPAPEL.NOME='" + Combo2 + "' " + _
                       "AND TPOSIC.FUNDO=" + Str(f.ID) + " AND TPOSIC.DATA >=" + ds + " AND TPOSIC.DATA<=" + SQLBaseDate + " GROUP BY TPOSIC.FUNDO, TPAPEL.NOME, TPOSIC.DATA ORDER BY TPOSIC.DATA", db, adOpenForwardOnly, adLockReadOnly)
                       
                 If Combo5 = "%" Then _
@@ -320,7 +320,7 @@ Public Sub newrefresh()
             End If
             
         Case "PL"   '----------------------------------------------------< PL >
-            ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
+            ds = SQLD(DateField4)
             AdjustXScale
             
             Set db = OpenTheDatabase
@@ -329,7 +329,7 @@ Public Sub newrefresh()
             CreateSingleLineChart rs, "DATA", "VALOR1"
             
         Case "TRADE" '----------------------------------------------------< TRADES (x,y)  >
-            ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
+            ds = SQLD(DateField4)
             
             Set db = OpenTheDatabase
             Set rs = New ADODB.Recordset
@@ -360,7 +360,7 @@ Public Sub newrefresh()
         
         Case "QUOTA"
             AdjustXScale
-            ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
+            ds = SQLD(DateField4)
             
             Set db = OpenTheDatabase
             Set rs = New ADODB.Recordset
@@ -369,7 +369,7 @@ Public Sub newrefresh()
             
         Case "RISCOCRD"
             AdjustXScale
-            ds = "#" + Format(DateField4, "MM/DD/YYYY") + "#"
+            ds = SQLD(DateField4)
             
             Set db = OpenTheDatabase
             Set rs = New ADODB.Recordset

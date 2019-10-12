@@ -141,7 +141,7 @@ Public Sub ChecaAML()
             
                 'Determina bandahigh e bandalow para o ativo pela regressão de trades passados
                     Set rs = New ADODB.Recordset
-                    Call rs.open("SELECT * FROM TTRADES WHERE DATA <= " + SQLBaseDate + " AND DATA>=#" + Format(BaseDate - 365, "MM/DD/YYYY") + "# AND ATIVO='" + x.Ativo + "' ORDER BY DATA DESC", db, adOpenForwardOnly, adLockReadOnly)
+                    Call rs.open("SELECT * FROM TTRADES WHERE DATA <= " + SQLBaseDate + " AND DATA>=" + SQLD(BaseDate - 365) + " AND ATIVO='" + x.Ativo + "' ORDER BY DATA DESC", db, adOpenForwardOnly, adLockReadOnly)
                     N = 0
                     While Not rs.EOF And N < 250
                         If rs("PU") > 0 Then

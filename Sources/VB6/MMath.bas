@@ -288,7 +288,7 @@ Public Sub WriteLogPerf(acao As String, items As Integer, segundos As Double)
     
     Set db = OpenTheDatabase
     db.Execute ("INSERT INTO TLOGPERF (DATAHORA, OPER, [USER], ITENS, SECS, ITEMPERSEC, SECPERITEM) VALUES " + _
-                "('" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "','" + acao + "','" + User.username + "'," + _
+                "('" + Format(Now(), "YYYY-MM-DD HH:MM:SS AM/PM") + "','" + acao + "','" + User.username + "'," + _
                 Str(items) + "," + Str(segundos) + "," + Str(i_s) + "," + Str(s_i) + ")")
 End Sub
 

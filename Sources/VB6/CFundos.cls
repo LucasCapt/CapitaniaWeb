@@ -342,7 +342,7 @@ Public Function Cria(x As String) As CFundo
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
             
-        db.Execute ("INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(LastNumber + 1) + ",'" + x + "', '', FALSE, '', " + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
+        db.Execute ("INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(LastNumber + 1) + ",'" + x + "', '', 0, '', " + SQLBaseDate + "," + SQLBaseDate + ",0)")
         
         
         Set y = New CFundo
@@ -376,7 +376,7 @@ Public Sub ExcluiFundo(x As CFundo)
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        db.Execute ("UPDATE TFUNDOS SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
+        db.Execute ("UPDATE TFUNDOS SET DELETED=1, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
     End If
     
     For i = 1 To c.Count - 1

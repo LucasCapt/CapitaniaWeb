@@ -265,7 +265,7 @@ Dim db As ADODB.Connection, rs As ADODB.Recordset, N As Integer, SouOrfao As Boo
             If p.Dt_Venc < BaseDate - 92 And p.Class_Rent <> "PERP" And p.Class_Rent <> "OVER" Then
                 'Pode ser, mas checa se não esteve em nenhuma carteira após M-3
                 Set rs = New ADODB.Recordset
-                Call rs.open("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(p.Dt_Venc + 7) + ")", db, adOpenForwardOnly, adLockReadOnly)
+                Call rs.open("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (DELETED =0  OR DT_DELETED>" + SQLD(p.Dt_Venc + 7) + ")", db, adOpenForwardOnly, adLockReadOnly)
                 If rs.EOF Then
                     'Pode ser... não existe em AKA ou foi deletado da AKA até Venc+7
                     Set rs = New ADODB.Recordset
@@ -280,7 +280,7 @@ Dim db As ADODB.Connection, rs As ADODB.Recordset, N As Integer, SouOrfao As Boo
             If Not SouOrfao Then
                 'Não é órfão, mas pode estar passado
                 Set rs = New ADODB.Recordset
-                Call rs.open("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (NOT DELETED OR DT_DELETED>" + SQLD(BaseDate - 730) + ")", db, adOpenForwardOnly, adLockReadOnly)
+                Call rs.open("SELECT * FROM TAKA WHERE (FROMID='" + p.ID + "' OR TOID='" + p.ID + "') AND (DELETED = 0 OR DT_DELETED>" + SQLD(BaseDate - 730) + ")", db, adOpenForwardOnly, adLockReadOnly)
                 If rs.EOF Then
                     'Pode ser... não existe em AKA ou foi deletado da AKA até 2Y-1
                     Set rs = New ADODB.Recordset
@@ -372,7 +372,7 @@ Private Sub Command4_Click()
     
     Set db = OpenTheDatabase
     For Each p In PassadoList
-        db.Execute ("UPDATE TPAPEL SET DELETED=TRUE, DT_DELETED=" + SQLD(BaseDate - 730) + " WHERE ID='" + p.ID + "'")
+        db.Execute ("UPDATE TPAPEL SET DELETED=1, DT_DELETED=" + SQLD(BaseDate - 730) + " WHERE ID='" + p.ID + "'")
         Papeis.c.remove p.ID
         PassadoList.remove p.ID
     Next p
@@ -388,7 +388,7 @@ Private Sub Command5_Click()
     
     Set db = OpenTheDatabase
     For Each p In VencidoList
-        db.Execute ("UPDATE TPAPEL SET DELETED=TRUE, DT_DELETED=" + SQLD(p.Dt_Venc + 7) + " WHERE ID='" + p.ID + "'")
+        db.Execute ("UPDATE TPAPEL SET DELETED=1, DT_DELETED=" + SQLD(p.Dt_Venc + 7) + " WHERE ID='" + p.ID + "'")
         Papeis.c.remove p.ID
         VencidoList.remove p.ID
     Next p

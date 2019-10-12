@@ -205,51 +205,51 @@ Public Sub newrefresh()
         Case "COMPL"
             Grid.FormatString = "Data         |Fundo                                              |Livro                      |Result          |Rule Breaches                            "
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT * FROM THISTCOMPL WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT * FROM THISTCOMPL WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1)AS NUM FROM THISTCOMPL WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1)AS NUM FROM THISTCOMPL WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
         Case "BREACH"
             Grid.FormatString = "Data         |Fundo                                              |Regra                   |Alocação       |Condição                                                                     "
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT * FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# AND TIPO='BREACH' ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT * FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " AND TIPO='BREACH' ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1)AS NUM FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# AND TIPO='BREACH' ", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1)AS NUM FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " AND TIPO='BREACH' ", db, adOpenForwardOnly, adLockReadOnly)
         Case "CASE"
             Grid.FormatString = "Data         |Fundo                                              |Regra                   "
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT DISTINCT FUNDO, REGRA, Month(DATA)+YEAR(DATA)*12 AS DATAINDEX FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# AND TIPO='BREACH'", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT DISTINCT FUNDO, REGRA, Month(DATA)+YEAR(DATA)*12 AS DATAINDEX FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " AND TIPO='BREACH'", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM (SELECT DISTINCT FUNDO, REGRA, Month(DATA)+YEAR(DATA)*12 AS DATAINDEX FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# AND TIPO='BREACH') ", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM (SELECT DISTINCT FUNDO, REGRA, Month(DATA)+YEAR(DATA)*12 AS DATAINDEX FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " AND TIPO='BREACH') ", db, adOpenForwardOnly, adLockReadOnly)
         Case "RISK"
             Grid.FormatString = "Data         |Fundo                                              |PL                     |VaR             |Stress              |Caixa                "
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT DATARUN, DATAINFO, FUNDO, PL, VAR, STRESS, CAIXA FROM THISTRISK WHERE DATARUN <=" + SQLBaseDate + " AND DATARUN>=#" + Format(d, "MM/DD/YYYY") + "# ORDER BY DATARUN", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT DATARUN, DATAINFO, FUNDO, PL, VAR, STRESS, CAIXA FROM THISTRISK WHERE DATARUN <=" + SQLBaseDate + " AND DATARUN>=" + SQLD(d) + " ORDER BY DATARUN", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM THISTRISK WHERE DATARUN <=" + SQLBaseDate + " AND DATARUN>=#" + Format(d, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM THISTRISK WHERE DATARUN <=" + SQLBaseDate + " AND DATARUN>=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
         Case "LIQ"
             Grid.FormatString = "Data         |Fundo                                              |Liquidity OK    |Cov. 1d  |Cov. 5d  |Cov. 21d |Cov. 42d |Cov. 63d |Cov. 126d|Cov. 252d"
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT DATARUN, FUNDO, LIQ_OK, LIQ_1, LIQ_5, LIQ_21, LIQ_42, LIQ_63, LIQ_126, LIQ_252 FROM THISTRISK WHERE DATARUN <=" + SQLBaseDate + " AND DATARUN>=#" + Format(d, "MM/DD/YYYY") + "# ORDER BY DATARUN", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT DATARUN, FUNDO, LIQ_OK, LIQ_1, LIQ_5, LIQ_21, LIQ_42, LIQ_63, LIQ_126, LIQ_252 FROM THISTRISK WHERE DATARUN <=" + SQLBaseDate + " AND DATARUN>=" + SQLD(d) + " ORDER BY DATARUN", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM THISTRISK WHERE DATARUN <=" + SQLBaseDate + " AND DATARUN>=#" + Format(d, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM THISTRISK WHERE DATARUN <=" + SQLBaseDate + " AND DATARUN>=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
         Case "SERIES"
             Grid.FormatString = "Data         |Fator                        |Valor            "
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT * FROM TFACTORHIST WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT * FROM TFACTORHIST WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM TFACTORHIST WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM TFACTORHIST WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
         Case "ADTV"
             Grid.FormatString = "Data         |Ativo                        |ADTV           |ADTV Condic.   |ADTV Classe    |ADTV Cond.Classe"
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT * FROM TADTV WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "# ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT * FROM TADTV WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM TADTV WHERE DATA <=" + SQLBaseDate + " AND DATA>=#" + Format(d, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM TADTV WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
         Case "REDEMP"
             Grid.FormatString = "Data         |Fundo                                              |Data Pagamento|Valor              |^Total? |Cancelado|Data Cancelado"
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT * FROM TRESGATES WHERE DATAOBS <=" + SQLBaseDate + " AND DATAOBS>=#" + Format(d, "MM/DD/YYYY") + "# ORDER BY DATAOBS", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT * FROM TRESGATES WHERE DATAOBS <=" + SQLBaseDate + " AND DATAOBS>=" + SQLD(d) + " ORDER BY DATAOBS", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM TRESGATES WHERE DATAOBS <=" + SQLBaseDate + " AND DATAOBS>=#" + Format(d, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM TRESGATES WHERE DATAOBS <=" + SQLBaseDate + " AND DATAOBS>=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
         Case "PL"
             Grid.FormatString = "Data         |Fundo                                              |PL                  "
             Set rs = New ADODB.Recordset
@@ -259,9 +259,9 @@ Public Sub newrefresh()
         Case "TRANSFERS"
             Grid.FormatString = "Data         |Fundo                                              |Data Aporte   |Valor              |Cancelado|Data Cancelado"
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT * FROM TTRANSFERS WHERE DATAOBS <=" + SQLBaseDate + " AND DATAOBS>=#" + Format(d, "MM/DD/YYYY") + "# ORDER BY DATAOBS", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT * FROM TTRANSFERS WHERE DATAOBS <=" + SQLBaseDate + " AND DATAOBS>=" + SQLD(d) + " ORDER BY DATAOBS", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM TTRANSFERS WHERE DATAOBS <=" + SQLBaseDate + " AND DATAOBS>=#" + Format(d, "MM/DD/YYYY") + "#", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM TTRANSFERS WHERE DATAOBS <=" + SQLBaseDate + " AND DATAOBS>=" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
         Case "MAIORCOT"
             Grid.FormatString = "Data         |Fundo                                              |1º COTISTA        |2º COTISTA        |3º COTISTA        "
             Set rs = New ADODB.Recordset
