@@ -163,6 +163,12 @@ Public Sub ReadDB(Data1 As Date)
     tt1 = tt1 + Now() - t0i
     
     
+    'Lê todo o TDATV TODO:JPL CHECAR
+    t0i = Now()
+        Set rs1 = db.OpenRecordset("SELECT * FROM TADTV WHERE DATA>=" + SQLD(BaseDate - 15) + " ORDER BY NOME ASC, DATA DESC")
+        AllADTVs = rs1.GetRows(rs1.RecordCount)
+    tt3 = tt3 + Now() - t0i
+    
     'Lê os títulos
     Set rs = New ADODB.Recordset
     Set rs = db.Execute("SELECT * FROM TPAPEL WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED =1 AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
@@ -235,22 +241,7 @@ Public Sub ReadDB(Data1 As Date)
         
         '---Lê o ADTV
             t0i = Now()
-            
-            'Tenta pelo código CETIP e ID, últimos 10 dias
-            Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT * FROM TADTV WHERE (NOME='" + x.CodCetip + "' OR NOME='" + x.ID + "') AND DATA>=" + SQLD(d - 10) + " ORDER BY DATA DESC", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
-            If rs1.EOF Then
-                x.adtv = 0
-                x.adtvClasse = 0
-                x.adtvCond = 0
-                x.adtvClasseCond = 0
-            Else
-                x.adtv = CritNN(rs1("ADTV"))
-                x.adtvClasse = CritNN(rs1("ADTVCLASSE"))
-                x.adtvCond = CritNN(rs1("ADTVCOND"))
-                x.adtvClasseCond = CritNN(rs1("ADTVCLASSECOND"))
-            End If
-            rs1.Close
+                x.GetYourADTVIn (AllADTVs)
             tt3 = tt3 + Now() - t0i
                             
         c.Add x, Trim(x.ID)

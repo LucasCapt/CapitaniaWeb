@@ -110,6 +110,51 @@ Public Sub CloneFrom(x As CPapel)
     Next i
 End Sub
 
+
+Private Function SearchArray(x As Variant, key As String)
+    'Auxiliar de GetYourADTVIn e funções GetRows - retorna o 1o da sequencia
+    Dim n As Integer, i As Integer, hi As Integer, lo As Integer
+    n = UBound(x, 2)
+    hi = n: lo = 0: i = (hi + lo) \ 2
+    While UCase(x(1, i)) <> key And hi > lo
+        If UCase(x(1, i)) > key Then hi = i - 1 Else lo = i + 1
+        i = (hi + lo) \ 2
+    Wend
+    If UCase(x(1, i)) = key Then
+        While UCase(x(1, i)) = key And i > 1
+            i = i - 1
+        Wend
+        If UCase(x(1, i)) <> key Then i = i + 1
+    End If
+    SearchArray = i
+End Function
+
+Public Sub GetYourADTVIn(x As Variant)
+    'Procura o ADTV no array "GetRows" x
+    Dim i As Integer, vai As Boolean
+    
+    vai = False
+    i = SearchArray(x, UCase(CodCetip))
+    vai = (UCase(x(1, i)) = UCase(CodCetip))
+    If Not vai Then
+        i = SearchArray(x, UCase(ID))
+        vai = (UCase(x(1, i)) = UCase(ID))
+    End If
+    
+    If vai Then
+        adtv = x(2, i)
+        adtvClasse = x(3, i)
+        adtvCond = x(4, i)
+        adtvClasseCond = x(5, i)
+    Else
+        adtv = 0
+        adtvClasse = 0
+        adtvCond = 0
+        adtvClasseCond = 0
+    End If
+End Sub
+
+
 Public Sub Refresh()
     'Seta variáveis estáticas
     Dim f As CFundo, pf As Double
@@ -173,10 +218,10 @@ Property Get ehcaixaANBIMA() As Boolean
     ehcaixaANBIMA = (Class_Liq = "OVER" Or Class_Liq = "CDBS" Or Class_Liq = "TITPUB" Or Class_Liq = "CASH")
 End Property
 
-Public Sub ZeraFlowsPor(meses As Integer)
+Public Sub ZeraFlowsPor(Meses As Integer)
     Dim i As Integer
     For i = 1 To NFlows
-        If CFDates(i) <= DateSerial(Year(BaseDate), Month(BaseDate) + meses, Day(BaseDate)) Then
+        If CFDates(i) <= DateSerial(Year(BaseDate), Month(BaseDate) + Meses, Day(BaseDate)) Then
             CFPrin(i) = 0
             CFInt(i) = 0
         End If

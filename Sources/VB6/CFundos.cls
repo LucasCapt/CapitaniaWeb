@@ -304,9 +304,22 @@ Public Function searchName(x As String) As CFundo
 End Function
 
 Public Function searchNameBlotter(x As String) As CFundo
-    Dim y As CFundo
+    Dim y As CFundo, a As String, achou As Boolean
     For Each y In c
-        If y.nomeBlotter = x Then Set searchNameBlotter = y
+        a = y.nomeBlotter + ";"
+        i = 1
+        achou = False
+        While (InStr(i, a, ";") > 0 Or InStr(i, a, ",") > 0) And Not achou
+            j = InStr(i, a, ";")
+            If j = 0 Then j = InStr(i, a, ",")
+            a1 = Trim(Mid(a, i, j - i))
+            If a1 = Trim(x) Then
+                achou = True
+                Set searchNameBlotter = y
+            End If
+            i = j + 1
+        Wend
+        'If x = y.nomeBlotter, x Then Set searchNameBlotter = y
     Next y
 End Function
 
