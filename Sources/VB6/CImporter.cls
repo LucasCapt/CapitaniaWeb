@@ -527,7 +527,7 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
         'Importa CRM (database)
             'Database do CRM
             Set db1 = DBEngine.Workspaces(0).OpenDatabase(Config.CRMDataBase)
-            Set rs1 = db1.OpenRecordset("SELECT * FROM DEALS WHERE TIMESTAMP>=" + SQLD(d))
+            Set rs1 = db1.OpenRecordset("SELECT * FROM DEALS WHERE TIMESTAMP>=#" + Format(d, "MM/dd/yyyy") + "#")
             While Not rs1.EOF
             
                 If rs1("Timestamp") <= Now() Then

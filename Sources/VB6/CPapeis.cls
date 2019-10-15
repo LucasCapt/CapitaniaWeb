@@ -163,9 +163,10 @@ Public Sub ReadDB(Data1 As Date)
     tt1 = tt1 + Now() - t0i
     
     
-    'Lê todo o TDATV TODO:JPL CHECAR
+    'Lê todo o TDATV TODO
     t0i = Now()
-        Set rs1 = db.OpenRecordset("SELECT * FROM TADTV WHERE DATA>=" + SQLD(BaseDate - 15) + " ORDER BY NOME ASC, DATA DESC")
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT * FROM TADTV WHERE DATA>=" + SQLD(BaseDate - 15) + " ORDER BY NOME ASC, DATA DESC", db, adOpenForwardOnly, adLockReadOnly)
         AllADTVs = rs1.GetRows(rs1.RecordCount)
     tt3 = tt3 + Now() - t0i
     
