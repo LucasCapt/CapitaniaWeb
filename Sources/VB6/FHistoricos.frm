@@ -219,7 +219,7 @@ Public Sub newrefresh()
             Set rs = New ADODB.Recordset
             Call rs.open("SELECT DISTINCT FUNDO, REGRA, Month(DATA)+YEAR(DATA)*12 AS DATAINDEX FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " AND TIPO='BREACH'", db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM (SELECT DISTINCT FUNDO, REGRA, Month(DATA)+YEAR(DATA)*12 AS DATAINDEX FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " AND TIPO='BREACH') ", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM (SELECT DISTINCT FUNDO, REGRA, Month(DATA)+YEAR(DATA)*12 AS DATAINDEX FROM THISTCOMPBREACHES WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " AND TIPO='BREACH') as TTEMP ", db, adOpenForwardOnly, adLockReadOnly)
         Case "RISK"
             Grid.FormatString = "Data         |Fundo                                              |PL                     |VaR             |Stress              |Caixa                "
             Set rs = New ADODB.Recordset
@@ -285,18 +285,18 @@ Public Sub newrefresh()
             a = "SELECT X.BROKER, X.MAXDATA, X.TVALOR, y.ID, Y.CNPJ, Y.RAZAOSOCIAL, Y.ATIVIDADE, Y.ATUALIZADO FROM (SELECT DISTINCT TTRADES.BROKER, MAX(DATA)AS MAXDATA, SUM(PU*QUANT) AS TVALOR FROM TTRADES GROUP BY BROKER)X "
             a = a + "INNER JOIN TCTPT Y ON X.BROKER = Y.NOME "
             a = a + "WHERE MAXDATA <=" + SQLBaseDate + " AND MAXDATA>=" + SQLD(d) + " "
-            a = a + "ORDER BY X.MAXDATA DESC"
+            a = a + ""
             Set rs = New ADODB.Recordset
             Call rs.open(a, db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM (" + a + ")", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM (" + a + ") as TTEMP", db, adOpenForwardOnly, adLockReadOnly)
         Case "POSSOURCE"
             Grid.FormatString = "Data         |Fundo                                              |Fonte           "
-            a = "SELECT  DATA, TFUNDOS.NOME, TPOSIC.TIPO  FROM TPOSIC INNER JOIN TFUNDOS ON TPOSIC.FUNDO = TFUNDOS.ID WHERE DATA <=" + SQLBaseDate + " AND DATA>=" + SQLD(d) + " GROUP BY TFUNDOS.NOME, DATA, TPOSIC.TIPO ORDER BY DATA"
+            a = "SELECT  [DATA], TFUNDOS.NOME, TPOSIC.TIPO  FROM TPOSIC INNER JOIN TFUNDOS ON TPOSIC.FUNDO = TFUNDOS.ID WHERE [DATA] <=" + SQLBaseDate + " AND [DATA]>=" + SQLD(d) + " GROUP BY TFUNDOS.NOME, [DATA], TPOSIC.TIPO"
             Set rs = New ADODB.Recordset
             Call rs.open(a, db, adOpenForwardOnly, adLockReadOnly)
             Set rs1 = New ADODB.Recordset
-            Call rs1.open("SELECT COUNT(1) AS NUM FROM (" + a + ")", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs1.open("SELECT COUNT(1) AS NUM FROM (" + a + ") as TTemp", db, adOpenForwardOnly, adLockReadOnly)
         Case "ALLOC"
             Grid.FormatString = "Data         |<Ativo                    |<Fundo                    |C/V  |PU Fundo           |PU Geral           |^Compliant         "
             Set rs = New ADODB.Recordset
@@ -372,7 +372,11 @@ Public Sub newrefresh()
                 Case "LIQ"
                     dt = rs("DATARUN")
                     ky = rs("FUNDO")
-                    ky2 = rs("LIQ_OK")
+                    If Not rs("LIQ_OK") = Null Then
+                        ky2 = rs("LIQ_OK")
+                    Else
+                        ky2 = ""
+                    End If
                 Case "PL"
                     dt = rs("DATARUN")
                     ky = rs("FUNDO")
@@ -458,7 +462,11 @@ Public Sub newrefresh()
                             Grid.TextMatrix(L, 4) = Format(rs("Stress"), "##0.00%")
                             Grid.TextMatrix(L, 5) = Format(rs("Caixa"), "##0.00%")
                         Case "LIQ"
-                            Grid.TextMatrix(L, 2) = rs("Liq_OK")
+                            If rs("LIQ_OK") <> Null Then
+                                Grid.TextMatrix(L, 2) = rs("Liq_OK")
+                            Else
+                                Grid.TextMatrix(L, 2) = ""
+                            End If
                             Grid.TextMatrix(L, 3) = Format(rs("Liq_1"), "##0.00%")
                             Grid.TextMatrix(L, 4) = Format(rs("Liq_5"), "##0.00%")
                             Grid.TextMatrix(L, 5) = Format(rs("Liq_21"), "##0.00%")

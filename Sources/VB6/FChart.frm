@@ -326,7 +326,7 @@ Public Sub newrefresh()
 
             Set db = OpenTheDatabase
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT DATA, FUNDO, SUM(VALOR) AS VALOR1 FROM TPOSIC WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " GROUP BY FUNDO, DATA ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT DATA, FUNDO, SUM(VALOR) AS VALOR1 FROM TPOSIC WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND FUNDO =" + Str(f.ID) + " GROUP BY FUNDO, DATA ORDER BY DATA", db, adOpenKeyset, adLockReadOnly)
             CreateSingleLineChart rs, "DATA", "VALOR1"
 
         Case "TRADE"    '----------------------------------------------------< TRADES (x,y)  >
@@ -334,7 +334,7 @@ Public Sub newrefresh()
 
             Set db = OpenTheDatabase
             Set rs = New ADODB.Recordset
-            Call rs.open("SELECT DATA, ATIVO, PU FROM TTRADES WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND ATIVO ='" + Combo1 + "' ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
+            Call rs.open("SELECT DATA, ATIVO, PU FROM TTRADES WHERE DATA >=" + ds + " AND DATA<=" + SQLBaseDate + " AND ATIVO ='" + Combo1 + "' ORDER BY DATA", db, adOpenKeyset, adLockReadOnly)
             If Not rs.EOF Then
                 MSChart1.RowCount = rs.RecordCount
                 MSChart1.ColumnCount = 2
@@ -343,7 +343,7 @@ Public Sub newrefresh()
                     i = i + 1
                     MSChart1.Row = i
                     MSChart1.Column = 1
-                    MSChart1.Data = CDbl(rs("DATA"))
+                    MSChart1.Data = CDbl(CInt(Mid(rs("DATA"), 9, 2)) / CInt(Mid(rs("DATA"), 6, 2)) / CInt(Mid(rs("data"), 1, 4)))
                     MSChart1.Column = 2
                     MSChart1.Data = rs("PU")
                     rs.MoveNext
