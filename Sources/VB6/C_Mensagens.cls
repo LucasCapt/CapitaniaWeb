@@ -547,19 +547,19 @@ Private Function subStress() As String
                  FitString(Config.RStress3, LC, "R") + FitString(Config.RStress4, LC, "R") + FitString(Config.RStress5, LC, "R") + vbCr
            
     Set rs = New ADODB.Recordset
-    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress1 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress1 + "' ORDER BY FUNDO", db, adOpenKeyset, adLockReadOnly)
     If rs.RecordCount > 0 Then a1 = rs.GetRows(rs.RecordCount) Else a1 = ArrayNulo
     Set rs = New ADODB.Recordset
-    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress2 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress2 + "' ORDER BY FUNDO", db, adOpenKeyset, adLockReadOnly)
     If rs.RecordCount > 0 Then a2 = rs.GetRows(rs.RecordCount) Else a2 = ArrayNulo
     Set rs = New ADODB.Recordset
-    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress3 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress3 + "' ORDER BY FUNDO", db, adOpenKeyset, adLockReadOnly)
     If rs.RecordCount > 0 Then a3 = rs.GetRows(rs.RecordCount) Else a3 = ArrayNulo
     Set rs = New ADODB.Recordset
-    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress4 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress4 + "' ORDER BY FUNDO", db, adOpenKeyset, adLockReadOnly)
     If rs.RecordCount > 0 Then a4 = rs.GetRows(rs.RecordCount) Else a4 = ArrayNulo
     Set rs = New ADODB.Recordset
-    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress5 + "' ORDER BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
+    Call rs.open("SELECT * FROM THISTSTRESS WHERE DATARUN=" + SQLBaseDate + " AND AREA='ASSET' AND CENARIO='" + Config.RStress5 + "' ORDER BY FUNDO", db, adOpenKeyset, adLockReadOnly)
     If rs.RecordCount > 0 Then a5 = rs.GetRows(rs.RecordCount) Else a5 = ArrayNulo
     i1 = 1: i2 = 1: i3 = 1: i4 = 1: i5 = 1
     

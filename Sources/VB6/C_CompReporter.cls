@@ -155,6 +155,9 @@ Sub GravaDB(Optional frm As Form)
     Dim v As Double, s As Double, s1 As Double, i As Integer, prop As CPropriedade, trd As CTrade
     Dim t0 As Date, td As Double, ti As Integer
     Dim RR As CRuleResult
+        
+    Dim vSQL As String
+    Dim vContador As Integer
     
     If MainStatus = "LIVE" Then
         t0 = Now()
@@ -177,9 +180,7 @@ Sub GravaDB(Optional frm As Form)
             db.Execute ("DELETE FROM THISTCOMPBREACHES WHERE DATA = " + SQLBaseDate)
             
             For Each f In Fundos.c
-                DoEvents
                 For Each b In f.MyBooks
-                    DoEvents
                     ruls = ""
                     ruls1 = ""
                     u = f.IAmCompliantWithBook(b, "ALL")
@@ -197,16 +198,16 @@ Sub GravaDB(Optional frm As Form)
                                 End If
                                 ruls = ruls + ", " + r.nome
                                 ruls1 = ruls1 + "-->" + RR.Compliant + ":" + r.nome + ":" + r.Extensa + "<--"
-                                db.Execute ("INSERT INTO THISTCOMPBREACHES (DATA, FUNDO, TIPO, LIVRO, REGRA, REGRATEXTO, ALOCACAO, DELTA, ESCOPO, PAPEIS, VERSAO, TIPOLIMITE) VALUES (" + _
+                                Call db.Execute("INSERT INTO THISTCOMPBREACHES (DATA, FUNDO, TIPO, LIVRO, REGRA, REGRATEXTO, ALOCACAO, DELTA, ESCOPO, PAPEIS, VERSAO, TIPOLIMITE) VALUES (" + _
                                     SQLBaseDate + ", '" + _
-                                    f.nome + "', '" + RR.Compliant + "', '" + b.nome + "', '" + r.nome + "', '" + r.Extensa + "', " + Str(RR.MaxOut * m) + "," + Str(RR.DeltaOut) + ",'" + r.Escopo + "','" + RR.PapelDescr + "',3,'" + u2 + "')")
+                                    f.nome + "', '" + RR.Compliant + "', '" + b.nome + "', '" + r.nome + "', '" + r.Extensa + "', " + Str(RR.MaxOut * m) + "," + Str(RR.DeltaOut) + ",'" + r.Escopo + "','" + RR.PapelDescr + "',3,'" + u2 + "')", , adCmdText + adExecuteNoRecords)
                             End If
                         Next r
                     End If
                     'Grava o arquivo de teste de compliance
-                    db.Execute ("INSERT INTO THISTCOMPL (DATA, DATAINFO, FUNDO, LIVRO, RESULT, RULEBREACHES, DATAWRITE, FUNDSTATUS, RULEBREACHTEXT) VALUES (" + _
+                    Call db.Execute("INSERT INTO THISTCOMPL (DATA, DATAINFO, FUNDO, LIVRO, RESULT, RULEBREACHES, DATAWRITE, FUNDSTATUS, RULEBREACHTEXT) VALUES (" + _
                      SQLBaseDate + "," + SQLD(f.Dt_LastInfo) + ", '" + _
-                    f.nome + "','" + b.nome + "','" + u + "','" + ruls + "', '" + Format(Now(), "YYYY-MM-DD HH:MM:SS") + "', '" + f.CarteiraUpdateStatus + "', '" + ruls1 + "')")
+                    f.nome + "','" + b.nome + "','" + u + "','" + ruls + "', '" + Format(Now(), "YYYY-MM-DD HH:MM:SS") + "', '" + f.CarteiraUpdateStatus + "', '" + ruls1 + "')", , adCmdText + adExecuteNoRecords)
                 Next b
             Next f 'Próximo fundo
                 
@@ -222,7 +223,6 @@ Sub GravaDB(Optional frm As Form)
             End If
             
             For Each f In Fundos.c
-                DoEvents
                 order = "INSERT INTO THISTRISK (DATAWRITE, DATARUN, DATAINFO, FUNDO, PL, VAR, VARQUOTA, STRESS, E_IMOB, E_INFL, E_PRE, E_DOLAR, CAIXA, DISP, "
                 order = order + "LIQ_OK, LIQ_1, LIQ_5, LIQ_21, LIQ_42, LIQ_63, LIQ_126, LIQ_252, "
                 order = order + "REQ_CASH_1, REQ_CASH_5, REQ_CASH_21, REQ_CASH_42, REQ_CASH_63, REQ_CASH_126, REQ_CASH_252, "
@@ -298,20 +298,33 @@ Sub GravaDB(Optional frm As Form)
                 
                 order = order + ")"
                     
-                db.Execute (order)
+                Call db.Execute(order)
             Next f 'Próximo fundo (grava risco)
             
         'Grava Resultados de Stress
+            vContador = 0
+            vSQL = Empty
             If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Stress")
             db.Execute ("DELETE FROM THISTSTRESS WHERE DATARUN = " + SQLBaseDate)
             For Each f In Fundos.c
                 For Each h In Stress.ListaDeCenarios
-                    DoEvents
-                    If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Stress  Fundo " & Trim(f.nome) & "Cenario " & h.nome)
+                    'If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Stress  Fundo " & Trim(f.nome) & "Cenario " & h.nome)
                     v = Stress.ApplyToFund(h.nome, f)
-                    db.Execute ("INSERT INTO THISTSTRESS (DATARUN, FUNDO, CENARIO, STRESS, AREA) VALUES (" + _
-                        SQLBaseDate + ",'" + f.nome + "','" + h.nome + "'," + Str(v) + ",'" + f.area + "')")
+                    If (vContador = 500) Then
+                        Call db.Execute(vSQL)
+                        vContador = 0
+                        vSQL = Empty
+                    Else
+                        vSQL = vSQL & "INSERT INTO THISTSTRESS (DATARUN, FUNDO, CENARIO, STRESS, AREA) VALUES (" + _
+                        SQLBaseDate + ",'" + f.nome + "','" + h.nome + "'," + Str(v) + ",'" + f.area + "');"
+                        vContador = vContador + 1
+                    End If
                 Next h
+                If (vContador > 0) Then
+                    Call db.Execute(vSQL)
+                    vContador = 0
+                    vSQL = Empty
+                End If
                 'Grava a provisao
             Next f 'Próximo fundo (Resultado de Stress)
             
@@ -319,11 +332,15 @@ Sub GravaDB(Optional frm As Form)
             If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Concentração")
             db.Execute ("DELETE FROM TCONCENTRA WHERE DATA = " + SQLBaseDate)
             
+            Dim vComand As ADODB.Command
+            Set vComand = New ADODB.Command
+            Set vComand.ActiveConnection = db
+            
+            vSQL = Empty
+            vContador = 0
             For Each f In Fundos.c
                 s = f.PLTotal
-                DoEvents
                 For i = 1 To 3
-                    DoEvents
                     u = Config.ConcentrationP(i)
                     Set prop = Props.searchName(u)
                     If Not prop Is Nothing Then
@@ -331,16 +348,28 @@ Sub GravaDB(Optional frm As Form)
                         If px > 0 Then
                             Set c = f.MyConcentration(px)
                             For Each h In c
-                                DoEvents
                                 If s = 0 Then s1 = 0 Else s1 = h.Valor / s
-                                If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Concentração Fundo " & f.nome & " Propriedade " & u)
-                                db.Execute ("INSERT INTO TCONCENTRA (DATA, NOME, PROPRIEDADE, VALORPROP, CONCENTRACAO) VALUES " + _
-                                "(" + SQLBaseDate + "," + _
-                                "'" + f.nome + "'," + _
-                                "'" + u + "'," + _
-                                "'" + h.nome + "'," + _
-                                Str(s1) + ")")
+                                'If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Concentração Fundo " & f.nome & " Propriedade " & u & " Concentração: " & h.nome)
+                                
+                                If vContador = 500 Then
+                                    Call db.Execute(vSQL)
+                                    vContador = 0
+                                    vSQL = Empty
+                                Else
+                                    vSQL = vSQL & "INSERT INTO TCONCENTRA (DATA, NOME, PROPRIEDADE, VALORPROP, CONCENTRACAO) VALUES " + _
+                                                  "(" + SQLBaseDate + "," + _
+                                                  "'" + f.nome + "'," + _
+                                                  "'" + u + "'," + _
+                                                  "'" + h.nome + "'," + _
+                                                  Str(s1) + ");" & vbCr
+                                    vContador = vContador + 1
+                                End If
                             Next h
+                            If (vContador) > 0 Then
+                                Call db.Execute(vSQL)
+                                vContador = 0
+                                vSQL = Empty
+                            End If
                         End If
                     End If
                 Next i
