@@ -526,31 +526,31 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
         
         'Importa CRM (database)
             'Database do CRM
-            Set db1 = DBEngine.Workspaces(0).OpenDatabase(Config.CRMDataBase)
-            Set rs1 = db1.OpenRecordset("SELECT * FROM DEALS WHERE TIMESTAMP>=#" + Format(d, "MM/dd/yyyy") + "#")
-            While Not rs1.EOF
-            
-                If rs1("Timestamp") <= Now() Then
-                
-                    d1 = rs1("Timestamp")
-                    f1 = rs1("Book")
-                    a1 = rs1("Instrument")
-                    If rs1("BuySell") = "Buy" Then CV = "C" Else CV = "V"
-                    q1 = rs1("Amount")
-                    t1 = rs1("Price")
-                    If Left(Ativo, 3) = "LFT" And rs1("Unitvalue") < 100 Then p1 = rs1("Unitvalue") * 1000 Else p1 = rs1("Unitvalue")
-                    b1 = rs1("Corretora")
-                    PR = rs1("Strategy")
-                    NA = a1
-                    vf = CritNN(rs1("Value"))
-                    
-                    db.Execute ("INSERT INTO TTRADES (DATA, HORA, HORA_MS, FUNDO, ATIVO, CV, QUANT, TAXA, PU, PRICEREF, PRICESRC, BROKER, PRODUTO, NOMEATIVO, VALFIN) VALUES ( " + _
-                    SQLD(d1) + ", '" + Format(Now(), "hh:mm:ss") + "'," + Str(Timer()) + ",'" + f1 + "','" + a1 + "','" + CV + "'," + Str(q1) + "," + Str(t1) + "," + Str(p1) + ",0,'','" + b1 + "','" + PR + "','" + NA + "'," + Str(vf) + ")")
-                
-                End If
-                rs1.MoveNext
-            Wend
-            db1.Close
+'            Set db1 = DBEngine.Workspaces(0).OpenDatabase(Config.CRMDataBase)
+'            Set rs1 = db1.OpenRecordset("SELECT * FROM DEALS WHERE TIMESTAMP>=#" + Format(d, "MM/dd/yyyy") + "#")
+'            While Not rs1.EOF
+'
+'                If rs1("Timestamp") <= Now() Then
+'
+'                    d1 = rs1("Timestamp")
+'                    f1 = rs1("Book")
+'                    a1 = rs1("Instrument")
+'                    If rs1("BuySell") = "Buy" Then CV = "C" Else CV = "V"
+'                    q1 = rs1("Amount")
+'                    t1 = rs1("Price")
+'                    If Left(Ativo, 3) = "LFT" And rs1("Unitvalue") < 100 Then p1 = rs1("Unitvalue") * 1000 Else p1 = rs1("Unitvalue")
+'                    b1 = rs1("Corretora")
+'                    PR = rs1("Strategy")
+'                    NA = a1
+'                    vf = CritNN(rs1("Value"))
+'
+'                    db.Execute ("INSERT INTO TTRADES (DATA, HORA, HORA_MS, FUNDO, ATIVO, CV, QUANT, TAXA, PU, PRICEREF, PRICESRC, BROKER, PRODUTO, NOMEATIVO, VALFIN) VALUES ( " + _
+'                    SQLD(d1) + ", '" + Format(Now(), "hh:mm:ss") + "'," + Str(Timer()) + ",'" + f1 + "','" + a1 + "','" + CV + "'," + Str(q1) + "," + Str(t1) + "," + Str(p1) + ",0,'','" + b1 + "','" + PR + "','" + NA + "'," + Str(vf) + ")")
+'
+'                End If
+'                rs1.MoveNext
+'            Wend
+'            db1.Close
         
         'Importa Trdes de RFE (arquivo .xls)
             If FileSystem.Dir(Config.RFETradeSheet) <> "" Then

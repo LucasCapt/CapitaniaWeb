@@ -218,11 +218,14 @@ Sub GravaDB(Optional frm As Form)
             Dim vConexaoTemp As ADODB.Connection
             If (vConexaoTemp Is Nothing) Then
                 Set vConexaoTemp = New ADODB.Connection
-                Let vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
+                Let vConnectionString = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
+                'Let vConnectionString = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
                 Call vConexaoTemp.open(vConnectionString)
             End If
             
             For Each f In Fundos.c
+                DoEvents
+                If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Risco e Liquidez Fundo " & f.nome)
                 order = "INSERT INTO THISTRISK (DATAWRITE, DATARUN, DATAINFO, FUNDO, PL, VAR, VARQUOTA, STRESS, E_IMOB, E_INFL, E_PRE, E_DOLAR, CAIXA, DISP, "
                 order = order + "LIQ_OK, LIQ_1, LIQ_5, LIQ_21, LIQ_42, LIQ_63, LIQ_126, LIQ_252, "
                 order = order + "REQ_CASH_1, REQ_CASH_5, REQ_CASH_21, REQ_CASH_42, REQ_CASH_63, REQ_CASH_126, REQ_CASH_252, "
@@ -308,7 +311,8 @@ Sub GravaDB(Optional frm As Form)
             db.Execute ("DELETE FROM THISTSTRESS WHERE DATARUN = " + SQLBaseDate)
             For Each f In Fundos.c
                 For Each h In Stress.ListaDeCenarios
-                    'If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Stress  Fundo " & Trim(f.nome) & "Cenario " & h.nome)
+                    DoEvents
+                    If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Stress  Fundo " & Trim(f.nome) & "Cenario " & h.nome)
                     v = Stress.ApplyToFund(h.nome, f)
                     If (vContador = 500) Then
                         Call db.Execute(vSQL)
@@ -349,9 +353,9 @@ Sub GravaDB(Optional frm As Form)
                             Set c = f.MyConcentration(px)
                             For Each h In c
                                 If s = 0 Then s1 = 0 Else s1 = h.Valor / s
-                                'If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Concentração Fundo " & f.nome & " Propriedade " & u & " Concentração: " & h.nome)
-                                
-                                If vContador = 500 Then
+                                DoEvents
+                                If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Concentração Fundo " & f.nome & " Propriedade " & u & " Concentração: " & h.nome)
+                                If vContador = 1000 Then
                                     Call db.Execute(vSQL)
                                     vContador = 0
                                     vSQL = Empty

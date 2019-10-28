@@ -87,7 +87,8 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             Dim vConexaoTemp As ADODB.Connection
             If (vConexaoTemp Is Nothing) Then
                 Set vConexaoTemp = New ADODB.Connection
-                vConnectionString = "Provider=SQLNCLI11;Server=Win10Dev;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
+                vConnectionString = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
+                'vConnectionString = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
                 Call vConexaoTemp.open(vConnectionString)
             End If
             Set rs1 = New ADODB.Recordset
@@ -342,7 +343,7 @@ Public Function Cria(x As String) As CFundo
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
             
-        db.Execute ("INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(LastNumber + 1) + ",'" + x + "', '', 0, '', " + SQLBaseDate + "," + SQLBaseDate + ",0)")
+        db.Execute ("INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, DT_CREATED, DT_DELETED, DELETED, RULE_NOCRSSTRD, OVERRIDELIMITS, CREDLIMREGULAM, FAVORIT_CASH, FAVORIT_CREDIT, FAVORIT_MKT, RULE_NODAYTRD) VALUES (" + Str(LastNumber + 1) + ",'" + x + "', '', 0, '', " + SQLBaseDate + "," + SQLBaseDate + ",0, 0, 0, 0, 0, 0, 0, 0)")
         
         
         Set y = New CFundo

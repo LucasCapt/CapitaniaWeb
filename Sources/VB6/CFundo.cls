@@ -273,29 +273,31 @@ Public Sub Consolida()
     End Select
     
     Set b2 = New Collection
-    For Each y In b
-        achou = False
-        For Each z In b2
-            If z.Papel.ID = y.Papel.ID And z.LiqConstraint = y.LiqConstraint Then
-                z.Valor0 = z.Valor0 + y.Valor0
-                z.Quant0 = z.Quant0 + y.Quant0
-                z.ValorD = z.ValorD + y.ValorD
-                z.QuantD = z.QuantD + y.QuantD
-                achou = True
+    If Not b Is Nothing Then
+        For Each y In b
+            achou = False
+            For Each z In b2
+                If z.Papel.ID = y.Papel.ID And z.LiqConstraint = y.LiqConstraint Then
+                    z.Valor0 = z.Valor0 + y.Valor0
+                    z.Quant0 = z.Quant0 + y.Quant0
+                    z.ValorD = z.ValorD + y.ValorD
+                    z.QuantD = z.QuantD + y.QuantD
+                    achou = True
+                End If
+            Next z
+            If Not achou Then
+                Set z = New CPosic
+                z.Fundo = Me.ID
+                Set z.Papel = y.Papel
+                z.Valor0 = y.Valor0
+                z.Quant0 = y.Quant0
+                z.ValorD = y.ValorD
+                z.QuantD = y.QuantD
+                z.LiqConstraint = y.LiqConstraint
+                b2.Add z
             End If
-        Next z
-        If Not achou Then
-            Set z = New CPosic
-            z.Fundo = Me.ID
-            Set z.Papel = y.Papel
-            z.Valor0 = y.Valor0
-            z.Quant0 = y.Quant0
-            z.ValorD = y.ValorD
-            z.QuantD = y.QuantD
-            z.LiqConstraint = y.LiqConstraint
-            b2.Add z
-        End If
-    Next y
+        Next y
+    End If
   
     Set MyPosicConsol = b2
 End Sub
@@ -733,13 +735,13 @@ Public Sub WriteDB()
         'If Me.OverrideLimit Then u = "TRUE" Else u = "FALSE"
         'If Me.LimCredReg Then u2 = "TRUE" Else u2 = "FALSE"
         
-        u = Bol2String(Me.OverrideLimit)
-        u2 = Bol2String(Me.LimCredReg)
-        U3 = Bol2String(Me.Favorit_Cash)
-        u4 = Bol2String(Me.Favorit_Credit)
-        u5 = Bol2String(Me.Favorit_Mkt)
-        u6 = Bol2String(Me.Rule_NoDayTrd)
-        u7 = Bol2String(Me.Rule_NoCrssTrd)
+        u = IIf(Me.OverrideLimit, "1", "0")
+        u2 = IIf(Me.LimCredReg, "1", "0")
+        U3 = IIf(Me.Favorit_Cash, "1", "0")
+        u4 = IIf(Me.Favorit_Credit, "1", "0")
+        u5 = IIf(Me.Favorit_Mkt, "1", "0")
+        u6 = IIf(Me.Rule_NoDayTrd, "1", "0")
+        u7 = IIf(Me.Rule_NoCrssTrd, "1", "0")
         
         order = "INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, CONSOLIDATION, " + _
                 "TIPO, PRAZORESGATE, LIQNOME, LIQMETHOD, CAIXAMANDATO, " + _
