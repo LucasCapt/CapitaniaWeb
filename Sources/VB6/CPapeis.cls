@@ -448,7 +448,7 @@ Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
     
     If MainStatus = "LIVE" Then
         
-        If Obj.Fundo Then s2 = "TRUE" Else s2 = "FALSE"
+        If Obj.Fundo Then s2 = "1" Else s2 = "0"
         se = SQLD(Obj.Dt_Emissao)
         sv = SQLD(Obj.Dt_Venc)
         If Obj.Dt_Created <= LongTimeAgo Then

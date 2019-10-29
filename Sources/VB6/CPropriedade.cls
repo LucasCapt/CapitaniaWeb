@@ -94,7 +94,7 @@ Public Sub WriteDB()
             rs.Close
         End If
             
-        If Me.ValorLivre Then u1 = "TRUE" Else u1 = "FALSE"
+        If Me.ValorLivre Then u1 = "1" Else u1 = "0"
         db.Execute ("INSERT INTO TPROPRIEDADES (ID, NOME, VALORLIVRE) VALUES (" + Str(Me.ID) + ", '" + Me.nome + "'," + u1 + ")")
         
         db.Execute ("DELETE FROM TPROPVALUES WHERE PROPRIEDADE=" + Str(Me.ID))

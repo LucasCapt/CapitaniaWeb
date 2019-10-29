@@ -429,7 +429,7 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
                 db.Execute (FrontString + "'FALTA FUNDO','FALTA FUNDO',FALSE)")
             Else
                 'o trade foi endereçado e tem fundo. Procurar o PTC do fundo
-                St_ok = "TRUE"
+                St_ok = "1"
                 St_Obs = ""
                 St_Status = "OK"
                 achou = False
@@ -439,7 +439,7 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
                     If u.MyTrade Is td Then
                         If u.Result > 1 Then
                             St_Obs = St_Obs + u.regra.nome + " "
-                            St_ok = "FALSE"
+                            St_ok = "0"
                             If u.Result = 3 Then
                                 St_Status = "VIOLOU"
                             ElseIf u.Result = 2 And St_Status <> "VIOLOU" Then

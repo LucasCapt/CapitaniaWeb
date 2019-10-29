@@ -91,18 +91,18 @@ Public Sub WriteDB()
             rs.Close
         End If
         
-        If Me.Por Then sbPor = "TRUE" Else sbPor = "FALSE"
-        If Me.PARA Then sbPara = "TRUE" Else sbPara = "FALSE"
+        If Me.Por Then sbPor = "1" Else sbPor = "0"
+        If Me.PARA Then sbPara = "1" Else sbPara = "0"
         
-        If Me.ANDRule Then sbAND = "TRUE" Else sbAND = "FALSE"
-        If Me.AND2Rule Then sbAND2 = "TRUE" Else sbAND2 = "FALSE"
-        If Me.AND3Rule Then sbAND3 = "TRUE" Else sbAND3 = "FALSE"
-        If Me.Conector Then sbConector = "TRUE" Else sbConector = "FALSE"
+        If Me.ANDRule Then sbAND = "1" Else sbAND = "0"
+        If Me.AND2Rule Then sbAND2 = "1" Else sbAND2 = "0"
+        If Me.AND3Rule Then sbAND3 = "1" Else sbAND3 = "0"
+        If Me.Conector Then sbConector = "1" Else sbConector = "0"
         
-        If Me.Aberta Then sbAb = "TRUE" Else sbAb = "FALSE"
-        If Me.MovementRule Then sMov = "TRUE" Else sMov = "FALSE"
-        sbissue = "FALSE" 'Versão nova usa LIM_REF
-        sbquant = "FALSE" 'Versão nova usa LIM_REF
+        If Me.Aberta Then sbAb = "1" Else sbAb = "0"
+        If Me.MovementRule Then sMov = "1" Else sMov = "0"
+        sbissue = "0" 'Versão nova usa LIM_REF
+        sbquant = "0" 'Versão nova usa LIM_REF
         
         dst = "" + SQLBaseDate + ""
         If Me.Por_Prop Is Nothing Then SpPor = "0" Else SpPor = Str(Me.Por_Prop.ID)
