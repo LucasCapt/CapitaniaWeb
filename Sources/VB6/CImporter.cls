@@ -11,6 +11,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'V. 2.128 - Alterado o ImportaPricing
+'           para não repetir ativo nem pegar ativos tipo CRIPR e CRIVT
+
 Public LastDate
 
 Private Excel As Object
@@ -91,6 +94,9 @@ End Sub
 Sub ImportaPricing(Level As Integer, Optional f As Form)
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, LastDate As Date, d As Date
     Dim nome As String, L As String, fdo As String, pp As String, vl As String
+    Dim AllPpr As String, TipoPpr As String
+    
+    AllPpr = ""
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("PRICING")) Then
     
@@ -117,8 +123,9 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                 nome = Config.PricingFilePrefix + Format(Year(d), "0000") + Format(Month(d), "00") + Format(Day(d), "00") + ".txt"
                 
                 If FileExists(nome) Then
-                    '---------Importa da Planilha
-                    If Not f Is Nothing Then f.Say ("Importando pricing " + Format(d, "dd-MMM-yy"))
+                
+                    '---------Importa do arquivo texto
+                    If Not f Is Nothing Then f.Say ("Importando pricing txt " + Format(d, "dd-MMM-yy"))
                     Open nome For Input As 1
                     
                     If Not EOF(1) Then Line Input #1, L
@@ -141,7 +148,21 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                                 Ativo = Ativo + Mid(L, i, 1)
                                 i = i + 1
                             Wend
+                            TipoPpr = ""
+                            If Mid(L, i, 1) = ";" Then
+                                'Separa o próximo campo --> TipoPpr
+                                While i < Len(L) And Mid(L, i, 1) <> ";"
+                                    TipoPpr = TipoPpr + Mid(L, i, 1)
+                                    i = i + 1
+                                Wend
                         End If
+                        End If
+                        
+                        'Verifica se a linha não é de um ativo (códigos proibidos) e se o ativo não é repetido
+                        If TipoPpr <> "CRIVT" And TipoPpr <> "CRIPR" And TipoPpr <> "DEBVT" And TipoPpr <> "DBPRV" And InStr(AllPpr, "\" + Ativo + "\") = 0 Then
+                        
+                            'Acrescenta o ativo entre os já processados
+                            AllPpr = AllPpr + "\" + Ativo + "\"
                         
                         'Procura a 2a virgula de tras p/ frente e separa o preço
                         i = Len(L)
@@ -156,13 +177,16 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                         db.Execute ("DELETE FROM TPRICING WHERE DATAOBS=" + SQLD(d) + " AND ATIVO='" + Ativo + "'")
                         db.Execute ("INSERT INTO TPRICING (DATAOBS, ATIVO, PRECO) VALUES (" + SQLD(d) + ", '" + Ativo + "', " + preco + ")")
                         
+                        End If
+                        
                     Wend
                     Close 1
-                End If 'FileExists
+                End If 'FileExists (importação do arquivo-texto)
                     
                     
                 If Not ws Is Nothing Then
                     '-------- Importa FII/ debentures (uma vez que importa, trava a importação do anterior)
+                    If Not f Is Nothing Then f.Say ("Importando pricing Excel " + Format(d, "dd-MMM-yy"))
                     j = 1
                     While ws.cells(1, j) <> ""
                         DoEvents
