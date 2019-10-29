@@ -65,7 +65,7 @@ Public Sub WriteDB()
             rs.Close
         End If
         
-        db.Execute ("INSERT INTO TRULEBOOKS (ID, NOME, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(Me.ID) + ", '" + Me.nome + "'," + SQLD(dtcriado) + "," + SQLBaseDate + ",FALSE)")
+        db.Execute ("INSERT INTO TRULEBOOKS (ID, NOME, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(Me.ID) + ", '" + Me.nome + "'," + SQLD(dtcriado) + "," + SQLBaseDate + ",0)")
         
         db.Execute ("DELETE FROM TBOOKREGRA WHERE RULEBOOK=" + Str(Me.ID))
         For Each b In c

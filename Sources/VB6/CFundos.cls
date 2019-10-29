@@ -503,6 +503,7 @@ Public Sub PreTradeCompliance(Mandatory As Boolean, Optional Form1 As Form)
     t0 = Now()
     N = 0
     For Each f In c
+        DoEvents
         If Not Form1 Is Nothing Then Form1.Say ("Executando Pré-Trade Compliance - " + f.nome)
         If Not f.PTCExecuted Or Mandatory Then
             f.PreTradeCompliance

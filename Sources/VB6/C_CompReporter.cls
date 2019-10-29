@@ -398,6 +398,7 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
     
     '---Reporta para TPTC
         For Each f In Fundos.c
+            DoEvents
             If f.area = "ASSET" Then
                 If Not f.PTCExecuted Then f.PreTradeCompliance
                 Select Case f.PTCResult
@@ -418,15 +419,16 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
     '---Reporta para TPTCDETAIL
         
         For Each td In Trades.CTodayTrades
+            DoEvents
             'Reporta os não endereçados
             achou = False
             FrontString = "INSERT INTO TPTCDETAIL (DATARUN, DATA, ACTIONBY, TRADEKEY, FUNDO, ADDR, STATUS, OBS, OK) VALUES (" + _
                 ReportTime + "," + SQLBaseDate + ",'" + ActionBy + "','" + td.TradeKey + "','" + td.Fundo + "','" + td.Addr + "',"
             
             If td.Addr <> "OK" Then
-                db.Execute (FrontString + "'NAO ENDERECADO','NAO ENDERECADO',FALSE)")
+                db.Execute (FrontString + "'NAO ENDERECADO','NAO ENDERECADO',0)")
             ElseIf td.MyFund Is Nothing Then
-                db.Execute (FrontString + "'FALTA FUNDO','FALTA FUNDO',FALSE)")
+                db.Execute (FrontString + "'FALTA FUNDO','FALTA FUNDO',0)")
             Else
                 'o trade foi endereçado e tem fundo. Procurar o PTC do fundo
                 St_ok = "1"
@@ -451,7 +453,7 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
                 Next u
                 If achou _
                     Then db.Execute (FrontString + "'" + St_Status + "','" + St_Obs + "'," + St_ok + ")") _
-                    Else db.Execute (FrontString + "'NAO ACHOU TRADE NO FUNDO','NAO ACHOU TRADE NO FUNDO',FALSE)")
+                    Else db.Execute (FrontString + "'NAO ACHOU TRADE NO FUNDO','NAO ACHOU TRADE NO FUNDO',0)")
             End If
         Next td
     
