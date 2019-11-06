@@ -73,7 +73,8 @@ Public NumErrors As Double             'Número de erros desde a última revisão
 'Public Const Ver = "2.123"               '13-Aug-2019
 'Public Const Ver = "2.125"               '18-Aug-2019
 'Public Const Ver = "2.126"               '09-Out-2019 'Alteração no FCreditRisk
-Public Const Ver = "2.127"               '10-Out-2019 'Alteração no MMath
+'Public Const Ver = "2.127"               '10-Out-2019 'Alteração no MMath
+Public Const Ver = "2.128"               '14-Out-2019 'Alteração no CImporter
 
 Sub Init()
     

@@ -1554,8 +1554,8 @@ Public Sub Layt22MainParaData(d As Date)
                 "[INDEX], COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO) VALUES " + _
                 "('" + pp.nome + "', '" + _
                 pp.ID + "','" + _
-                pp.Status + "', '" + _
-                s2 + "', '" + _
+                pp.Status + "', " + _
+                s2 + ", '" + _
                 pp.Class_Liq + "','" _
                 + pp.Class_Rent + "'," + _
                 SQLD(pp.Dt_Emissao) + " , " + _

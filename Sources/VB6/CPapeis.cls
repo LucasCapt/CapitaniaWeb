@@ -183,7 +183,7 @@ Public Sub ReadDB(Data1 As Date)
         x.ISIN = CritS(rs("ISIN"))
         x.CNPJ = CritS(rs("CNPJ"))
         x.Status = rs("Status")
-        x.Fundo = rs("Fundo")
+        x.Fundo = (rs("Fundo") = 1)
         x.IDFluxo = crit(rs("CashFlow_ID"))
         x.Tipo = CritS(rs("Tipo"))
         x.Class_Liq = crit(rs("Class_Liq"))
@@ -462,11 +462,6 @@ Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
         Call rs.open("SELECT * FROM TPAPEL WHERE ID='" + Obj.ID + "'", db, adOpenForwardOnly, adLockReadOnly)
         
         If rs.EOF Or UpdateIfDuplicated Then
-                If s2 = "FALSE" Then
-                    s2 = 0
-                Else
-                    s2 = 1
-                End If
             'Coloca no Database
                 db.Execute ("DELETE FROM TPAPEL WHERE ID='" + Obj.ID + "'")
                 db.Execute ("INSERT INTO TPAPEL (NOME, ID, STATUS, FUNDO, CLASS_LIQ, CLASS_RENTAB, DATA_EMISSAO, DATA_VENCTO, " + _
