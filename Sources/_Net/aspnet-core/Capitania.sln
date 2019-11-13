@@ -21,7 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capitania.Web.Core", "src\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capitania.Web.Mvc", "src\Capitania.Web.Mvc\Capitania.Web.Mvc.csproj", "{A2213374-BB48-48FD-BBD4-81E6A961D866}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capitania.EntityFrameworkCore", "src\Capitania.EntityFrameworkCore\Capitania.EntityFrameworkCore.csproj", "{E0580562-F8F2-4EBB-B07A-ABFC6F2C314F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Capitania.EntityFrameworkCore", "src\Capitania.EntityFrameworkCore\Capitania.EntityFrameworkCore.csproj", "{E0580562-F8F2-4EBB-B07A-ABFC6F2C314F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capitania.Importer", "Capitania.Importer\Capitania.Importer.csproj", "{ABAD8BB4-1D26-47DC-9C51-CFAFC7A9BE51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capitania.Importer.Library", "Capitania.Importer.Library\Capitania.Importer.Library.csproj", "{27317643-93FD-49E2-8C5A-A933D3C38A90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +65,14 @@ Global
 		{E0580562-F8F2-4EBB-B07A-ABFC6F2C314F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0580562-F8F2-4EBB-B07A-ABFC6F2C314F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0580562-F8F2-4EBB-B07A-ABFC6F2C314F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABAD8BB4-1D26-47DC-9C51-CFAFC7A9BE51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABAD8BB4-1D26-47DC-9C51-CFAFC7A9BE51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABAD8BB4-1D26-47DC-9C51-CFAFC7A9BE51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABAD8BB4-1D26-47DC-9C51-CFAFC7A9BE51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27317643-93FD-49E2-8C5A-A933D3C38A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27317643-93FD-49E2-8C5A-A933D3C38A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27317643-93FD-49E2-8C5A-A933D3C38A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27317643-93FD-49E2-8C5A-A933D3C38A90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +86,10 @@ Global
 		{22CFE0D2-8DCA-42D7-AD7D-784C3862493F} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
 		{A2213374-BB48-48FD-BBD4-81E6A961D866} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
 		{E0580562-F8F2-4EBB-B07A-ABFC6F2C314F} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
+		{ABAD8BB4-1D26-47DC-9C51-CFAFC7A9BE51} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
+		{27317643-93FD-49E2-8C5A-A933D3C38A90} = {AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2498958C-9284-4C45-B1E9-AB27A6113FF3}
 	EndGlobalSection
 EndGlobal
