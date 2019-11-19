@@ -95,5 +95,12 @@
     <text name="Skins">Skins</text>
     <text name="Settings">Settings</text>
     <text name="Filter">Filter</text>
+    
+    <!--Capitania-->    
+    <text name="TConfigurations">Configurations</text>
+    <text name="TConfigurations.Code">Code</text>
+    <text name="TConfigurations.Description">Description</text>
+    <text name="TConfigurations.Value">Value</text>
+    
   </texts>
 </localizationDictionary>

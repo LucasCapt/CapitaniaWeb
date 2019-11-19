@@ -4,14 +4,16 @@ using Capitania.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Capitania.Migrations
 {
     [DbContext(typeof(CapitaniaDbContext))]
-    partial class CapitaniaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191114161932_Initial Database")]
+    partial class InitialDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1082,25 +1084,6 @@ namespace Capitania.Migrations
                     b.HasIndex("TenancyName");
 
                     b.ToTable("AbpTenants");
-                });
-
-            modelBuilder.Entity("Capitania.TConfiguracao.TConfiguracao", b =>
-                {
-                    b.Property<string>("Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("cfg_param");
-
-                    b.Property<string>("Descricao")
-                        .HasColumnName("cfg_descricao");
-
-                    b.Property<string>("Id");
-
-                    b.Property<string>("Valor")
-                        .HasColumnName("cfg_valor");
-
-                    b.HasKey("Codigo");
-
-                    b.ToTable("TConfiguracao");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>

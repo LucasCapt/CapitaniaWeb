@@ -1262,7 +1262,7 @@ Public Sub Layt22MainParaData(d As Date)
         '---------------------------------------------< Tenta achar o papel já existente (no database)
         PapelAchado = False
         Call FStart.Say("Importando posição XML " & d & " Fundo: " & rs("fundo") & " Papel: " & rs("PAPEL_ISIN"))
-        If rs("COMPROMISSADA") Then
+        If rs("COMPROMISSADA") = 1 Then
             'É compromissada
             Set rs1 = New ADODB.Recordset
             Call rs1.open("SELECT * FROM TPAPEL WHERE ID='OVER'", db, adOpenForwardOnly, adLockReadOnly)
@@ -1371,7 +1371,7 @@ Public Sub Layt22MainParaData(d As Date)
             
             Set pp = New CPapel
             
-            If rs("COMPROMISSADA") Then
+            If rs("COMPROMISSADA") = 1 Then
             
                 pp.ID = "OVER"
                 pp.ISIN = "OVER"
