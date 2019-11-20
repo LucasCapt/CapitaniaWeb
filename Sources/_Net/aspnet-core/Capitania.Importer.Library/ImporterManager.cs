@@ -531,12 +531,10 @@ namespace Capitania.Importer.Library
                                 vSQL.AppendLine("delete from TPosic");
                                 vSQL.AppendLine(String.Format(" where DATA = '{0}'", data.ToString("yyyy-MM-dd")));
                                 vSQL.AppendLine(String.Format("   and FUNDO = {0}", vIDFundo));
-                                using (SqlConnection vConexao = new )
+                                using (SqlCommand vComandoDelete = new SqlCommand(vSQL.ToString(), vConection))
                                 {
-
+                                    vComandoDelete.ExecuteNonQuery();
                                 }
-                                vContexto.TPosic.RemoveRange(vContexto.TPosic.Where(w => w.DATA.Value.Date == data.Date && w.FUNDO == vIDFundo));
-                                vContexto.SaveChanges();
                             }
 
                             vSQL = new StringBuilder();
