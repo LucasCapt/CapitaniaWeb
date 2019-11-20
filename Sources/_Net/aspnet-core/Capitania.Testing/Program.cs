@@ -10,8 +10,8 @@ namespace Capitania.Testing
     {
         static void Main(string[] args)
         {
-            //Capitania.Importer.Library.ImporterManager.Initialize();
-            Capitania.Importer.Library.ImporterManager.ImportarPosicao();
+            Capitania.Importer.Library.ImporterManager.Initialize();
+            //Capitania.Importer.Library.ImporterManager.ImportarPosicao();
         }
     }
 }
