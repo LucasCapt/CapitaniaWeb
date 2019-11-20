@@ -46,5 +46,6 @@ namespace Capitania.TProvFilter
         [Key]
         [Column(Order = 1)]
         public bool DELETED { get; set; }
+
     }
 }
