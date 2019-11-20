@@ -538,7 +538,7 @@ namespace Capitania.Importer.Library
                             }
 
                             vSQL = new StringBuilder();
-                            if (vReader.GetByte(vReader.GetOrdinal("COMPROMISSADA")) == 1)
+                            if (vReader.GetBoolean(vReader.GetOrdinal("COMPROMISSADA")))
                             {
                                 vSQL.AppendLine("select *");
                                 vSQL.AppendLine("  from TPAPEL");
@@ -559,7 +559,7 @@ namespace Capitania.Importer.Library
                             vSQL.AppendLine("SELECT *");
                             vSQL.AppendLine("  FROM TPAPEL");
                             vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 AND DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
                             vSQL.AppendLine(String.Format("   AND ISIN = '{0}'", vPapelISIN));
 
                             vSQL.AppendLine(" UNION ");
@@ -567,7 +567,7 @@ namespace Capitania.Importer.Library
                             vSQL.AppendLine("SELECT *");
                             vSQL.AppendLine("  FROM TPAPEL");
                             vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 AND DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
                             vSQL.AppendLine(String.Format("   AND ID = '{0}'", vPapelISIN));
 
                             vSQL.AppendLine(" UNION ");
@@ -578,7 +578,7 @@ namespace Capitania.Importer.Library
                             vSQL.AppendLine("                 FROM TAKA");
                             vSQL.AppendLine(String.Format("                WHERE TAKA.FROMID = '{0}'", vPapelISIN));
                             vSQL.AppendLine(String.Format("                  AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 AND TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
+                            vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
                             vSQL.AppendLine("                  AND TPAPEL.ID = TAKA.TOID)");
 
                             string vCNPJIssuer = vReader.GetString(vReader.GetOrdinal("CNPJISSUE"));
@@ -588,7 +588,7 @@ namespace Capitania.Importer.Library
                                 vSQL.AppendLine("SELECT *");
                                 vSQL.AppendLine("  FROM TPAPEL");
                                 vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine(String.Format("   AND (DELETED = 0 AND DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
                                 vSQL.AppendLine(String.Format("   AND CNPJ = '{0}'", vCNPJIssuer));
 
                                 vSQL.AppendLine(" UNION ");
@@ -599,7 +599,7 @@ namespace Capitania.Importer.Library
                                 vSQL.AppendLine("                 FROM TFUNDOS");
                                 vSQL.AppendLine(String.Format("                WHERE TFUNDOS.CNPJ = '{0}'", vCNPJIssuer));
                                 vSQL.AppendLine(String.Format("                  AND TFUNDOS.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine(String.Format("                  AND (TFUNDOS.DELETED =0 AND TFUNDOS.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("                  AND (TFUNDOS.DELETED =0 OR TFUNDOS.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
                                 vSQL.AppendLine("                  AND TPAPEL.ID = TFUNDOS.IDTITULO)");
 
                                 vSQL.AppendLine(" UNION ");
@@ -610,7 +610,7 @@ namespace Capitania.Importer.Library
                                 vSQL.AppendLine("                 FROM TAKA");
                                 vSQL.AppendLine(String.Format("                WHERE TAKA.FROMID = '{0}'", vCNPJIssuer));
                                 vSQL.AppendLine(String.Format("                  AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 AND TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
                                 vSQL.AppendLine("                  AND TPAPEL.ID = TAKA.TOID)");
 
                             }
@@ -622,7 +622,7 @@ namespace Capitania.Importer.Library
                             vSQL.AppendLine("SELECT *");
                             vSQL.AppendLine("  FROM TPAPEL");
                             vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 AND DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
                             vSQL.AppendLine(String.Format("   AND ID = '{0}'", vPapelCod));
 
                             vSQL.AppendLine(" UNION");
@@ -630,7 +630,7 @@ namespace Capitania.Importer.Library
                             vSQL.AppendLine("SELECT *");
                             vSQL.AppendLine("  FROM TPAPEL");
                             vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 AND DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
                             vSQL.AppendLine(String.Format("   AND CODCETIP = '{0}'", vPapelCod));
 
                             vSQL.AppendLine(" UNION ");
@@ -641,10 +641,10 @@ namespace Capitania.Importer.Library
                             vSQL.AppendLine("                 FROM TAKA");
                             vSQL.AppendLine(String.Format("                WHERE TAKA.FROMID = '{0}'", vPapelCod));
                             vSQL.AppendLine(String.Format("                  AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 AND TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
+                            vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
                             vSQL.AppendLine("                  AND TPAPEL.ID = TAKA.TOID)");
 
-                            using (SqlCommand vComandoPapel = new SqlCommand(vSQL.ToString()))
+                            using (SqlCommand vComandoPapel = new SqlCommand(vSQL.ToString(), vConection))
                             {
                                 using (IDataReader vReaderPapel = vComandoPapel.ExecuteReader())
                                 {
@@ -654,14 +654,15 @@ namespace Capitania.Importer.Library
                                     if (vReaderPapel.Read())
                                     {
                                         //Papel Encontrado
-                                        PPISIN = vReader.GetString(vReader.GetOrdinal("ISIN"));
-                                        ppID = vReader.GetString(vReader.GetOrdinal("ID"));
+                                        if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                            PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                        ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
                                     }
                                     else
                                     {
                                         TPapel pp = new TPapel();
 
-                                        if (vReader.GetByte(vReader.GetOrdinal("COMPROMISSADA")) == 1)
+                                        if (vReader.GetBoolean(vReader.GetOrdinal("COMPROMISSADA")))
                                         {
                                             pp.ID = "OVER";
                                             pp.ISIN = "OVER";
@@ -693,8 +694,9 @@ namespace Capitania.Importer.Library
                                                 long i = 1;
                                                 while (true)
                                                 {
-                                                    vPapelTemp = vContexto.TPapel.FirstOrDefault(w => w.ID == String.Format("{0}({1})", pp.ID, i));
-                                                    if (vPapelCod == null)
+                                                    string vID = String.Format("{0}({1})", pp.ID, i);
+                                                    vPapelTemp = vContexto.TPapel.FirstOrDefault(w => w.ID.Equals(vID));
+                                                    if (vPapelTemp == null)
                                                     {
                                                         pp.ID = String.Format("{0}({1})", pp.ID, i);
                                                         break;
@@ -775,9 +777,9 @@ namespace Capitania.Importer.Library
                                                     pp.Class_Rentab = "MATURITY";
                                                     pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
                                                     pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
-                                                    if (vReader.GetDecimal(vReader.GetOrdinal("pindex1")) == 100)
+                                                    if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
                                                     {
-                                                        pp.Coupon = (double)vReader.GetDecimal(vReader.GetOrdinal("cupom1"));
+                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
                                                         pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
                                                     }
                                                     else
@@ -794,9 +796,9 @@ namespace Capitania.Importer.Library
                                                     pp.Class_Rentab = "MATURITY";
                                                     pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
                                                     pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
-                                                    if (vReader.GetDecimal(vReader.GetOrdinal("pindex1")) == 100)
+                                                    if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
                                                     {
-                                                        pp.Coupon = (double)vReader.GetDecimal(vReader.GetOrdinal("cupom1"));
+                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
                                                         pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
                                                     }
                                                     else
@@ -809,7 +811,7 @@ namespace Capitania.Importer.Library
                                                     break;
                                                 case "acoes":
                                                     string codigo = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
-                                                    if (decimal.Parse(codigo.Substring(codigo.Length - 3, 2)) > 10 || decimal.Parse(codigo.Substring(codigo.Length - 4, 3)) > 10)
+                                                    if (decimal.Parse(codigo.Substring(codigo.Length - 2, 2)) > 10 || decimal.Parse(codigo.Substring(codigo.Length - 3, 3)) > 10)
 
                                                     {
                                                         //Fundo imobiliário
@@ -877,6 +879,7 @@ namespace Capitania.Importer.Library
                                     vContexto.SaveChanges();
                                 }
                             }
+
                         }
                     }
                 }

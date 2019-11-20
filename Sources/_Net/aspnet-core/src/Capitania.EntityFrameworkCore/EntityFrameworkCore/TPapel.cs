@@ -18,7 +18,6 @@ namespace Capitania.EntityFrameworkCore
         [StringLength(40)]
         public string CODCETIP { get; set; }
 
-        [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short Fundo { get; set; }
@@ -68,7 +67,6 @@ namespace Capitania.EntityFrameworkCore
         [Column(TypeName = "date")]
         public DateTime? DT_DELETED { get; set; }
 
-        [Key]
         [Column(Order = 1)]
         public bool DELETED { get; set; }
 
@@ -88,5 +86,8 @@ namespace Capitania.EntityFrameworkCore
 
         [StringLength(255)]
         public string CNPJ { get; set; }
+
+        [Key]
+        public long IDPapel { get; set; }
     }
 }
