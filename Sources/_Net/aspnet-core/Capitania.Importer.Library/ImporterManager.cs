@@ -669,7 +669,6 @@ namespace Capitania.Importer.Library
                                             //'Coloca os defaults
                                             pp.Nome = "Unknown (" + pp.ID + ")";
                                             pp.Status = "AUTO_TIPO2";
-                                            s2 = "0";// 'eh fundo?;
                                             pp.Data_Emissao = DateTime.Now;
                                             pp.Data_Vencto = DateTime.Now;
                                             pp.Index = "CDI+";
