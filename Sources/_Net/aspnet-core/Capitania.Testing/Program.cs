@@ -12,6 +12,10 @@ namespace Capitania.Testing
         {
             Capitania.Importer.Library.ImporterManager.Initialize();
             //Capitania.Importer.Library.ImporterManager.ImportarPosicao();
+            while (true)
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
         }
     }
 }
