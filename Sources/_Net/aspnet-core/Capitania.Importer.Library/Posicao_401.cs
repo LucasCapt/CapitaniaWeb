@@ -6158,7 +6158,7 @@ namespace Capitania.Importer.Library
 
         private decimal valorcontabilField;
 
-        private int justificativaField;
+        private string justificativaField;
 
         private bool justificativaFieldSpecified;
 
@@ -6182,19 +6182,19 @@ namespace Capitania.Importer.Library
 
         private bool aluguelatrasadoFieldSpecified;
 
-        private sn_type opcaorecompraField;
+        private string opcaorecompraField;
 
         private string dtopcaorecompraField;
 
-        private tipoimovel_type tipoimovelField;
+        private string tipoimovelField;
 
-        private sn_type questjurField;
+        private string questjurField;
 
         private string motivoquestjurField;
 
-        private tipouso_type tipousoField;
+        private string tipousoField;
 
-        private long matriculaField;
+        private string matriculaField;
 
         private bool matriculaFieldSpecified;
 
@@ -6318,7 +6318,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public int justificativa
+        public string justificativa
         {
             get
             {
@@ -6479,7 +6479,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public sn_type opcaorecompra
+        public string opcaorecompra
         {
             get
             {
@@ -6505,7 +6505,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public tipoimovel_type tipoimovel
+        public string tipoimovel
         {
             get
             {
@@ -6518,7 +6518,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public sn_type questjur
+        public string questjur
         {
             get
             {
@@ -6544,7 +6544,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public tipouso_type tipouso
+        public string tipouso
         {
             get
             {
@@ -6557,7 +6557,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long matricula
+        public string matricula
         {
             get
             {
