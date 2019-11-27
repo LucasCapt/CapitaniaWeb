@@ -471,7 +471,7 @@ namespace Capitania.Importer.Library
                                     ProcessImportedXml(vDataPosicao, (int)vFundos[0].ID);
                                 }
 
-                                
+
                             }
                         fileStream.Close();
                     }
@@ -1060,17 +1060,197 @@ namespace Capitania.Importer.Library
 
         }
 
-        public static void ImportarSeriesDeMercado()
+        public static void ImportarSeriesDeRisco()
         {
+
             string vArquivoLeitura = Path.Combine(ParameterManager.GetParameterValue(DBParametersConstants.HistFilePath), ParameterManager.GetParameterValue(DBParametersConstants.HistFileName));
-            string vNomePlanilhaResgates = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTab);
-            string vNomePlanilhaTransferencia = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTransferTab);
+            string vNomePlanilhaImportacao = ParameterManager.GetParameterValue(DBParametersConstants.HistFileTab);
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
-            Excel._Worksheet planilhaResgates = xlWorkbook.Sheets[vNomePlanilhaResgates];
+            Excel._Worksheet planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
 
+
+            #region Importa séries de mercado
+
+            ImportarSerie("IFIX", ParameterManager.GetParameterValue(DBParametersConstants.HistFileIFIX), planilhaImportacao);
+            ImportarSerie("IPCA2Y", ParameterManager.GetParameterValue(DBParametersConstants.HistFileIPCA2Y), planilhaImportacao);
+            ImportarSerie("IPCA5Y", ParameterManager.GetParameterValue(DBParametersConstants.HistFileIPCA5Y), planilhaImportacao);
+            ImportarSerie("IPCA10Y", ParameterManager.GetParameterValue(DBParametersConstants.HistFileIPCA10Y), planilhaImportacao);
+            ImportarSerie("IMAB5", ParameterManager.GetParameterValue(DBParametersConstants.HistFileIMAB5), planilhaImportacao);
+            ImportarSerie("PRE2Y", ParameterManager.GetParameterValue(DBParametersConstants.HistFilePRE2Y), planilhaImportacao);
+            ImportarSerie("PRE5Y", ParameterManager.GetParameterValue(DBParametersConstants.HistFilePRE5Y), planilhaImportacao);
+            ImportarSerie("DOLAR", ParameterManager.GetParameterValue(DBParametersConstants.HistFileDolar), planilhaImportacao);
+            ImportarSerie("IDA", ParameterManager.GetParameterValue(DBParametersConstants.HistFileIDA), planilhaImportacao);
+
+            #endregion
+
+            #region Importa ratings
+
+            vNomePlanilhaImportacao = ParameterManager.GetParameterValue(DBParametersConstants.HistFileRatingsTab);
+            planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
+            int i = 1;
+            while (planilhaImportacao.Cells[1, i] != string.Empty && i < 256)
+            {
+                string a = planilhaImportacao.Cells[1, i];
+                if (a.Contains(" "))
+                {
+                    a = a.Substring(0, a.LastIndexOf(" ") - 1);
+                    DateTime vDate = new DateTime();
+                    if (DateTime.TryParse(planilhaImportacao.Cells[4, i], out vDate))
+                    {
+                        StringBuilder vSQL = new StringBuilder();
+                        vSQL.AppendLine("delete from TRATINGS");
+                        vSQL.AppendLine(String.Format(" where ID = '{0}'", a));
+                        vSQL.AppendLine(String.Format("   and DATA >= '{0}'", vDate.ToString("yyyy-MM-dd")));
+                        using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                        {
+                            vConection.Open();
+                            using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                            {
+                                vComando.ExecuteNonQuery();
+                            }
+
+                            int j = 4;
+                            while (DateTime.TryParse(planilhaImportacao.Cells[j, i], out vDate))
+                            {
+                                vSQL.AppendLine("INSERT INTO TRATINGS (DATA, ID, RATING) values (");
+                                vSQL.AppendLine(String.Format("'{0}', '{1}', '{2}');", vDate.ToString("yyyy-MM-dd"), a, planilhaImportacao.Cells[j, i + 1]));
+                                using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    vComando.ExecuteNonQuery();
+                                }
+                                j++;
+                            }
+                            vConection.Close();
+                        }
+                    }
+                    i++;
+                    i++;
+                }
+            }
+
+            #endregion
+
+            #region Importa quotas
+
+            vNomePlanilhaImportacao = ParameterManager.GetParameterValue(DBParametersConstants.HistFileQuotaTab);
+            planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
+
+            i = 1;
+            while (planilhaImportacao.Cells[1, i] != string.Empty && i < 256)
+            {
+                int vIDFundo = 0;
+                if (int.TryParse(planilhaImportacao.Cells[1, i], out vIDFundo))
+                {
+                    DateTime vDate = new DateTime();
+                    if (DateTime.TryParse(planilhaImportacao.Cells[6, i], out vDate))
+                    {
+                        StringBuilder vSQL = new StringBuilder();
+                        vSQL.AppendLine("delete from TQUOTAS");
+                        vSQL.AppendLine(String.Format(" where FUNDO = '{0}'", vIDFundo));
+                        vSQL.AppendLine(String.Format("   and DATA >= '{0}'", vDate.ToString("yyyy-MM-dd")));
+                        using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                        {
+                            vConection.Open();
+                            using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                            {
+                                vComando.ExecuteNonQuery();
+                            }
+
+                            int j = 6;
+                            while (DateTime.TryParse(planilhaImportacao.Cells[j, i], out vDate))
+                            {
+                                vSQL.AppendLine("INSERT INTO TQUOTAS (DATA, FUNDO, QUOTA) values (");
+                                vSQL.AppendLine(String.Format("'{0}', '{1}', '{2}');", vDate.ToString("yyyy-MM-dd"), vIDFundo, planilhaImportacao.Cells[j, i + 1]));
+                                using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    vComando.ExecuteNonQuery();
+                                }
+                                j++;
+                            }
+                            vConection.Close();
+                        }
+                    }
+                }
+                i = i + 3;
+            }
+
+            #endregion
+
+            xlWorkbook.Close();
+
+            //TODO: Marcar flag de importação do dia;
+            //TODO: Logar importação
         }
 
+        public static void ImportarMaiorCotistas()
+        {
+            string vArquivoLeitura = Path.Combine(ParameterManager.GetParameterValue(DBParametersConstants.ShareFilePath), ParameterManager.GetParameterValue(DBParametersConstants.ShareFileName));
+            string vNomePlanilhaImportacao = "DATA";
+            Excel.Application xlApp = new Excel.Application();
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+            Excel._Worksheet planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
+
+            DateTime vData = DateTime.Parse(planilhaImportacao.Cells[1, 1].ToString());
+            StringBuilder vSQL = new StringBuilder();
+            vSQL.AppendLine("delete from TMAIORCOTISTA");
+            vSQL.AppendLine(String.Format(" where DATAOBS = '{0}'", vData.ToString("yyyy-MM-dd")));
+            using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+            {
+                vConection.Open();
+                using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                {
+                    vComando.ExecuteNonQuery();
+                }
+
+                for (int i = 0; i < xlWorkbook.Worksheets.Count; i++)
+                {
+                    string vNomeQuota = xlWorkbook.Worksheets.Item[i].Name;
+                    if (!vNomeQuota.Equals("DATA"))
+                    {
+                        
+                        planilhaImportacao = xlWorkbook.Sheets[i];
+                        int Col = 3;
+                        decimal vValor;
+                        if (planilhaImportacao.Cells[1, 4].Equals("VALOR BRUTO") && !decimal.TryParse(planilhaImportacao.Cells[2, 3], out vValor))
+                        {
+                            Col = 4;
+                        }
+                        int k = 2;
+                        int j = 1;
+                        decimal[] vValores = { 0, 0, 0 };
+
+                        while (planilhaImportacao.Cells[k, 1] != "" && k < 100 && j < 4)
+                        {
+                            if (planilhaImportacao.Cells[i, Col + 1] == "")
+                            {
+                                decimal vValorCotista = 0;
+                                if (decimal.TryParse(planilhaImportacao.Cells[k, Col], out vValorCotista))
+                                    vValores[j] = vValorCotista;
+                                else
+                                    vValores[j] = 0;
+                                j++;
+                            }
+                            k++;
+                        }
+
+                        vSQL.AppendLine("INSERT INTO TMAIORCOTISTA (DATAOBS, FUNDO, MAXCOT1, MAXCOT2, MAXCOT3) VALUES (");
+                        vSQL.AppendLine(String.Format("'{0}', '{1}', {2}, {3}, {4});", vData, vNomeQuota, vValores[0], vValores[1], vValores[2]));
+                        using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                        {
+                            vComando.ExecuteNonQuery();
+                        }
+                    }
+                }
+                foreach (var workSheet in xlWorkbook.Worksheets)
+                {
+
+                }
+                vConection.Close();
+            }
+            //TODO: Marcar flag de importação do dia;
+            //TODO: Logar importação
+        }
         private static void ImportarSerie(string dbName, string nomePlanilha, Excel._Worksheet planilha)
         {
             DateTime vUltimaData = DateTime.Now.AddDays(-3650);
@@ -1089,9 +1269,9 @@ namespace Capitania.Importer.Library
             if (j != 0)
             {
                 int i = 4;
-                while (planilha.Cells[i, j]!= "" && i < 2000)
+                while (planilha.Cells[i, j] != "" && i < 2000)
                 {
-                    if(planilha.Cells[i, j]> vUltimaData)
+                    if (planilha.Cells[i, j] > vUltimaData)
                     {
                         TFACTORHIST vHist = new TFACTORHIST();
                         vHist.FACTORID = dbName;
@@ -1104,7 +1284,7 @@ namespace Capitania.Importer.Library
                 }
 
                 vContexto.SaveChanges();
-                
+
             }
         }
 
