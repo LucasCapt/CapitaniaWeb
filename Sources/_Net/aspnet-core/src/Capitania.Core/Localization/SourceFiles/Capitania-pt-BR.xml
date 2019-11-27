@@ -91,5 +91,12 @@
     <text name="StartTyping">Comece a escrever</text>
     <text name="Skins">Temas</text>
     <text name="Settings">Configurações</text>
+
+    <!--Capitania-->
+    <text name="TConfigurations">Configurações</text>
+    <text name="TConfigurations.Code">Código</text>
+    <text name="TConfigurations.Description">Descrição</text>
+    <text name="TConfigurations.Value">Valor</text>
+    
   </texts>
 </localizationDictionary>
