@@ -12,6 +12,7 @@ namespace Capitania.EntityFrameworkCore
         {
         }
 
+        public virtual DbSet<TConfiguracao.TConfiguracao> Configuracoes { get; set; }
         public virtual DbSet<TPOSICLAYOUT2> TPOSICLAYOUT2 { get; set; }
         public virtual DbSet<TAKA> TAKA { get; set; }
         public virtual DbSet<TBookRegra> TBookRegra { get; set; }

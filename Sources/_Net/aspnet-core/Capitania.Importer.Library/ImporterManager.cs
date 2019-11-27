@@ -923,8 +923,8 @@ namespace Capitania.Importer.Library
                 string vNomePlanilhaTransferencia = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTransferTab);
                 Excel.Application xlApp = new Excel.Application();
                 Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
-                Excel._Worksheet planilhaResgates = xlWorkbook.Sheets[vNomePlanilhaResgates];
-                Excel._Worksheet planilhaTransferencias = xlWorkbook.Sheets[vNomePlanilhaTransferencia];
+                Excel._Worksheet planilhaResgates = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaResgates];
+                Excel._Worksheet planilhaTransferencias = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaTransferencia];
 
                 #region Importar Resgates
 
@@ -948,7 +948,7 @@ namespace Capitania.Importer.Library
                 int i = 16384;
                 int vMaxLines = 30000;
 
-                while (planilhaResgates.Cells[i, 1] == "" || planilhaResgates.Cells[i, 1] > vCutDate && i > 4)
+                while (planilhaResgates.Cells[i, 1].ToString() == "" || (DateTime)planilhaResgates.Cells[i, 1] > vCutDate && i > 4)
                 {
                     i = i / 2;
                 }
@@ -956,28 +956,28 @@ namespace Capitania.Importer.Library
                 if (i == 4)
                     i = 3;
 
-                while (planilhaResgates.Cells[i, 1] == "" && i < vMaxLines && planilhaResgates.Cells[i, 1] < vCutDate)
+                while (planilhaResgates.Cells[i, 1].ToString() == "" && i < vMaxLines && (DateTime)planilhaResgates.Cells[i, 1] < vCutDate)
                 {
                     i++;
                 }
 
-                while (planilhaResgates.Cells[i, 1] == "" && i < vMaxLines && planilhaResgates.Cells[i, 1] <= DateTime.Now)
+                while (planilhaResgates.Cells[i, 1].ToString() == "" && i < vMaxLines && (DateTime)planilhaResgates.Cells[i, 1] <= DateTime.Now)
                 {
                     TResgates vResgate = new TResgates();
-                    vResgate.DATAOBS = planilhaResgates.Cells[i, 1];
-                    vResgate.FUNDO = planilhaResgates.Cells[i, 2];
-                    if (planilhaResgates.Cells[i, 6] == "")
+                    vResgate.DATAOBS = (DateTime)planilhaResgates.Cells[i, 1];
+                    vResgate.FUNDO = planilhaResgates.Cells[i, 2].ToString();
+                    if (planilhaResgates.Cells[i, 6].ToString() == "")
                         vResgate.DATALIQ = vResgate.DATAOBS;
                     else
-                        vResgate.DATALIQ = planilhaResgates.Cells[i, 6];
+                        vResgate.DATALIQ = (DateTime)planilhaResgates.Cells[i, 6];
 
-                    string vValor = planilhaResgates.Cells[i, 2];
+                    string vValor = planilhaResgates.Cells[i, 2].ToString();
                     vValor = vValor.Replace("R$", "");
                     vResgate.VALOR = double.Parse(vValor);
-                    vResgate.CANCELADO = (planilhaResgates.Cells[i, 9] != "");
-                    vResgate.TOTAL = (planilhaResgates.Cells[i, 7] = "T");
+                    vResgate.CANCELADO = (planilhaResgates.Cells[i, 9].ToString() != "");
+                    vResgate.TOTAL = (planilhaResgates.Cells[i, 7].ToString() = "T");
                     DateTime vDataCancelamento;
-                    if (DateTime.TryParse(planilhaResgates.Cells[i, 10], out vDataCancelamento))
+                    if (DateTime.TryParse(planilhaResgates.Cells[i, 10].ToString(), out vDataCancelamento))
                         vResgate.DATACANCEL = vDataCancelamento;
                     else
                         vResgate.DATACANCEL = new DateTime(2000, 01, 01);
@@ -1067,7 +1067,7 @@ namespace Capitania.Importer.Library
             string vNomePlanilhaImportacao = ParameterManager.GetParameterValue(DBParametersConstants.HistFileTab);
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
-            Excel._Worksheet planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
+            Excel._Worksheet planilhaImportacao = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaImportacao];
 
 
             #region Importa séries de mercado
@@ -1276,7 +1276,7 @@ namespace Capitania.Importer.Library
                         TFACTORHIST vHist = new TFACTORHIST();
                         vHist.FACTORID = dbName;
                         vHist.DATA = planilha.Cells[i, j];
-                        vHist.VALOR = planilha.[i, j + 1];
+                        vHist.VALOR = planilha.Cells[i, j + 1];
                         vContexto.TFACTORHIST.Add(vHist);
                     }
 
