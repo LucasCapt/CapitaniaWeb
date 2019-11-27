@@ -482,7 +482,10 @@ namespace Capitania.Importer.Library
                     pathProcessados = Path.Combine(pathProcessados, vNomePastaProcessamento);
                     if (!Directory.Exists(pathProcessados))
                         Directory.CreateDirectory(pathProcessados);
-                    File.Move(vXmlFileToImport, Path.Combine(pathProcessados, Path.GetFileName(vXmlFileToImport)));
+                    string vArquivoDestino = Path.Combine(pathProcessados, Path.GetFileName(vXmlFileToImport));
+                    if (File.Exists(vArquivoDestino))
+                        File.Delete(vArquivoDestino);
+                    File.Move(vXmlFileToImport, vArquivoDestino);
                 }
             }
             catch (Exception ex)
@@ -493,7 +496,10 @@ namespace Capitania.Importer.Library
                 pathRejeitados = Path.Combine(pathRejeitados, vNomePastaProcessamento);
                 if (!Directory.Exists(pathRejeitados))
                     Directory.CreateDirectory(pathRejeitados);
-                File.Move(vXmlFileToImport, Path.Combine(pathRejeitados, Path.GetFileName(vXmlFileToImport)));
+                string vArquivoDestino = Path.Combine(pathRejeitados, Path.GetFileName(vXmlFileToImport));
+                if (File.Exists(vArquivoDestino))
+                    File.Delete(vArquivoDestino);
+                File.Move(vXmlFileToImport, vArquivoDestino);
             }
         }
 
