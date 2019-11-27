@@ -32,6 +32,7 @@ namespace Capitania.EntityFrameworkCore
         public virtual DbSet<TTransfers> TTransfers { get; set; }
         public virtual DbSet<TUsers> TUsers { get; set; }
         public virtual DbSet<TPosic> TPosic { get; set; }
+        public virtual DbSet<TFACTORHIST> TFACTORHIST { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

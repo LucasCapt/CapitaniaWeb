@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using Capitania.EntityFrameworkCore;
 using System.Data;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Capitania.Importer.Library
 {
@@ -892,6 +893,234 @@ namespace Capitania.Importer.Library
 
                 vConection.Close();
             }
+        }
+
+        public static void ImportarResgates()
+        {
+            //Obter última data dos resgates
+            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
+            DateTime vUltimaData = vContexto.TResgates.Where(w => w.DATAOBS.Value.Date <= DateTime.Now.Date).Max(k => k.DATAOBS).Value;
+            if (vUltimaData.Date < new DateTime(2012, 1, 1).Date)
+                vUltimaData = new DateTime(2012, 1, 1);
+
+            if (vUltimaData.Date < DateTime.Now.Date)
+            {
+
+
+                DateTime vCutDate = vUltimaData.AddDays(-365);
+                //Abrir a planilha excel.
+                string vArquivoLeitura = Path.Combine(ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFilePath), ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileName));
+                string vNomePlanilhaResgates = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTab);
+                string vNomePlanilhaTransferencia = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTransferTab);
+                Excel.Application xlApp = new Excel.Application();
+                Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+                Excel._Worksheet planilhaResgates = xlWorkbook.Sheets[vNomePlanilhaResgates];
+                Excel._Worksheet planilhaTransferencias = xlWorkbook.Sheets[vNomePlanilhaTransferencia];
+
+                #region Importar Resgates
+
+                #region Apagar resgates do último ano
+
+                StringBuilder vSQL = new StringBuilder();
+                vSQL.AppendLine("delete from TRESGATES");
+                vSQL.AppendLine(String.Format(" where DATAOBS >= '{0}'", vCutDate.ToString("yyyy-MM-dd")));
+                using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                {
+                    vConection.Open();
+                    using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                    {
+                        vComando.ExecuteNonQuery();
+                    }
+                    vConection.Close();
+                }
+
+                #endregion
+
+                int i = 16384;
+                int vMaxLines = 30000;
+
+                while (planilhaResgates.Cells[i, 1] == "" || planilhaResgates.Cells[i, 1] > vCutDate && i > 4)
+                {
+                    i = i / 2;
+                }
+
+                if (i == 4)
+                    i = 3;
+
+                while (planilhaResgates.Cells[i, 1] == "" && i < vMaxLines && planilhaResgates.Cells[i, 1] < vCutDate)
+                {
+                    i++;
+                }
+
+                while (planilhaResgates.Cells[i, 1] == "" && i < vMaxLines && planilhaResgates.Cells[i, 1] <= DateTime.Now)
+                {
+                    TResgates vResgate = new TResgates();
+                    vResgate.DATAOBS = planilhaResgates.Cells[i, 1];
+                    vResgate.FUNDO = planilhaResgates.Cells[i, 2];
+                    if (planilhaResgates.Cells[i, 6] == "")
+                        vResgate.DATALIQ = vResgate.DATAOBS;
+                    else
+                        vResgate.DATALIQ = planilhaResgates.Cells[i, 6];
+
+                    string vValor = planilhaResgates.Cells[i, 2];
+                    vValor = vValor.Replace("R$", "");
+                    vResgate.VALOR = double.Parse(vValor);
+                    vResgate.CANCELADO = (planilhaResgates.Cells[i, 9] != "");
+                    vResgate.TOTAL = (planilhaResgates.Cells[i, 7] = "T");
+                    DateTime vDataCancelamento;
+                    if (DateTime.TryParse(planilhaResgates.Cells[i, 10], out vDataCancelamento))
+                        vResgate.DATACANCEL = vDataCancelamento;
+                    else
+                        vResgate.DATACANCEL = new DateTime(2000, 01, 01);
+
+                    vContexto.TResgates.Add(vResgate);
+                    i++;
+                }
+
+                vContexto.SaveChanges();
+
+                #endregion
+
+                #region Importar Transferências
+
+                //Abrir a planilha excel.
+
+                #region Apagar resgates do último ano
+
+                vSQL = new StringBuilder();
+                vSQL.AppendLine("delete from TTRANSFERS");
+                vSQL.AppendLine(String.Format(" where DATAOBS >= '{0}'", vCutDate.ToString("yyyy-MM-dd")));
+                using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                {
+                    vConection.Open();
+                    using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                    {
+                        vComando.ExecuteNonQuery();
+                    }
+                    vConection.Close();
+                }
+
+                #endregion
+
+                i = 2048;
+
+                while (planilhaResgates.Cells[i, 1] == "" || planilhaResgates.Cells[i, 1] > vCutDate && i > 4)
+                {
+                    i = i / 2;
+                }
+
+                if (i == 4)
+                    i = 3;
+
+                while (planilhaResgates.Cells[i, 1] == "" && i < vMaxLines && planilhaResgates.Cells[i, 1] < vCutDate)
+                {
+                    i++;
+                }
+
+                while (planilhaResgates.Cells[i, 1] == "" && i < vMaxLines && planilhaResgates.Cells[i, 1] <= DateTime.Now)
+                {
+                    TTransfers vTransfer = new TTransfers();
+                    vTransfer.DATAOBS = planilhaResgates.Cells[i, 1];
+                    vTransfer.FUNDO = planilhaResgates.Cells[i, 4];
+                    if (planilhaResgates.Cells[i, 6] == "")
+                        vTransfer.DATALIQ = vTransfer.DATAOBS;
+                    else
+                        vTransfer.DATALIQ = planilhaResgates.Cells[i, 6];
+
+                    string vValor = planilhaResgates.Cells[i, 5];
+                    vValor = vValor.Replace("R$", "");
+                    vTransfer.VALOR = double.Parse(vValor);
+                    vTransfer.CANCELADO = (planilhaResgates.Cells[i, 9] != "");
+                    DateTime vDataCancelamento;
+                    if (DateTime.TryParse(planilhaResgates.Cells[i, 10], out vDataCancelamento))
+                        vTransfer.DATACANCEL = vDataCancelamento;
+                    else
+                        vTransfer.DATACANCEL = new DateTime(2000, 01, 01);
+
+                    vContexto.TTransfers.Add(vTransfer);
+                    i++;
+                }
+
+                vContexto.SaveChanges();
+
+                #endregion
+            }
+
+            //TODO: Marcar flag de importação do dia;
+            //TODO: Logar importação
+
+        }
+
+        public static void ImportarSeriesDeMercado()
+        {
+            string vArquivoLeitura = Path.Combine(ParameterManager.GetParameterValue(DBParametersConstants.HistFilePath), ParameterManager.GetParameterValue(DBParametersConstants.HistFileName));
+            string vNomePlanilhaResgates = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTab);
+            string vNomePlanilhaTransferencia = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTransferTab);
+            Excel.Application xlApp = new Excel.Application();
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+            Excel._Worksheet planilhaResgates = xlWorkbook.Sheets[vNomePlanilhaResgates];
+
+        }
+
+        private static void ImportarSerie(string dbName, string nomePlanilha, Excel._Worksheet planilha)
+        {
+            DateTime vUltimaData = DateTime.Now.AddDays(-3650);
+            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
+            DateTime? vLastDate = vContexto.TFACTORHIST.Where(w => w.FACTORID.Equals(dbName) && w.DATA < DateTime.Now.Date && w.DATA > DateTime.Now.AddDays(-720).Date).Max(k => k.DATA);
+            bool vImcompleta = false;
+            if (vLastDate == null)
+                vImcompleta = true;
+            else
+            {
+                vUltimaData = vLastDate.Value;
+                vImcompleta = VerificarIncompleta(vUltimaData);
+            }
+
+            int j = SearchColumn(nomePlanilha, planilha);
+            if (j != 0)
+            {
+                int i = 4;
+                while (planilha.Cells[i, j]!= "" && i < 2000)
+                {
+                    if(planilha.Cells[i, j]> vUltimaData)
+                    {
+                        TFACTORHIST vHist = new TFACTORHIST();
+                        vHist.FACTORID = dbName;
+                        vHist.DATA = planilha.Cells[i, j];
+                        vHist.VALOR = planilha.[i, j + 1];
+                        vContexto.TFACTORHIST.Add(vHist);
+                    }
+
+                    i++;
+                }
+
+                vContexto.SaveChanges();
+                
+            }
+        }
+
+        private static int SearchColumn(string x, Excel._Worksheet planilha)
+        {
+            int i = 1;
+
+            while (planilha.Cells[1, i] != x && i < 100)
+            {
+                i++;
+                i++;
+            }
+
+            if (planilha.Cells[1, i] == x)
+                return i;
+            else
+                return 0;
+        }
+
+        private static bool VerificarIncompleta(DateTime vData)
+        {
+            if (vData.DayOfWeek == DayOfWeek.Monday)
+                return (vData < vData.AddDays(-3));
+            else
+                return (vData < vData.AddDays(-1));
         }
     }
 }
