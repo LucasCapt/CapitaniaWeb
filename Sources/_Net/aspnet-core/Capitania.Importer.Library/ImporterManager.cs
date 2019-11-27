@@ -975,7 +975,7 @@ namespace Capitania.Importer.Library
                     vValor = vValor.Replace("R$", "");
                     vResgate.VALOR = double.Parse(vValor);
                     vResgate.CANCELADO = (planilhaResgates.Cells[i, 9].ToString() != "");
-                    vResgate.TOTAL = (planilhaResgates.Cells[i, 7].ToString() = "T");
+                    vResgate.TOTAL = (planilhaResgates.Cells[i, 7].ToString() == "T");
                     DateTime vDataCancelamento;
                     if (DateTime.TryParse(planilhaResgates.Cells[i, 10].ToString(), out vDataCancelamento))
                         vResgate.DATACANCEL = vDataCancelamento;
