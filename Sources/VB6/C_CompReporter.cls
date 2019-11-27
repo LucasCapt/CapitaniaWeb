@@ -218,9 +218,7 @@ Sub GravaDB(Optional frm As Form)
             Dim vConexaoTemp As ADODB.Connection
             If (vConexaoTemp Is Nothing) Then
                 Set vConexaoTemp = New ADODB.Connection
-                Let vConnectionString = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
-                'Let vConnectionString = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
-                Call vConexaoTemp.open(vConnectionString)
+                Call vConexaoTemp.open(MMain.DatabaseConnectionString)
             End If
             
             For Each f In Fundos.c

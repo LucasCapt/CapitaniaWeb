@@ -33,9 +33,14 @@ namespace Capitania.Importer.Library
 
         private static void OnCreate(object source, FileSystemEventArgs e)
         {
-            System.Threading.Thread.Sleep(10000);
-            string vFolder = Path.GetFileName(Path.GetDirectoryName(e.FullPath));
-            ImportXmlAnbima(e.FullPath, vFolder);
+            System.Threading.Thread.Sleep(20000);
+            string vPath = Path.GetDirectoryName(e.FullPath);
+            foreach (var xmlFile in Directory.GetFiles(vPath, "*.xml"))
+            {
+                string vFolder = Path.GetFileName(Path.GetDirectoryName(xmlFile));
+                ImportXmlAnbima(xmlFile, vFolder);
+            }
+
         }
 
         public static void ImportarPosicao()
@@ -54,436 +59,441 @@ namespace Capitania.Importer.Library
 
         private static void ImportXmlAnbima(string vXmlFileToImport, string vNomePastaProcessamento)
         {
-            //Carregar os arquivos;
-            XmlSerializer serializer = new XmlSerializer(typeof(ArquivoPosicao_4_01_type));
-
-            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
-            //Para cada pasta no arquivo raiz
-
-            if (File.Exists(vXmlFileToImport))
+            try
             {
-                using (FileStream fileStream = new FileStream(vXmlFileToImport, FileMode.Open))
+                //Carregar os arquivos;
+                XmlSerializer serializer = new XmlSerializer(typeof(ArquivoPosicao_4_01_type));
+
+                Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
+                //Para cada pasta no arquivo raiz
+
+                if (File.Exists(vXmlFileToImport))
                 {
-                    ArquivoPosicao_4_01_type vXmlAnbima = (ArquivoPosicao_4_01_type)serializer.Deserialize(fileStream);
-
-                    foreach (var vFundo in vXmlAnbima.fundo)
+                    using (FileStream fileStream = new FileStream(vXmlFileToImport, FileMode.Open))
                     {
-                        DateTime vDataPosicao = new DateTime(int.Parse(vFundo.header.dtposicao.Substring(0, 4)), int.Parse(vFundo.header.dtposicao.Substring(4, 2)), int.Parse(vFundo.header.dtposicao.Substring(6, 2)));
-                        var vFilter = vContexto.TProvFilter.Where(k => (k.DT_CREATED.Value <= vDataPosicao && !(k.DELETED && k.DT_DELETED.Value <= vDataPosicao))).ToList();
-                        var vFundos = vContexto.TFundos.Where(k => k.CNPJ.Equals(vFundo.header.cnpj.ToString()) && (!k.DELETED || k.DT_DELETED.Value > vDataPosicao)).ToList();
-                        var vFundosNome = vContexto.TFundos.Where(k => k.Nome.Equals(vFundo.header.nome.ToString()) && (!k.DELETED || k.DT_DELETED.Value > vDataPosicao)).ToList();
-                        vFundos.AddRange(vFundosNome);
+                        ArquivoPosicao_4_01_type vXmlAnbima = (ArquivoPosicao_4_01_type)serializer.Deserialize(fileStream);
 
-                        if (vFundos.Count > 0)
-                        {
-                            StringBuilder vSQL = new StringBuilder();
-                            vSQL.AppendLine("delete from TPOSICLAYOUT2");
-                            vSQL.AppendLine(String.Format(" where DATA = '{0}'", vDataPosicao.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   and FUNDO = {0}", vFundos[0].ID));
-                            using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                        if (vXmlAnbima.fundo != null)
+                            foreach (var vFundo in vXmlAnbima.fundo)
                             {
-                                vConection.Open();
-                                using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                DateTime vDataPosicao = new DateTime(int.Parse(vFundo.header.dtposicao.Substring(0, 4)), int.Parse(vFundo.header.dtposicao.Substring(4, 2)), int.Parse(vFundo.header.dtposicao.Substring(6, 2)));
+                                var vFilter = vContexto.TProvFilter.Where(k => (k.DT_CREATED.Value <= vDataPosicao && !(k.DELETED && k.DT_DELETED.Value <= vDataPosicao))).ToList();
+                                var vFundos = vContexto.TFundos.Where(k => k.CNPJ.Equals(vFundo.header.cnpj.ToString()) && (!k.DELETED || k.DT_DELETED.Value > vDataPosicao)).ToList();
+                                var vFundosNome = vContexto.TFundos.Where(k => k.Nome.Equals(vFundo.header.nome.ToString()) && (!k.DELETED || k.DT_DELETED.Value > vDataPosicao)).ToList();
+                                vFundos.AddRange(vFundosNome);
+
+                                if (vFundos.Count > 0)
                                 {
-                                    vComando.ExecuteNonQuery();
-                                }
-                                vConection.Close();
-                            }
-
-                            float vTotalDespesas = 0;
-                            float vValorAResgatar = (float)vFundo.header.vlcotasresgatar;
-                            float vTotalProvisao = -vValorAResgatar;
-                            float vTotalGeral = 0;
-
-                            #region Ações
-
-                            if (vFundo.acoes != null)
-                            {
-                                foreach (var acao in vFundo.acoes)
-                                {
-                                    TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                    //FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX], CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA
-                                    vPosicLayout2.FUNDO = vFundos[0].ID;
-                                    vPosicLayout2.TIPO = "acoes";
-                                    vPosicLayout2.PAPEL_ISIN = acao.isin;
-                                    vPosicLayout2.PAPEL_COD = acao.codativo;
-                                    vPosicLayout2.QUANT = (double)(acao.qtdisponivel + acao.qtgarantia);
-                                    vPosicLayout2.VALOR = (double)(acao.valorfindisp + acao.valorfinemgar);
-                                    if (acao.classeoperacao == classeCDTV_type.V)
-                                        vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
-                                    vPosicLayout2.DATA = vDataPosicao;
-                                    vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
-                                    vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
-                                    vPosicLayout2.INDEX = "";
-                                    vPosicLayout2.CUPOM = 0;
-                                    vPosicLayout2.PINDEX = 0;
-                                    vPosicLayout2.CNPJISSUE = "";
-                                    vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                    vPosicLayout2.COMPROMISSADA = false;
-                                    vTotalGeral += (float)vPosicLayout2.VALOR;
-                                    vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                    vContexto.SaveChanges();
-                                }
-                            }
-                            #endregion
-
-                            #region Título Privado
-
-                            if (vFundo.titprivado != null)
-                            {
-                                foreach (var tituloPrivado in vFundo.titprivado)
-                                {
-                                    TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                    vPosicLayout2.FUNDO = vFundos[0].ID;
-                                    vPosicLayout2.TIPO = "titprivado";
-                                    vPosicLayout2.PAPEL_ISIN = tituloPrivado.isin;
-                                    vPosicLayout2.PAPEL_COD = tituloPrivado.codativo;
-                                    vPosicLayout2.QUANT = (double)(tituloPrivado.qtdisponivel + tituloPrivado.qtgarantia);
-                                    vPosicLayout2.VALOR = (double)(tituloPrivado.valorfindisp + tituloPrivado.valorfinemgar);
-                                    if (tituloPrivado.classeoperacao == classeCDTV_type.V)
-                                        vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
-                                    vPosicLayout2.DATA = vDataPosicao;
-                                    int vAno = int.Parse(tituloPrivado.dtemissao.Substring(0, 4));
-                                    int vMes = int.Parse(tituloPrivado.dtemissao.Substring(4, 2));
-                                    int vDia = int.Parse(tituloPrivado.dtemissao.Substring(6, 2));
-                                    vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
-                                    vAno = int.Parse(tituloPrivado.dtvencimento.Substring(0, 4));
-                                    vMes = int.Parse(tituloPrivado.dtvencimento.Substring(4, 2));
-                                    vDia = int.Parse(tituloPrivado.dtvencimento.Substring(6, 2));
-                                    vPosicLayout2.DTVENC = new DateTime(vAno, vMes, vDia);
-                                    vPosicLayout2.INDEX = tituloPrivado.indexador;
-                                    vPosicLayout2.CUPOM = (double)tituloPrivado.coupom / 100;
-                                    vPosicLayout2.PINDEX = (double)tituloPrivado.percindex;
-                                    vPosicLayout2.CNPJISSUE = tituloPrivado.cnpjemissor.ToString();
-                                    vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                    vPosicLayout2.COMPROMISSADA = (tituloPrivado.compromisso != null);
-                                    vTotalGeral += (float)vPosicLayout2.VALOR;
-
-                                    vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                    vContexto.SaveChanges();
-                                }
-                            }
-                            #endregion
-
-                            #region Título Público
-
-                            if (vFundo.titpublico != null)
-                            {
-                                foreach (var tituloPublico in vFundo.titpublico)
-                                {
-                                    TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                    vPosicLayout2.FUNDO = vFundos[0].ID;
-                                    vPosicLayout2.TIPO = "titpublico";
-                                    vPosicLayout2.PAPEL_ISIN = tituloPublico.isin;
-                                    vPosicLayout2.PAPEL_COD = tituloPublico.codativo;
-                                    vPosicLayout2.QUANT = (double)(tituloPublico.qtdisponivel + tituloPublico.qtgarantia);
-                                    vPosicLayout2.VALOR = (double)(tituloPublico.valorfindisp + tituloPublico.valorfinemgar);
-                                    if (tituloPublico.classeoperacao == classeCDTV_type.V)
-                                        vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
-                                    vPosicLayout2.DATA = vDataPosicao;
-                                    int vAno = int.Parse(tituloPublico.dtemissao.Substring(0, 4));
-                                    int vMes = int.Parse(tituloPublico.dtemissao.Substring(4, 2));
-                                    int vDia = int.Parse(tituloPublico.dtemissao.Substring(6, 2));
-                                    vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
-                                    vAno = int.Parse(tituloPublico.dtvencimento.Substring(0, 4));
-                                    vMes = int.Parse(tituloPublico.dtvencimento.Substring(4, 2));
-                                    vDia = int.Parse(tituloPublico.dtvencimento.Substring(6, 2));
-                                    vPosicLayout2.DTVENC = new DateTime(vAno, vMes, vDia);
-                                    vPosicLayout2.INDEX = tituloPublico.indexador;
-                                    vPosicLayout2.CUPOM = (double)tituloPublico.coupom / 100;
-                                    vPosicLayout2.PINDEX = (double)tituloPublico.percindex;
-                                    vPosicLayout2.CNPJISSUE = "";
-                                    vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                    vPosicLayout2.COMPROMISSADA = (tituloPublico.compromisso != null);
-                                    vTotalGeral += (float)vPosicLayout2.VALOR;
-
-                                    vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                    vContexto.SaveChanges();
-                                }
-                            }
-                            #endregion
-
-                            #region Debêntures
-
-                            if (vFundo.debenture != null)
-                            {
-                                foreach (var debenture in vFundo.debenture)
-                                {
-                                    TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                    vPosicLayout2.FUNDO = vFundos[0].ID;
-                                    vPosicLayout2.TIPO = "debenture";
-                                    vPosicLayout2.PAPEL_ISIN = debenture.isin;
-                                    vPosicLayout2.PAPEL_COD = debenture.coddeb;
-                                    vPosicLayout2.QUANT = (double)(debenture.qtdisponivel + debenture.qtgarantia);
-                                    vPosicLayout2.VALOR = (double)(debenture.valorfindisp + debenture.valorfinemgar);
-                                    if (debenture.classeoperacao == classeCDTV_type.V)
-                                        vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
-                                    vPosicLayout2.DATA = vDataPosicao;
-                                    int vAno = int.Parse(debenture.dtemissao.Substring(0, 4));
-                                    int vMes = int.Parse(debenture.dtemissao.Substring(4, 2));
-                                    int vDia = int.Parse(debenture.dtemissao.Substring(6, 2));
-                                    vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
-                                    vAno = int.Parse(debenture.dtvencimento.Substring(0, 4));
-                                    vMes = int.Parse(debenture.dtvencimento.Substring(4, 2));
-                                    vDia = int.Parse(debenture.dtvencimento.Substring(6, 2));
-                                    vPosicLayout2.DTVENC = new DateTime(vAno, vMes, vDia);
-                                    vPosicLayout2.INDEX = debenture.indexador;
-                                    vPosicLayout2.CUPOM = (double)debenture.coupom / 100;
-                                    vPosicLayout2.PINDEX = (double)debenture.percindex;
-                                    vPosicLayout2.CNPJISSUE = debenture.cnpjemissor.ToString();
-                                    vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                    vPosicLayout2.COMPROMISSADA = false;
-
-                                    vTotalGeral += (float)vPosicLayout2.VALOR;
-
-                                    vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                    vContexto.SaveChanges();
-                                }
-                            }
-                            #endregion
-
-                            #region Caixa
-
-                            if (vFundo.caixa != null)
-                            {
-                                foreach (var caixa in vFundo.caixa)
-                                {
-                                    TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                    vPosicLayout2.FUNDO = vFundos[0].ID;
-                                    vPosicLayout2.TIPO = "caixa";
-                                    vPosicLayout2.PAPEL_ISIN = caixa.isininstituicao;
-                                    vPosicLayout2.PAPEL_COD = "CONTA";
-                                    vPosicLayout2.QUANT = (double)caixa.saldo;
-                                    vPosicLayout2.VALOR = vPosicLayout2.QUANT;
-                                    vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                    vPosicLayout2.COMPROMISSADA = false;
-                                    vTotalGeral += (float)vPosicLayout2.VALOR;
-
-                                    vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                    vContexto.SaveChanges();
-                                }
-                            }
-                            #endregion
-
-                            #region Cotas
-
-                            if (vFundo.cotas != null)
-                            {
-                                foreach (var cota in vFundo.cotas)
-                                {
-                                    TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                    vPosicLayout2.FUNDO = vFundos[0].ID;
-                                    vPosicLayout2.TIPO = "cotas";
-                                    vPosicLayout2.PAPEL_ISIN = cota.isin;
-                                    vPosicLayout2.PAPEL_COD = cota.cnpjfundo.ToString();
-                                    vPosicLayout2.QUANT = (double)(cota.qtdisponivel + cota.qtgarantia);
-                                    vPosicLayout2.VALOR = (double)((double)cota.puposicao + vPosicLayout2.QUANT);
-                                    vPosicLayout2.CNPJISSUE = cota.cnpjfundo.ToString();
-                                    vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                    vPosicLayout2.COMPROMISSADA = false;
-                                    vTotalGeral += (float)vPosicLayout2.VALOR;
-
-                                    vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                    vContexto.SaveChanges();
-                                }
-                            }
-                            #endregion
-
-                            #region Despesas
-
-                            vTotalDespesas -= (float)vFundo.despesas.txadm;
-                            if (vFundo.outrasdespesas != null)
-                            {
-                                foreach (var outraDespesas in vFundo.outrasdespesas)
-                                {
-                                    vTotalDespesas -= (float)outraDespesas.valor;
-                                }
-                            }
-                            #endregion
-
-                            #region Provisões
-
-                            if (vFundo.provisao != null)
-                            {
-                                foreach (var provisao in vFundo.provisao)
-                                {
-                                    //provisão, futuros, imoveis, 
-                                    object vProvedorFiltro = null;
-                                    foreach (var filtro in vFilter)
+                                    StringBuilder vSQL = new StringBuilder();
+                                    vSQL.AppendLine("delete from TPOSICLAYOUT2");
+                                    vSQL.AppendLine(String.Format(" where DATA = '{0}'", vDataPosicao.ToString("yyyy-MM-dd")));
+                                    vSQL.AppendLine(String.Format("   and FUNDO = {0}", vFundos[0].ID));
+                                    using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                                     {
-                                        if (vFundos[0].ID == filtro.FUNDO && filtro.PROV_COD == provisao.codprov.ToString() && filtro.PROV_DATA == provisao.dt)
+                                        vConection.Open();
+                                        using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
                                         {
-                                            vProvedorFiltro = filtro;
+                                            vComando.ExecuteNonQuery();
+                                        }
+                                        vConection.Close();
+                                    }
+
+                                    float vTotalDespesas = 0;
+                                    float vValorAResgatar = (float)vFundo.header.vlcotasresgatar;
+                                    float vTotalProvisao = -vValorAResgatar;
+                                    float vTotalGeral = 0;
+
+                                    #region Ações
+
+                                    if (vFundo.acoes != null)
+                                    {
+                                        foreach (var acao in vFundo.acoes)
+                                        {
+                                            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                            //FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX], CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA
+                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.TIPO = "acoes";
+                                            vPosicLayout2.PAPEL_ISIN = acao.isin;
+                                            vPosicLayout2.PAPEL_COD = acao.codativo;
+                                            vPosicLayout2.QUANT = (double)(acao.qtdisponivel + acao.qtgarantia);
+                                            vPosicLayout2.VALOR = (double)(acao.valorfindisp + acao.valorfinemgar);
+                                            if (acao.classeoperacao == classeCDTV_type.V)
+                                                vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
+                                            vPosicLayout2.DATA = vDataPosicao;
+                                            vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.INDEX = "";
+                                            vPosicLayout2.CUPOM = 0;
+                                            vPosicLayout2.PINDEX = 0;
+                                            vPosicLayout2.CNPJISSUE = "";
+                                            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.COMPROMISSADA = false;
+                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Título Privado
+
+                                    if (vFundo.titprivado != null)
+                                    {
+                                        foreach (var tituloPrivado in vFundo.titprivado)
+                                        {
+                                            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.TIPO = "titprivado";
+                                            vPosicLayout2.PAPEL_ISIN = tituloPrivado.isin;
+                                            vPosicLayout2.PAPEL_COD = tituloPrivado.codativo;
+                                            vPosicLayout2.QUANT = (double)(tituloPrivado.qtdisponivel + tituloPrivado.qtgarantia);
+                                            vPosicLayout2.VALOR = (double)(tituloPrivado.valorfindisp + tituloPrivado.valorfinemgar);
+                                            if (tituloPrivado.classeoperacao == classeCDTV_type.V)
+                                                vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
+                                            vPosicLayout2.DATA = vDataPosicao;
+                                            int vAno = int.Parse(tituloPrivado.dtemissao.Substring(0, 4));
+                                            int vMes = int.Parse(tituloPrivado.dtemissao.Substring(4, 2));
+                                            int vDia = int.Parse(tituloPrivado.dtemissao.Substring(6, 2));
+                                            vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
+                                            vAno = int.Parse(tituloPrivado.dtvencimento.Substring(0, 4));
+                                            vMes = int.Parse(tituloPrivado.dtvencimento.Substring(4, 2));
+                                            vDia = int.Parse(tituloPrivado.dtvencimento.Substring(6, 2));
+                                            vPosicLayout2.DTVENC = new DateTime(vAno, vMes, vDia);
+                                            vPosicLayout2.INDEX = tituloPrivado.indexador;
+                                            vPosicLayout2.CUPOM = (double)tituloPrivado.coupom / 100;
+                                            vPosicLayout2.PINDEX = (double)tituloPrivado.percindex;
+                                            vPosicLayout2.CNPJISSUE = tituloPrivado.cnpjemissor.ToString();
+                                            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.COMPROMISSADA = (tituloPrivado.compromisso != null);
+                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+
+                                            vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Título Público
+
+                                    if (vFundo.titpublico != null)
+                                    {
+                                        foreach (var tituloPublico in vFundo.titpublico)
+                                        {
+                                            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.TIPO = "titpublico";
+                                            vPosicLayout2.PAPEL_ISIN = tituloPublico.isin;
+                                            vPosicLayout2.PAPEL_COD = tituloPublico.codativo;
+                                            vPosicLayout2.QUANT = (double)(tituloPublico.qtdisponivel + tituloPublico.qtgarantia);
+                                            vPosicLayout2.VALOR = (double)(tituloPublico.valorfindisp + tituloPublico.valorfinemgar);
+                                            if (tituloPublico.classeoperacao == classeCDTV_type.V)
+                                                vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
+                                            vPosicLayout2.DATA = vDataPosicao;
+                                            int vAno = int.Parse(tituloPublico.dtemissao.Substring(0, 4));
+                                            int vMes = int.Parse(tituloPublico.dtemissao.Substring(4, 2));
+                                            int vDia = int.Parse(tituloPublico.dtemissao.Substring(6, 2));
+                                            vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
+                                            vAno = int.Parse(tituloPublico.dtvencimento.Substring(0, 4));
+                                            vMes = int.Parse(tituloPublico.dtvencimento.Substring(4, 2));
+                                            vDia = int.Parse(tituloPublico.dtvencimento.Substring(6, 2));
+                                            vPosicLayout2.DTVENC = new DateTime(vAno, vMes, vDia);
+                                            vPosicLayout2.INDEX = tituloPublico.indexador;
+                                            vPosicLayout2.CUPOM = (double)tituloPublico.coupom / 100;
+                                            vPosicLayout2.PINDEX = (double)tituloPublico.percindex;
+                                            vPosicLayout2.CNPJISSUE = "";
+                                            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.COMPROMISSADA = (tituloPublico.compromisso != null);
+                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+
+                                            vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Debêntures
+
+                                    if (vFundo.debenture != null)
+                                    {
+                                        foreach (var debenture in vFundo.debenture)
+                                        {
+                                            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.TIPO = "debenture";
+                                            vPosicLayout2.PAPEL_ISIN = debenture.isin;
+                                            vPosicLayout2.PAPEL_COD = debenture.coddeb;
+                                            vPosicLayout2.QUANT = (double)(debenture.qtdisponivel + debenture.qtgarantia);
+                                            vPosicLayout2.VALOR = (double)(debenture.valorfindisp + debenture.valorfinemgar);
+                                            if (debenture.classeoperacao == classeCDTV_type.V)
+                                                vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
+                                            vPosicLayout2.DATA = vDataPosicao;
+                                            int vAno = int.Parse(debenture.dtemissao.Substring(0, 4));
+                                            int vMes = int.Parse(debenture.dtemissao.Substring(4, 2));
+                                            int vDia = int.Parse(debenture.dtemissao.Substring(6, 2));
+                                            vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
+                                            vAno = int.Parse(debenture.dtvencimento.Substring(0, 4));
+                                            vMes = int.Parse(debenture.dtvencimento.Substring(4, 2));
+                                            vDia = int.Parse(debenture.dtvencimento.Substring(6, 2));
+                                            vPosicLayout2.DTVENC = new DateTime(vAno, vMes, vDia);
+                                            vPosicLayout2.INDEX = debenture.indexador;
+                                            vPosicLayout2.CUPOM = (double)debenture.coupom / 100;
+                                            vPosicLayout2.PINDEX = (double)debenture.percindex;
+                                            vPosicLayout2.CNPJISSUE = debenture.cnpjemissor.ToString();
+                                            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.COMPROMISSADA = false;
+
+                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+
+                                            vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Caixa
+
+                                    if (vFundo.caixa != null)
+                                    {
+                                        foreach (var caixa in vFundo.caixa)
+                                        {
+                                            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.TIPO = "caixa";
+                                            vPosicLayout2.PAPEL_ISIN = caixa.isininstituicao;
+                                            vPosicLayout2.PAPEL_COD = "CONTA";
+                                            vPosicLayout2.QUANT = (double)caixa.saldo;
+                                            vPosicLayout2.VALOR = vPosicLayout2.QUANT;
+                                            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.COMPROMISSADA = false;
+                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+
+                                            vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Cotas
+
+                                    if (vFundo.cotas != null)
+                                    {
+                                        foreach (var cota in vFundo.cotas)
+                                        {
+                                            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.TIPO = "cotas";
+                                            vPosicLayout2.PAPEL_ISIN = cota.isin;
+                                            vPosicLayout2.PAPEL_COD = cota.cnpjfundo.ToString();
+                                            vPosicLayout2.QUANT = (double)(cota.qtdisponivel + cota.qtgarantia);
+                                            vPosicLayout2.VALOR = (double)((double)cota.puposicao + vPosicLayout2.QUANT);
+                                            vPosicLayout2.CNPJISSUE = cota.cnpjfundo.ToString();
+                                            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.COMPROMISSADA = false;
+                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+
+                                            vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Despesas
+
+                                    vTotalDespesas -= (float)vFundo.despesas.txadm;
+                                    if (vFundo.outrasdespesas != null)
+                                    {
+                                        foreach (var outraDespesas in vFundo.outrasdespesas)
+                                        {
+                                            vTotalDespesas -= (float)outraDespesas.valor;
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Provisões
+
+                                    if (vFundo.provisao != null)
+                                    {
+                                        foreach (var provisao in vFundo.provisao)
+                                        {
+                                            //provisão, futuros, imoveis, 
+                                            object vProvedorFiltro = null;
+                                            foreach (var filtro in vFilter)
+                                            {
+                                                if (vFundos[0].ID == filtro.FUNDO && filtro.PROV_COD == provisao.codprov.ToString() && filtro.PROV_DATA == provisao.dt)
+                                                {
+                                                    vProvedorFiltro = filtro;
+                                                }
+                                            }
+
+                                            if (vProvedorFiltro == null)
+                                            {
+                                                if (provisao.credeb == credeb_type.C)
+                                                    vTotalProvisao += (float)provisao.valor;
+                                                else
+                                                    vTotalProvisao -= (float)provisao.valor;
+                                            }
+                                            else
+                                            {
+                                                TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                                vPosicLayout2.FUNDO = vFundos[0].ID;
+                                                vPosicLayout2.TIPO = (vProvedorFiltro as TProvFilter.TProvFilter).PP_TIPO;
+                                                vPosicLayout2.PAPEL_ISIN = (vProvedorFiltro as TProvFilter.TProvFilter).PP_ISIN;
+                                                vPosicLayout2.PAPEL_COD = (vProvedorFiltro as TProvFilter.TProvFilter).PP_COD;
+                                                vPosicLayout2.QUANT = 1;
+                                                vPosicLayout2.VALOR = (double)provisao.valor;
+                                                if (provisao.credeb == credeb_type.D)
+                                                    vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
+                                                vPosicLayout2.CNPJISSUE = "";
+                                                vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                                vPosicLayout2.COMPROMISSADA = false;
+
+                                                vTotalGeral += (float)vPosicLayout2.VALOR;
+                                                vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                            }
                                         }
                                     }
 
-                                    if (vProvedorFiltro == null)
+                                    #endregion
+
+                                    #region Futuros
+
+                                    if (vFundo.futuros != null)
                                     {
-                                        if (provisao.credeb == credeb_type.C)
-                                            vTotalProvisao += (float)provisao.valor;
-                                        else
-                                            vTotalProvisao -= (float)provisao.valor;
+                                        foreach (var futuro in vFundo.futuros)
+                                        {
+                                            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.TIPO = "futuros";
+                                            vPosicLayout2.PAPEL_ISIN = futuro.isin;
+                                            vPosicLayout2.PAPEL_COD = String.Format("{0}{1}", futuro.ativo, futuro.serie);
+                                            string vMSS = "";
+
+                                            if (futuro.ativo.Equals("DAP") && futuro.vltotalpos < 50000 * futuro.quantidade)
+                                                vPosicLayout2.QUANT = (double)futuro.quantidade * 120000;
+                                            else
+                                                vPosicLayout2.QUANT = (double)futuro.vltotalpos;
+
+                                            if (futuro.classeoperacao == classeCV_type.V)
+                                                vPosicLayout2.QUANT = vPosicLayout2.QUANT * -1;
+
+                                            vPosicLayout2.VALOR = (double)futuro.vlajuste;
+
+                                            int vAno = int.Parse(futuro.dtvencimento.Substring(0, 4));
+                                            int vMes = int.Parse(futuro.dtvencimento.Substring(4, 2));
+                                            int vDia = int.Parse(futuro.dtvencimento.Substring(6, 2));
+                                            vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
+                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+
+                                            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.COMPROMISSADA = false;
+                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+
+                                            vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                        }
                                     }
-                                    else
+                                    #endregion
+
+                                    #region Imóveis
+
+                                    if (vFundo.imoveis != null)
+                                    {
+                                        foreach (var imovel in vFundo.imoveis)
+                                        {
+                                            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.TIPO = "imoveis";
+                                            vPosicLayout2.VALOR = (double)imovel.valoravaliacao;
+                                            if (vPosicLayout2.VALOR == 0)
+                                                vPosicLayout2.VALOR = (double)imovel.valorcontabil;
+                                            vPosicLayout2.PAPEL_COD = String.Format("{0} {1}", imovel.logradouro, imovel.numero);
+                                            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.COMPROMISSADA = false;
+
+                                            vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Provisão acumulada
+
+                                    if (vTotalProvisao != 0)
                                     {
                                         TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
                                         vPosicLayout2.FUNDO = vFundos[0].ID;
-                                        vPosicLayout2.TIPO = (vProvedorFiltro as TProvFilter.TProvFilter).PP_TIPO;
-                                        vPosicLayout2.PAPEL_ISIN = (vProvedorFiltro as TProvFilter.TProvFilter).PP_ISIN;
-                                        vPosicLayout2.PAPEL_COD = (vProvedorFiltro as TProvFilter.TProvFilter).PP_COD;
-                                        vPosicLayout2.QUANT = 1;
-                                        vPosicLayout2.VALOR = (double)provisao.valor;
-                                        if (provisao.credeb == credeb_type.D)
-                                            vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
-                                        vPosicLayout2.CNPJISSUE = "";
+                                        vPosicLayout2.TIPO = "PROVISAO";
+                                        vPosicLayout2.PAPEL_ISIN = "PROVISAO";
+                                        vPosicLayout2.PAPEL_COD = "PROVISAO";
+                                        vPosicLayout2.QUANT = vTotalProvisao;
+                                        vPosicLayout2.VALOR = vTotalProvisao;
+                                        vPosicLayout2.DATA = vDataPosicao;
+                                        vPosicLayout2.DTVENC = new DateTime(1990, 01, 01);
+                                        vPosicLayout2.DTISSUE = new DateTime(1990, 01, 01);
+                                        vPosicLayout2.INDEX = "";
+                                        vPosicLayout2.PINDEX = 0;
+                                        vPosicLayout2.CNPJISSUE = "0";
                                         vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                         vPosicLayout2.COMPROMISSADA = false;
 
-                                        vTotalGeral += (float)vPosicLayout2.VALOR;
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                        vContexto.SaveChanges();
                                     }
-                                }
-                            }
 
-                            #endregion
+                                    #endregion
 
-                            #region Futuros
+                                    #region Despesa Acumulada
 
-                            if (vFundo.futuros != null)
-                            {
-                                foreach (var futuro in vFundo.futuros)
-                                {
-                                    TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                    vPosicLayout2.FUNDO = vFundos[0].ID;
-                                    vPosicLayout2.TIPO = "futuros";
-                                    vPosicLayout2.PAPEL_ISIN = futuro.isin;
-                                    vPosicLayout2.PAPEL_COD = String.Format("{0}{1}", futuro.ativo, futuro.serie);
-                                    string vMSS = "";
+                                    if (vTotalDespesas != 0)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+                                        vPosicLayout2.FUNDO = vFundos[0].ID;
+                                        vPosicLayout2.TIPO = "DESPESA";
+                                        vPosicLayout2.PAPEL_ISIN = "DESPESA";
+                                        vPosicLayout2.PAPEL_COD = "DESPESA";
+                                        vPosicLayout2.QUANT = vTotalDespesas;
+                                        vPosicLayout2.VALOR = vTotalDespesas;
+                                        vPosicLayout2.DATA = vDataPosicao;
+                                        vPosicLayout2.DTVENC = new DateTime(1990, 01, 01);
+                                        vPosicLayout2.DTISSUE = new DateTime(1990, 01, 01);
+                                        vPosicLayout2.INDEX = "";
+                                        vPosicLayout2.PINDEX = 0;
+                                        vPosicLayout2.CNPJISSUE = "0";
+                                        vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                        vPosicLayout2.COMPROMISSADA = false;
 
-                                    if (futuro.ativo.Equals("DAP") && futuro.vltotalpos < 50000 * futuro.quantidade)
-                                        vPosicLayout2.QUANT = (double)futuro.quantidade * 120000;
-                                    else
-                                        vPosicLayout2.QUANT = (double)futuro.vltotalpos;
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
 
-                                    if (futuro.classeoperacao == classeCV_type.V)
-                                        vPosicLayout2.QUANT = vPosicLayout2.QUANT * -1;
+                                    #endregion
 
-                                    vPosicLayout2.VALOR = (double)futuro.vlajuste;
+                                    vTotalGeral = vTotalGeral + vTotalProvisao + vTotalDespesas;
 
-                                    int vAno = int.Parse(futuro.dtvencimento.Substring(0, 4));
-                                    int vMes = int.Parse(futuro.dtvencimento.Substring(4, 2));
-                                    int vDia = int.Parse(futuro.dtvencimento.Substring(6, 2));
-                                    vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
-                                    vTotalGeral += (float)vPosicLayout2.VALOR;
-
-                                    vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                    vPosicLayout2.COMPROMISSADA = false;
-                                    vTotalGeral += (float)vPosicLayout2.VALOR;
-
-                                    vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    /*
+                                     * Gerar notificação
+                                    If Abs(TPL -plind) > 0.05 * plind Then
+                                       If Notify Then MsgBox("Fundo " + nome + " inconsistente na importação XML:" + Chr(13) + Format(TPL, "###,###,##0") + " x " + Format(plind, "###,###,##0"))
+                                        WriteLogError "Importação PL inconsistente", nome
+                                    End If
+                                    */
                                     vContexto.SaveChanges();
+                                    ProcessImportedXml(vDataPosicao, (int)vFundos[0].ID);
                                 }
+
+                                
                             }
-                            #endregion
-
-                            #region Imóveis
-
-                            if (vFundo.imoveis != null)
-                            {
-                                foreach (var imovel in vFundo.imoveis)
-                                {
-                                    TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                    vPosicLayout2.FUNDO = vFundos[0].ID;
-                                    vPosicLayout2.TIPO = "imoveis";
-                                    vPosicLayout2.VALOR = (double)imovel.valoravaliacao;
-                                    if (vPosicLayout2.VALOR == 0)
-                                        vPosicLayout2.VALOR = (double)imovel.valorcontabil;
-                                    vPosicLayout2.PAPEL_COD = String.Format("{0} {1}", imovel.logradouro, imovel.numero);
-                                    vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                    vPosicLayout2.COMPROMISSADA = false;
-
-                                    vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                    vContexto.SaveChanges();
-                                }
-                            }
-                            #endregion
-
-                            #region Provisão acumulada
-
-                            if (vTotalProvisao != 0)
-                            {
-                                TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                vPosicLayout2.FUNDO = vFundos[0].ID;
-                                vPosicLayout2.TIPO = "PROVISAO";
-                                vPosicLayout2.PAPEL_ISIN = "PROVISAO";
-                                vPosicLayout2.PAPEL_COD = "PROVISAO";
-                                vPosicLayout2.QUANT = vTotalProvisao;
-                                vPosicLayout2.VALOR = vTotalProvisao;
-                                vPosicLayout2.DATA = vDataPosicao;
-                                vPosicLayout2.DTVENC = new DateTime(1990, 01, 01);
-                                vPosicLayout2.DTISSUE = new DateTime(1990, 01, 01);
-                                vPosicLayout2.INDEX = "";
-                                vPosicLayout2.PINDEX = 0;
-                                vPosicLayout2.CNPJISSUE = "0";
-                                vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                vPosicLayout2.COMPROMISSADA = false;
-
-                                vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                vContexto.SaveChanges();
-                            }
-
-                            #endregion
-
-                            #region Despesa Acumulada
-
-                            if (vTotalDespesas != 0)
-                            {
-                                TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                vPosicLayout2.FUNDO = vFundos[0].ID;
-                                vPosicLayout2.TIPO = "DESPESA";
-                                vPosicLayout2.PAPEL_ISIN = "DESPESA";
-                                vPosicLayout2.PAPEL_COD = "DESPESA";
-                                vPosicLayout2.QUANT = vTotalDespesas;
-                                vPosicLayout2.VALOR = vTotalDespesas;
-                                vPosicLayout2.DATA = vDataPosicao;
-                                vPosicLayout2.DTVENC = new DateTime(1990, 01, 01);
-                                vPosicLayout2.DTISSUE = new DateTime(1990, 01, 01);
-                                vPosicLayout2.INDEX = "";
-                                vPosicLayout2.PINDEX = 0;
-                                vPosicLayout2.CNPJISSUE = "0";
-                                vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
-                                vPosicLayout2.COMPROMISSADA = false;
-
-                                vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
-                                vContexto.SaveChanges();
-                            }
-
-                            #endregion
-
-                            vTotalGeral = vTotalGeral + vTotalProvisao + vTotalDespesas;
-
-                            /*
-                             * Gerar notificação
-                            If Abs(TPL -plind) > 0.05 * plind Then
-                               If Notify Then MsgBox("Fundo " + nome + " inconsistente na importação XML:" + Chr(13) + Format(TPL, "###,###,##0") + " x " + Format(plind, "###,###,##0"))
-                                WriteLogError "Importação PL inconsistente", nome
-                            End If
-                            */
-                        }
-
-                        ProcessImportedXml(vDataPosicao, (int)vFundos[0].ID);
+                        fileStream.Close();
                     }
-                    fileStream.Close();
-                }
 
-                string pathProcessados = Path.Combine(Path.GetDirectoryName(ConfigurationManager.AppSettings["pathRaizXml"]), "Processados");
-                if (!Directory.Exists(pathProcessados))
-                    Directory.CreateDirectory(pathProcessados);
-                pathProcessados = Path.Combine(pathProcessados, vNomePastaProcessamento);
-                if (!Directory.Exists(pathProcessados))
-                    Directory.CreateDirectory(pathProcessados);
-                File.Move(vXmlFileToImport, Path.Combine(pathProcessados, Path.GetFileName(vXmlFileToImport)));
+                    string pathProcessados = Path.Combine(Path.GetDirectoryName(ConfigurationManager.AppSettings["pathRaizXml"]), "Processados");
+                    if (!Directory.Exists(pathProcessados))
+                        Directory.CreateDirectory(pathProcessados);
+                    pathProcessados = Path.Combine(pathProcessados, vNomePastaProcessamento);
+                    if (!Directory.Exists(pathProcessados))
+                        Directory.CreateDirectory(pathProcessados);
+                    File.Move(vXmlFileToImport, Path.Combine(pathProcessados, Path.GetFileName(vXmlFileToImport)));
+                }
+            }
+            catch (Exception ex)
+            {
+                string pathRejeitados = Path.Combine(Path.GetDirectoryName(ConfigurationManager.AppSettings["pathRaizXml"]), "Rejeitados");
+                if (!Directory.Exists(pathRejeitados))
+                    Directory.CreateDirectory(pathRejeitados);
+                pathRejeitados = Path.Combine(pathRejeitados, vNomePastaProcessamento);
+                if (!Directory.Exists(pathRejeitados))
+                    Directory.CreateDirectory(pathRejeitados);
+                File.Move(vXmlFileToImport, Path.Combine(pathRejeitados, Path.GetFileName(vXmlFileToImport)));
             }
         }
 
@@ -883,11 +893,10 @@ namespace Capitania.Importer.Library
                                     vPosicao.TIPO = 2;
 
                                     vContexto.TPosic.Add(vPosicao);
-                                    vContexto.SaveChanges();
                                 }
                             }
-
                         }
+                        vContexto.SaveChanges();
                     }
                 }
 

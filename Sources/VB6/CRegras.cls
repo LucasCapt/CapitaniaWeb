@@ -123,8 +123,8 @@ Public Function Cria(x As String) As CRegra
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
         
-        order = "INSERT INTO TREGRAS (ID, NOME, MAXMIN, LIMITE, POR, POR_PROP, PARA, PARA_PROP, PARA_VALOR, WORKLOW, WARN, PARA_COMP, ABERTA, DELETED, DT_CREATED, DT_DELETED, ESCOPO, LIM_REF) " + _
-            "VALUES (" + Str(LastNumber + 1) + ", '" + x + "', 'MAX', 0, FALSE, 0, FALSE, 0, '', 0, 0, '', 0, 0, " + SQLBaseDate + "," + SQLBaseDate + ",'CTRL','PL')"
+        order = "INSERT INTO TREGRAS (ID, NOME, MAXMIN, LIMITE, POR, POR_PROP, PARA, PARA_PROP, PARA_VALOR, WORKLOW, WARN, PARA_COMP, ABERTA, DELETED, DT_CREATED, DT_DELETED, ESCOPO, LIM_REF, CONECTOR, MOVEMENTRULE, ANDRULE, REFISSUE, ISSUE_QUANT, AND2RULE, AND3RULE) " + _
+            "VALUES (" + Str(LastNumber + 1) + ", '" + x + "', 'MAX', 0, 0, 0, 0, 0, '', 0, 0, '', 0, 0, " + SQLBaseDate + "," + SQLBaseDate + ",'CTRL','PL', 0, 0, 0, 0, 0, 0, 0)"
         
         db.Execute order
         
