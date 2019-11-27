@@ -119,7 +119,7 @@ Public Sub WriteDB()
             ", " + sbAND + ", " + Str(spand) + ", '" + AND_valor + "','" + AND_comp + "'," + sbConector + _
             ", " + sbAND2 + ", " + Str(spand2) + ", '" + AND2_valor + "','" + AND2_comp + "'" + _
             ", " + sbAND3 + ", " + Str(spand3) + ", '" + AND3_valor + "','" + AND3_comp + "'" + _
-            ", " + sbissue + ", " + sissue + "," + dst + "," + dst + ", FALSE,'" + Me.Escopo + "'," + sbquant + ",'" + Me.Lim_Ref + "')"
+            ", " + sbissue + ", " + sissue + "," + dst + "," + dst + ", 0,'" + Me.Escopo + "'," + sbquant + ",'" + Me.Lim_Ref + "')"
         
         db.Execute order
         

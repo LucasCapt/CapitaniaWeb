@@ -2,6 +2,8 @@ Attribute VB_Name = "MMain"
 Public Const LongTimeAgo As Date = 36526
 
 Private vConexao As ADODB.Connection
+Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
+'Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
 
 Public DBFileName As String
 Public ConfigFileName As String
@@ -75,7 +77,10 @@ Public NumErrors As Double             'Número de erros desde a última revisão
 'Public Const Ver = "2.126"               '09-Out-2019 'Alteração no FCreditRisk
 'Public Const Ver = "2.127"               '10-Out-2019 'Alteração no MMath
 'Public Const Ver = "2.128"               '14-Out-2019 'Alteração no CImporter
-Public Const Ver = "2.129"               '05-Nov-2019 'Alteração no CPapel (PresumedMaturity)
+'Public Const Ver = "2.129"               '05-Nov-2019 'Alteração no CPapel (PresumedMaturity)
+'Public Const Ver = "2.130"               '18-Nov-2019 'Correção na criação de regras (erro ao inserir devido ao campo 'false'
+Public Const Ver = "2.131"               '18-Nov-2019 'Insert no método 'cria' de regras estava incorreto, desconsiderando campos da tabela.
+
 
 Sub Init()
     
@@ -352,9 +357,7 @@ Public Function OpenTheDatabase(Optional ByVal pForceOpenConnection As Boolean =
     
     If vConexao Is Nothing Then
         Set vConexao = New ADODB.Connection
-        Let vConnectionString = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
-        'Let vConnectionString = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
-        Call vConexao.open(vConnectionString)
+        Call vConexao.open(MMain.DatabaseConnectionString)
     End If
     
     Set OpenTheDatabase = vConexao

@@ -166,7 +166,7 @@ Public Sub ReadDB(Data1 As Date)
     'Lê todo o TDATV TODO
     t0i = Now()
         Set rs1 = New ADODB.Recordset
-        Call rs1.open("SELECT * FROM TADTV WHERE DATA>=" + SQLD(BaseDate - 15) + " ORDER BY NOME ASC, DATA DESC", db, adOpenForwardOnly, adLockReadOnly)
+        Call rs1.open("SELECT * FROM TADTV WHERE DATA>=" + SQLD(BaseDate - 15) + " ORDER BY NOME ASC, DATA DESC", db, adOpenKeyset, adLockReadOnly)
         AllADTVs = rs1.GetRows(rs1.RecordCount)
     tt3 = tt3 + Now() - t0i
     
@@ -224,9 +224,7 @@ Public Sub ReadDB(Data1 As Date)
             Dim vConexaoTemp As ADODB.Connection
             If (vConexaoTemp Is Nothing) Then
                 Set vConexaoTemp = New ADODB.Connection
-                Let vConnectionString = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
-                'Let vConnectionString = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
-                Call vConexaoTemp.open(vConnectionString)
+                Call vConexaoTemp.open(MMain.DatabaseConnectionString)
             End If
             Set rs1 = New ADODB.Recordset
             Call rs1.open("SELECT * FROM TFLUXOS WHERE IDFLUXO = '" + x.IDFluxo + "' AND DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1 AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY DATA", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)

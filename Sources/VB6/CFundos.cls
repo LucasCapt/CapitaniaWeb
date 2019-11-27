@@ -87,9 +87,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             Dim vConexaoTemp As ADODB.Connection
             If (vConexaoTemp Is Nothing) Then
                 Set vConexaoTemp = New ADODB.Connection
-                vConnectionString = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
-                'vConnectionString = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
-                Call vConexaoTemp.open(vConnectionString)
+                Call vConexaoTemp.open(MMain.DatabaseConnectionString)
             End If
             Set rs1 = New ADODB.Recordset
             Call rs1.open("SELECT * FROM TFUNDOBOOK WHERE FUNDO=" + Str(rs("ID")), vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
