@@ -914,7 +914,7 @@ namespace Capitania.Importer.Library
         {
             //Obter última data dos resgates
             Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
-            DateTime vUltimaData = vContexto.TResgates.Where(w => w.DATAOBS.Value.Date <= DateTime.Now.Date).Max(k => k.DATAOBS).Value;
+            DateTime vUltimaData = vContexto.TResgates.Where(w => w.DATAOBS.Value <= DateTime.Now).Max(k => k.DATAOBS).Value;
             if (vUltimaData.Date < new DateTime(2012, 1, 1).Date)
                 vUltimaData = new DateTime(2012, 1, 1);
 
@@ -928,7 +928,7 @@ namespace Capitania.Importer.Library
                 string vNomePlanilhaResgates = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTab);
                 string vNomePlanilhaTransferencia = ParameterManager.GetParameterValue(DBParametersConstants.RedemptionFileTransferTab);
                 Excel.Application xlApp = new Excel.Application();
-                Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+                Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura, null, true);
                 Excel._Worksheet planilhaResgates = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaResgates];
                 Excel._Worksheet planilhaTransferencias = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaTransferencia];
 
@@ -954,7 +954,8 @@ namespace Capitania.Importer.Library
                 int i = 16384;
                 int vMaxLines = 30000;
 
-                while (planilhaResgates.Cells[i, 1].ToString() == "" || (DateTime)planilhaResgates.Cells[i, 1] > vCutDate && i > 4)
+
+                while (planilhaResgates.Cells[i, 1].ToString() == "" || (DateTime)(planilhaResgates.Cells[i, 1] as Excel.Range).Value > vCutDate && i > 4)
                 {
                     i = i / 2;
                 }
@@ -1482,7 +1483,7 @@ namespace Capitania.Importer.Library
                 Excel.Application xlApp = new Excel.Application();
                 Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
                 Excel._Worksheet planilaPricing = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaPricing];
-                
+
                 int j = 1;
                 while (planilaPricing.Cells[1, j] != string.Empty)
                 {
@@ -1496,9 +1497,9 @@ namespace Capitania.Importer.Library
                     int i = 4;
                     DateTime vData = new DateTime(2015, 10, 1);
 
-                    if (planilaPricing.Cells[i, j] !=string.Empty && i<100)
+                    if (planilaPricing.Cells[i, j] != string.Empty && i < 100)
                     {
-                        if(planilaPricing.Cells[i, j]> vUltimaData)
+                        if (planilaPricing.Cells[i, j] > vUltimaData)
                         {
                             vData = planilaPricing.Cells[i, j];
                             double vValor = 0;
@@ -1531,7 +1532,7 @@ namespace Capitania.Importer.Library
 
                             }
                         }
-                        
+
                     }
                     j = j + 3;
                 }

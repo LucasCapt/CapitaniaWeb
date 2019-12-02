@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Abp.Domain.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,8 +16,8 @@ namespace Capitania.EntityFrameworkCore
             TConfiguracao.TConfiguracao vParametro = parametros.FirstOrDefault(k => k.Codigo.Equals(parameterCode));
             if (vParametro == null)
             {
-                CapitaniaDbContext vContexto = new CapitaniaDbContext(new Microsoft.EntityFrameworkCore.DbContextOptions<CapitaniaDbContext>());
-                vParametro = null;// vContexto.Configuracoes.FirstOrDefault(w => w.Codigo.Equals(parameterCode));
+                CapitaniaDbModel vContexto = new CapitaniaDbModel();
+                vParametro = vContexto.Configuracoes.FirstOrDefault(w => w.Codigo.Equals(parameterCode));
                 if (vParametro == null)
                     throw new Exception(String.Format("Parametro com código {0} não cadastrado.", parameterCode));
 
