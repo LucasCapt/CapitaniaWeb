@@ -66,6 +66,7 @@ Sub importaADTV(Level As Integer, Optional f As Form)
                         DoEvents
                         If ws.cells(i, j) > LastDate Then
                             d = ws.cells(i, j)
+                            
                             If IsNumeric(ws.cells(1, j + 1)) And ws.cells(i, j) <> "" Then
                                 adtv = ws.cells(1, j + 1)
                                 Call FStart.Say("Importando ADTV Ativo " & Ativo & " Data " & d)

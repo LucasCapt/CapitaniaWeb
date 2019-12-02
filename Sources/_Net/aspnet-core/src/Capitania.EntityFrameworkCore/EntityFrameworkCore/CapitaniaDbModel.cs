@@ -34,6 +34,8 @@ namespace Capitania.EntityFrameworkCore
         public virtual DbSet<TUsers> TUsers { get; set; }
         public virtual DbSet<TPosic> TPosic { get; set; }
         public virtual DbSet<TFACTORHIST> TFACTORHIST { get; set; }
+        public virtual DbSet<TPricing> TPricing { get; set; }
+        public virtual DbSet<TADTV> TADTV { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

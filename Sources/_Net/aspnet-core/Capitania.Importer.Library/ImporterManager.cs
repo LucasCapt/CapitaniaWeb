@@ -1214,7 +1214,7 @@ namespace Capitania.Importer.Library
                     string vNomeQuota = xlWorkbook.Worksheets.Item[i].Name;
                     if (!vNomeQuota.Equals("DATA"))
                     {
-                        
+
                         planilhaImportacao = xlWorkbook.Sheets[i];
                         int Col = 3;
                         decimal vValor;
@@ -1254,6 +1254,292 @@ namespace Capitania.Importer.Library
                 }
                 vConection.Close();
             }
+            //TODO: Marcar flag de importação do dia;
+            //TODO: Logar importação
+        }
+
+        public static void ImportarTrades()
+        {
+            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
+
+            DateTime? vMaxData = vContexto.TTrades.Max(w => w.DATA);
+            if (vMaxData == null)
+                vMaxData = DateTime.Now.AddDays(-30);
+
+            if (vMaxData.Value.Date > DateTime.Now.Date)
+                vMaxData = DateTime.Now.AddDays(-1);
+
+            StringBuilder vSQL = new StringBuilder();
+            vSQL.AppendLine("delete from TTRADES");
+            vSQL.AppendLine(String.Format(" where DATA >= '{0}'", vMaxData.Value.ToString("yyyy-MM-dd")));
+            using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+            {
+                vConection.Open();
+                using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                {
+                    vComando.ExecuteNonQuery();
+                }
+
+                string vArquivoLeitura = ParameterManager.GetParameterValue(DBParametersConstants.RFETradeSheet);
+                string vNomePlanilhaResgates = ParameterManager.GetParameterValue(DBParametersConstants.RFETradeTab);
+                Excel.Application xlApp = new Excel.Application();
+                Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+                Excel._Worksheet planilhaTrades = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaResgates];
+
+                int hi = 16000;
+                int lo = 10;
+                int meio = (hi + lo) / 2;
+                DateTime celmeio = new DateTime(1990, 01, 01);
+
+                while (hi > lo && celmeio != vMaxData.Value)
+                {
+                    meio = (hi + lo) / 2;
+                    string vValor = planilhaTrades.Cells[meio, 1];
+                    if (DateTime.TryParse(vValor, out celmeio))
+                        if (celmeio > vMaxData.Value)
+                            hi = meio;
+                        else
+                            lo = meio + 1;
+                    else
+                        lo = meio + 1;
+                }
+                int i = meio;
+                while (planilhaTrades.Cells[i, 1] >= vMaxData && i > 5)
+                {
+                    i--;
+                }
+                while (planilhaTrades.Cells[i, 1] != string.Empty && planilhaTrades.Cells[i, 1] < vMaxData)
+                {
+                    i++;
+                }
+
+                while (planilhaTrades.Cells[i, 1] != string.Empty)
+                {
+
+                    TTrades vTrade = new TTrades();
+                    vTrade.DATA = DateTime.Parse(planilhaTrades.Cells[i, 1]);
+                    vTrade.HORA = DateTime.Now;
+                    vTrade.HORA_MS = (DateTime.Now - DateTime.Today).TotalSeconds;
+                    vTrade.FUNDO = planilhaTrades.Cells[i, 2];
+                    vTrade.ATIVO = planilhaTrades.Cells[i, 10];
+                    vTrade.CV = planilhaTrades.Cells[i, 4];
+                    vTrade.QUANT = planilhaTrades.Cells[i, 5];
+                    vTrade.TAXA = 0;
+                    vTrade.PU = planilhaTrades.Cells[i, 6];
+                    vTrade.PRICEREF = 0;
+                    vTrade.PRICESRC = string.Empty;
+                    vTrade.BROKER = planilhaTrades.Cells[i, 3];
+                    vTrade.PRODUTO = planilhaTrades.Cells[i, 23];
+                    vTrade.NOMEATIVO = planilhaTrades.Cells[i, 24];
+                    vTrade.VALFIN = planilhaTrades.Cells[i, 7];
+                    vContexto.TTrades.Add(vTrade);
+                }
+
+                //importar arquivo .negs
+
+                while (vMaxData.Value.Date <= DateTime.Now.Date)
+                {
+                    string vValorParametroNegsFilePrefixo = ParameterManager.GetParameterValue(DBParametersConstants.NegsFilePrefix);
+                    string vPrefixoNegsFile = Path.GetFileName(vValorParametroNegsFilePrefixo);
+                    string vNegFilePath = Path.GetDirectoryName(vValorParametroNegsFilePrefixo);
+
+                    foreach (string vFile in Directory.GetFiles(vNegFilePath, String.Format("{0}*{1}.txt", vPrefixoNegsFile, vMaxData.Value.ToString("dd_MM_yy"))))
+                    {
+                        var vLinhas = File.ReadLines(vFile);
+                        foreach (var vLinha in vLinhas)
+                        {
+                            if (!vLinha.Equals("0#FU") && !vLinha.Equals("99#FU"))
+                            {
+                                string[] vValores = vLinha.Substring(1).Split('#');
+                                string vFundo = vValores[1];
+                                string vCV = vValores[2];
+                                string vAtivo = vValores[5];
+                                string vBroker = vValores[7];
+                                decimal vQuantidade = decimal.Parse(vValores[9]);
+                                decimal vPreco = decimal.Parse(vValores[10]);
+                                TTrades vTrade = new TTrades();
+                                vTrade.DATA = vMaxData.Value;
+                                vTrade.HORA = DateTime.Now;
+                                vTrade.HORA_MS = (DateTime.Now - DateTime.Today).TotalSeconds;
+                                vTrade.FUNDO = vFundo;
+                                vTrade.ATIVO = vAtivo;
+                                vTrade.CV = vCV;
+                                vTrade.QUANT = (double)vQuantidade;
+                                vTrade.TAXA = (double)vPreco;
+                                vTrade.PU = (double)vPreco;
+                                vTrade.PRICEREF = 0;
+                                vTrade.PRICESRC = string.Empty;
+                                vTrade.BROKER = vBroker;
+                                vTrade.PRODUTO = "RV";
+                                vContexto.TTrades.Add(vTrade);
+                            }
+                        }
+
+                    }
+
+                    vMaxData = vMaxData.Value.AddDays(1);
+                }
+
+                vContexto.SaveChanges();
+
+                vConection.Close();
+            }
+
+            //TODO: Marcar flag de importação do dia;
+            //TODO: Logar importação
+        }
+
+        public static void ImportarPrincing()
+        {
+            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
+            DateTime? vUltimaData = vContexto.TPricing.Max(w => w.DATAOBS);
+            if (vUltimaData != null)
+                vUltimaData = vUltimaData.Value.AddDays(-5);
+
+            if (vUltimaData.Value.Date < new DateTime(2015, 10, 1))
+                vUltimaData = new DateTime(2015, 10, 1);
+
+            if (vUltimaData.Value.Date < DateTime.Now.Date)
+            {
+                string vArquivoLeitura = ParameterManager.GetParameterValue(DBParametersConstants.FIIFileName);
+                string vNomePlanilhaPricing = ParameterManager.GetParameterValue(DBParametersConstants.FIIFileTab);
+                Excel.Application xlApp = new Excel.Application();
+                Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+                Excel._Worksheet planilaPricing = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaPricing];
+
+                vUltimaData = vUltimaData.Value.AddDays(1);
+                string vFileNomePrefixo = ParameterManager.GetParameterValue(DBParametersConstants.PricingFilePrefix);
+                while (vUltimaData.Value.Date < DateTime.Now.Date)
+                {
+                    string vFileName = string.Format("{0}{1}.txt", vFileNomePrefixo, vUltimaData.Value.ToString("yyyyMMdd"));
+                    if (File.Exists(vFileName))
+                    {
+                        //TODO: Processar arquivo texto de princing;
+                    }
+
+                    int j = 1;
+                    while (planilaPricing.Cells[1, j] != string.Empty)
+                    {
+                        string vAtivo = string.Empty;
+
+                        if (planilaPricing.Cells[1, j].ToString().Contains(" "))
+                            vAtivo = planilaPricing.Cells[1, j].ToString().Substring(0, planilaPricing.Cells[1, j].ToString().IndexOf(" "));
+                        else
+                            vAtivo = planilaPricing.Cells[1, j].ToString();
+
+                        int i = 4;
+                        while (planilaPricing.Cells[i, j] != string.Empty && planilaPricing.Cells[i, j] != vUltimaData)
+                            i++;
+
+                        if (planilaPricing.Cells[i, j] == vUltimaData)
+                        {
+                            using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                            {
+                                vConection.Open();
+                                StringBuilder vSQL = new StringBuilder();
+                                vSQL.AppendLine("DELETE FROM TPRICING ");
+                                vSQL.AppendLine(String.Format(" WHERE DATAOBS = '{0}'", vUltimaData.Value.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND ATIVO = '{0}'", vAtivo));
+                                using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    vComando.ExecuteNonQuery();
+                                }
+                                TPricing vPricing = new TPricing();
+                                vPricing.DATAOBS = vUltimaData;
+                                vPricing.ATIVO = vAtivo;
+                                vPricing.PRECO = (double)planilaPricing.Cells[i, j + 1];
+                                vContexto.TPricing.Add(vPricing);
+
+                                vConection.Close();
+                            }
+                        }
+                        j = j + 3;
+                    }
+                    vUltimaData = vUltimaData.Value.AddDays(1);
+                }
+                vContexto.SaveChanges();
+            }
+
+
+            //TODO: Marcar flag de importação do dia;
+            //TODO: Logar importação
+        }
+
+        public static void ImportarADTV()
+        {
+            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
+            DateTime? vUltimaData = vContexto.TADTV.Max(w => w.DATA);
+            if (vUltimaData != null)
+                vUltimaData = vUltimaData.Value.AddDays(-5);
+
+            if (vUltimaData.Value.Date < new DateTime(2015, 10, 1))
+                vUltimaData = new DateTime(2015, 10, 1);
+
+            if (vUltimaData.Value.Date < DateTime.Now.Date)
+            {
+                string vArquivoLeitura = ParameterManager.GetParameterValue(DBParametersConstants.FIIFileName);
+                string vNomePlanilhaPricing = ParameterManager.GetParameterValue(DBParametersConstants.FIIADTVTab);
+                Excel.Application xlApp = new Excel.Application();
+                Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+                Excel._Worksheet planilaPricing = (Excel._Worksheet)xlWorkbook.Sheets[vNomePlanilhaPricing];
+                
+                int j = 1;
+                while (planilaPricing.Cells[1, j] != string.Empty)
+                {
+                    string vAtivo = string.Empty;
+
+                    if (planilaPricing.Cells[1, j].ToString().Contains(" "))
+                        vAtivo = planilaPricing.Cells[1, j].ToString().Substring(0, planilaPricing.Cells[1, j].ToString().IndexOf(" "));
+                    else
+                        vAtivo = planilaPricing.Cells[1, j].ToString();
+
+                    int i = 4;
+                    DateTime vData = new DateTime(2015, 10, 1);
+
+                    if (planilaPricing.Cells[i, j] !=string.Empty && i<100)
+                    {
+                        if(planilaPricing.Cells[i, j]> vUltimaData)
+                        {
+                            vData = planilaPricing.Cells[i, j];
+                            double vValor = 0;
+                            if (planilaPricing.Cells[i, j] && double.TryParse(planilaPricing.Cells[1, j + 1], out vValor))
+                            {
+                                double vADTVCond = vValor;
+                                double.TryParse(planilaPricing.Cells[1, j + 2], out vADTVCond);
+                                using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                                {
+                                    vConection.Open();
+                                    StringBuilder vSQL = new StringBuilder();
+                                    vSQL.AppendLine("DELETE FROM TADTV ");
+                                    vSQL.AppendLine(String.Format(" WHERE NOME = '{0}'", vAtivo));
+                                    vSQL.AppendLine(String.Format("   AND DATA = '{0}'", vData.ToString("yyyy-MM-dd")));
+                                    using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                    {
+                                        vComando.ExecuteNonQuery();
+                                    }
+                                    TADTV vTADTV = new TADTV();
+                                    vTADTV.DATA = vData;
+                                    vTADTV.NOME = vAtivo;
+                                    vTADTV.ADTV = vValor;
+                                    vTADTV.ADTVCOND = vADTVCond;
+                                    vTADTV.ADTVCLASSE = vValor;
+                                    vTADTV.ADTVCLASSECOND = vADTVCond;
+                                    vContexto.TADTV.Add(vTADTV);
+
+                                    vConection.Close();
+                                }
+
+                            }
+                        }
+                        
+                    }
+                    j = j + 3;
+                }
+
+                vContexto.SaveChanges();
+            }
+
+
             //TODO: Marcar flag de importação do dia;
             //TODO: Logar importação
         }
