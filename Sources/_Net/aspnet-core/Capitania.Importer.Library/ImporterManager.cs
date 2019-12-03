@@ -78,17 +78,35 @@ namespace Capitania.Importer.Library
                             foreach (var vFundo in vXmlAnbima.fundo)
                             {
                                 DateTime vDataPosicao = new DateTime(int.Parse(vFundo.header.dtposicao.Substring(0, 4)), int.Parse(vFundo.header.dtposicao.Substring(4, 2)), int.Parse(vFundo.header.dtposicao.Substring(6, 2)));
+                                List<DataRow> vFundos;
                                 var vFilter = vContexto.TProvFilter.Where(k => (k.DT_CREATED.Value <= vDataPosicao && !(k.DELETED && k.DT_DELETED.Value <= vDataPosicao))).ToList();
-                                var vFundos = vContexto.TFundos.Where(k => k.CNPJ.Equals(vFundo.header.cnpj.ToString()) && (!k.DELETED || k.DT_DELETED.Value > vDataPosicao)).ToList();
-                                var vFundosNome = vContexto.TFundos.Where(k => k.Nome.Equals(vFundo.header.nome.ToString()) && (!k.DELETED || k.DT_DELETED.Value > vDataPosicao)).ToList();
-                                vFundos.AddRange(vFundosNome);
+                                StringBuilder vSQL = new StringBuilder();
+                                vSQL.AppendLine("select *");
+                                vSQL.AppendLine("  from TFundos");
+                                vSQL.AppendLine(String.Format(" where CNPJ = '{0}'", vFundo.header.cnpj));
+                                vSQL.AppendLine(String.Format("    or NOME = '{0}'", vFundo.header.nome));
+
+                                using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                                {
+                                    vConection.Open();
+                                    using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                    {
+                                        using (SqlDataReader vReader = vComando.ExecuteReader())
+                                        {
+                                            var dt = new System.Data.DataTable();
+                                            dt.Load(vReader);
+                                            vFundos = dt.AsEnumerable().ToList();
+                                        }
+                                    }
+                                    vConection.Close();
+                                }
 
                                 if (vFundos.Count > 0)
                                 {
-                                    StringBuilder vSQL = new StringBuilder();
+                                    vSQL = new StringBuilder();
                                     vSQL.AppendLine("delete from TPOSICLAYOUT2");
                                     vSQL.AppendLine(String.Format(" where DATA = '{0}'", vDataPosicao.ToString("yyyy-MM-dd")));
-                                    vSQL.AppendLine(String.Format("   and FUNDO = {0}", vFundos[0].ID));
+                                    vSQL.AppendLine(String.Format("   and FUNDO = {0}", vFundos[0].Field<int>("ID")));
                                     using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                                     {
                                         vConection.Open();
@@ -112,7 +130,7 @@ namespace Capitania.Importer.Library
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
                                             //FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX], CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA
-                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "acoes";
                                             vPosicLayout2.PAPEL_ISIN = acao.isin;
                                             vPosicLayout2.PAPEL_COD = acao.codativo;
@@ -142,7 +160,7 @@ namespace Capitania.Importer.Library
                                         foreach (var tituloPrivado in vFundo.titprivado)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "titprivado";
                                             vPosicLayout2.PAPEL_ISIN = tituloPrivado.isin;
                                             vPosicLayout2.PAPEL_COD = tituloPrivado.codativo;
@@ -179,7 +197,7 @@ namespace Capitania.Importer.Library
                                         foreach (var tituloPublico in vFundo.titpublico)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "titpublico";
                                             vPosicLayout2.PAPEL_ISIN = tituloPublico.isin;
                                             vPosicLayout2.PAPEL_COD = tituloPublico.codativo;
@@ -216,7 +234,7 @@ namespace Capitania.Importer.Library
                                         foreach (var debenture in vFundo.debenture)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "debenture";
                                             vPosicLayout2.PAPEL_ISIN = debenture.isin;
                                             vPosicLayout2.PAPEL_COD = debenture.coddeb;
@@ -254,7 +272,7 @@ namespace Capitania.Importer.Library
                                         foreach (var caixa in vFundo.caixa)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "caixa";
                                             vPosicLayout2.PAPEL_ISIN = caixa.isininstituicao;
                                             vPosicLayout2.PAPEL_COD = "CONTA";
@@ -276,7 +294,7 @@ namespace Capitania.Importer.Library
                                         foreach (var cota in vFundo.cotas)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "cotas";
                                             vPosicLayout2.PAPEL_ISIN = cota.isin;
                                             vPosicLayout2.PAPEL_COD = cota.cnpjfundo.ToString();
@@ -314,7 +332,7 @@ namespace Capitania.Importer.Library
                                             object vProvedorFiltro = null;
                                             foreach (var filtro in vFilter)
                                             {
-                                                if (vFundos[0].ID == filtro.FUNDO && filtro.PROV_COD == provisao.codprov.ToString() && filtro.PROV_DATA == provisao.dt)
+                                                if (vFundos[0].Field<int>("ID") == filtro.FUNDO && filtro.PROV_COD == provisao.codprov.ToString() && filtro.PROV_DATA == provisao.dt)
                                                 {
                                                     vProvedorFiltro = filtro;
                                                 }
@@ -330,7 +348,7 @@ namespace Capitania.Importer.Library
                                             else
                                             {
                                                 TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                                vPosicLayout2.FUNDO = vFundos[0].ID;
+                                                vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                                 vPosicLayout2.TIPO = (vProvedorFiltro as TProvFilter.TProvFilter).PP_TIPO;
                                                 vPosicLayout2.PAPEL_ISIN = (vProvedorFiltro as TProvFilter.TProvFilter).PP_ISIN;
                                                 vPosicLayout2.PAPEL_COD = (vProvedorFiltro as TProvFilter.TProvFilter).PP_COD;
@@ -357,7 +375,7 @@ namespace Capitania.Importer.Library
                                         foreach (var futuro in vFundo.futuros)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "futuros";
                                             vPosicLayout2.PAPEL_ISIN = futuro.isin;
                                             vPosicLayout2.PAPEL_COD = String.Format("{0}{1}", futuro.ativo, futuro.serie);
@@ -395,7 +413,7 @@ namespace Capitania.Importer.Library
                                         foreach (var imovel in vFundo.imoveis)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].ID;
+                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "imoveis";
                                             vPosicLayout2.VALOR = (double)imovel.valoravaliacao;
                                             if (vPosicLayout2.VALOR == 0)
@@ -414,7 +432,7 @@ namespace Capitania.Importer.Library
                                     if (vTotalProvisao != 0)
                                     {
                                         TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                        vPosicLayout2.FUNDO = vFundos[0].ID;
+                                        vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                         vPosicLayout2.TIPO = "PROVISAO";
                                         vPosicLayout2.PAPEL_ISIN = "PROVISAO";
                                         vPosicLayout2.PAPEL_COD = "PROVISAO";
@@ -439,7 +457,7 @@ namespace Capitania.Importer.Library
                                     if (vTotalDespesas != 0)
                                     {
                                         TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                        vPosicLayout2.FUNDO = vFundos[0].ID;
+                                        vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                         vPosicLayout2.TIPO = "DESPESA";
                                         vPosicLayout2.PAPEL_ISIN = "DESPESA";
                                         vPosicLayout2.PAPEL_COD = "DESPESA";
@@ -469,7 +487,7 @@ namespace Capitania.Importer.Library
                                     End If
                                     */
                                     vContexto.SaveChanges();
-                                    ProcessImportedXml(vDataPosicao, (int)vFundos[0].ID);
+                                    ProcessImportedXml(vDataPosicao, vFundos[0].Field<int>("ID"));
                                 }
 
 

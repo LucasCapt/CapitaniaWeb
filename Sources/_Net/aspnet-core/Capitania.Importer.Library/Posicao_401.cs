@@ -450,7 +450,7 @@ namespace Capitania.Importer.Library
 
         private string isinField;
 
-        private long cnpjField;
+        private string cnpjField;
 
         private string nomeField;
 
@@ -506,7 +506,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpj
+        public string cnpj
         {
             get
             {
