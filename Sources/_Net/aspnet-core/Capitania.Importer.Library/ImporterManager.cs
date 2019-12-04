@@ -274,10 +274,16 @@ namespace Capitania.Importer.Library
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
                                             vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "caixa";
+                                            vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.PAPEL_ISIN = caixa.isininstituicao;
                                             vPosicLayout2.PAPEL_COD = "CONTA";
                                             vPosicLayout2.QUANT = (double)caixa.saldo;
                                             vPosicLayout2.VALOR = vPosicLayout2.QUANT;
+                                            vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.CUPOM = 0;
+                                            vPosicLayout2.PINDEX = 0;
+                                            vPosicLayout2.CNPJISSUE = string.Empty;
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = false;
                                             vTotalGeral += (float)vPosicLayout2.VALOR;
@@ -296,12 +302,18 @@ namespace Capitania.Importer.Library
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
                                             vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "cotas";
+                                            vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.PAPEL_ISIN = cota.isin;
                                             vPosicLayout2.PAPEL_COD = cota.cnpjfundo.ToString();
                                             vPosicLayout2.QUANT = (double)(cota.qtdisponivel + cota.qtgarantia);
                                             vPosicLayout2.VALOR = (double)((double)cota.puposicao + vPosicLayout2.QUANT);
                                             vPosicLayout2.CNPJISSUE = cota.cnpjfundo.ToString();
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                            vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.CUPOM = 0;
+                                            vPosicLayout2.PINDEX = 0;
+                                            vPosicLayout2.CNPJISSUE = string.Empty;
                                             vPosicLayout2.COMPROMISSADA = false;
                                             vTotalGeral += (float)vPosicLayout2.VALOR;
 
@@ -358,6 +370,11 @@ namespace Capitania.Importer.Library
                                                     vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
                                                 vPosicLayout2.CNPJISSUE = "";
                                                 vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+                                                vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
+                                                vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
+                                                vPosicLayout2.CUPOM = 0;
+                                                vPosicLayout2.PINDEX = 0;
+                                                vPosicLayout2.CNPJISSUE = string.Empty;
                                                 vPosicLayout2.COMPROMISSADA = false;
 
                                                 vTotalGeral += (float)vPosicLayout2.VALOR;
@@ -377,6 +394,7 @@ namespace Capitania.Importer.Library
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
                                             vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "futuros";
+                                            vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.PAPEL_ISIN = futuro.isin;
                                             vPosicLayout2.PAPEL_COD = String.Format("{0}{1}", futuro.ativo, futuro.serie);
                                             string vMSS = "";
@@ -396,6 +414,11 @@ namespace Capitania.Importer.Library
                                             int vDia = int.Parse(futuro.dtvencimento.Substring(6, 2));
                                             vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
                                             vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.CUPOM = 0;
+                                            vPosicLayout2.PINDEX = 0;
+                                            vPosicLayout2.CNPJISSUE = string.Empty;
 
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = false;
@@ -415,10 +438,16 @@ namespace Capitania.Importer.Library
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
                                             vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "imoveis";
+                                            vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.VALOR = (double)imovel.valoravaliacao;
                                             if (vPosicLayout2.VALOR == 0)
                                                 vPosicLayout2.VALOR = (double)imovel.valorcontabil;
                                             vPosicLayout2.PAPEL_COD = String.Format("{0} {1}", imovel.logradouro, imovel.numero);
+                                            vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
+                                            vPosicLayout2.CUPOM = 0;
+                                            vPosicLayout2.PINDEX = 0;
+                                            vPosicLayout2.CNPJISSUE = string.Empty;
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = false;
 
@@ -444,6 +473,9 @@ namespace Capitania.Importer.Library
                                         vPosicLayout2.INDEX = "";
                                         vPosicLayout2.PINDEX = 0;
                                         vPosicLayout2.CNPJISSUE = "0";
+                                        vPosicLayout2.CUPOM = 0;
+                                        vPosicLayout2.PINDEX = 0;
+                                        vPosicLayout2.CNPJISSUE = string.Empty;
                                         vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                         vPosicLayout2.COMPROMISSADA = false;
 
@@ -468,9 +500,88 @@ namespace Capitania.Importer.Library
                                         vPosicLayout2.DTISSUE = new DateTime(1990, 01, 01);
                                         vPosicLayout2.INDEX = "";
                                         vPosicLayout2.PINDEX = 0;
-                                        vPosicLayout2.CNPJISSUE = "0";
+                                        vPosicLayout2.CUPOM = 0;
+                                        vPosicLayout2.PINDEX = 0;
+                                        vPosicLayout2.CNPJISSUE = string.Empty;
                                         vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                         vPosicLayout2.COMPROMISSADA = false;
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+
+                                    #endregion
+
+                                    #region Outros
+
+                                    if (vFundo.corretagem != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "corretagem");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.fidc != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "fidc");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.forwardsmoedas != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "forwardsmoedas");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.opcoesacoes != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "opcoesacoes");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.opcoesderiv != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "opcoesderiv");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.opcoesflx != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "opcoesflx");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.opcoesmoedasotc != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "opcoesmoedasotc");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.participacoes != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "participacoes");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.partplanprev != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "partplanprev");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.swap != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "swap");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.termorf != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "termorf");
+
+                                        vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
+                                    }
+                                    if (vFundo.termorv != null)
+                                    {
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "termorv");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
@@ -520,6 +631,27 @@ namespace Capitania.Importer.Library
                     File.Delete(vArquivoDestino);
                 File.Move(vXmlFileToImport, vArquivoDestino);
             }
+        }
+
+        private static TPOSICLAYOUT2 DadosOutros(string vNomePastaProcessamento, DateTime vDataPosicao, int vIDFundo, string vDescricao)
+        {
+            TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
+            vPosicLayout2.FUNDO = vIDFundo;
+            vPosicLayout2.TIPO = "!outro";
+            vPosicLayout2.PAPEL_ISIN = vDescricao;
+            vPosicLayout2.PAPEL_COD = "OUTRO";
+            vPosicLayout2.QUANT = 0;
+            vPosicLayout2.VALOR = 0;
+            vPosicLayout2.DATA = vDataPosicao;
+            vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
+            vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
+            vPosicLayout2.INDEX = string.Empty;
+            vPosicLayout2.CUPOM = 0;
+            vPosicLayout2.PINDEX = 0;
+            vPosicLayout2.CNPJISSUE = string.Empty;
+            vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
+            vPosicLayout2.COMPROMISSADA = false;
+            return vPosicLayout2;
         }
 
         private static string ConvIndex(string valor1, string valor2 = "")
@@ -973,25 +1105,24 @@ namespace Capitania.Importer.Library
                 int i = 16384;
                 int vMaxLines = 30000;
 
-                DateTime vDataCelula = (DateTime)(planilhaResgates.Cells[i, 1] as Range).Value;
-                while (vDataCelula > vCutDate && i > 4)
+                DateTime? vDataCelula = (planilhaResgates.Cells[i, 1] as Range).Value;
+                while ((vDataCelula == null || vDataCelula > vCutDate) && i > 4)
                 {
                     i = i / 2;
-                    vDataCelula = (DateTime)(planilhaResgates.Cells[i, 1] as Range).Value;
+                    vDataCelula = (planilhaResgates.Cells[i, 1] as Range).Value;
                 }
 
                 if (i == 4)
                     i = 3;
 
-                vDataCelula = (DateTime)(planilhaResgates.Cells[i, 1] as Range).Value;
-                while (i < vMaxLines && vDataCelula < vCutDate)
+                vDataCelula = (planilhaResgates.Cells[i, 1] as Range).Value;
+                while (vDataCelula != null && i < vMaxLines && vDataCelula < vCutDate)
                 {
                     i++;
-                    vDataCelula = (DateTime)(planilhaResgates.Cells[i, 1] as Range).Value;
+                    vDataCelula = (planilhaResgates.Cells[i, 1] as Range).Value;
                 }
 
-                vDataCelula = (DateTime)(planilhaResgates.Cells[i, 1] as Range).Value;
-                while (i < vMaxLines && vDataCelula <= DateTime.Now)
+                while (vDataCelula != null && i < vMaxLines && vDataCelula <= DateTime.Now)
                 {
                     TResgates vResgate = new TResgates();
                     vResgate.DATAOBS = vDataCelula;
@@ -1002,13 +1133,19 @@ namespace Capitania.Importer.Library
                         vResgate.DATALIQ = (DateTime)(planilhaResgates.Cells[i, 6] as Range).Value;
 
                     string vValor = (planilhaResgates.Cells[i, 5] as Range).Value.ToString();
-                    vValor = vValor.Replace("R$", "");
+                    vValor = vValor.Replace("R$", "").Replace(",", ".");
+                    while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
+                        vValor = vValor.Remove(vValor.IndexOf("."));
+
                     vResgate.VALOR = double.Parse(vValor);
                     string vCancelado = (planilhaResgates.Cells[i, 9] as Range).Value;
                     vResgate.CANCELADO = (!String.IsNullOrEmpty(vCancelado));
                     vResgate.TOTAL = ((planilhaResgates.Cells[i, 7] as Range).Value.ToString() == "T");
                     DateTime vDataCancelamento;
-                    if (DateTime.TryParse((planilhaResgates.Cells[i, 10] as Range).Value, out vDataCancelamento))
+                    string vStringData = string.Empty;
+                    if ((planilhaResgates.Cells[i, 10] as Range).Value != null)
+                        vStringData = (planilhaResgates.Cells[i, 10] as Range).Value.ToString();
+                    if (DateTime.TryParse(vStringData, out vDataCancelamento))
                         vResgate.DATACANCEL = vDataCancelamento;
                     else
                         vResgate.DATACANCEL = new DateTime(2000, 01, 01);
@@ -1016,7 +1153,7 @@ namespace Capitania.Importer.Library
                     vContexto.TResgates.Add(vResgate);
                     i++;
 
-                    vDataCelula = (DateTime)(planilhaResgates.Cells[i, 1] as Range).Value;
+                    vDataCelula = (planilhaResgates.Cells[i, 1] as Range).Value;
                 }
 
                 vContexto.SaveChanges();
@@ -1046,51 +1183,59 @@ namespace Capitania.Importer.Library
 
                 i = 2048;
 
-                vDataCelula = (DateTime)(planilhaTransferencias.Cells[i, 1] as Range).Value;
-                while (vDataCelula > vCutDate && i > 4)
+                DateTime? vValorDataCelular = (planilhaTransferencias.Cells[i, 1] as Range).Value;
+                while ((vValorDataCelular == null || vValorDataCelular > vCutDate) && i > 4)
                 {
                     i = i / 2;
-                    vDataCelula = (DateTime)(planilhaTransferencias.Cells[i, 1] as Range).Value;
+                    vValorDataCelular = (planilhaTransferencias.Cells[i, 1] as Range).Value;
                 }
 
                 if (i == 4)
                     i = 3;
 
-                vDataCelula = (DateTime)(planilhaTransferencias.Cells[i, 1] as Range).Value;
-                while ( i < vMaxLines && vDataCelula < vCutDate)
+                vValorDataCelular = (planilhaTransferencias.Cells[i, 1] as Range).Value;
+                while (vValorDataCelular != null && i < vMaxLines && vValorDataCelular < vCutDate)
                 {
                     i++;
-                    vDataCelula = (DateTime)(planilhaTransferencias.Cells[i, 1] as Range).Value;
+                    vValorDataCelular = (planilhaTransferencias.Cells[i, 1] as Range).Value;
                 }
 
-                while (i < vMaxLines && vDataCelula <= DateTime.Now)
+                while (vValorDataCelular != null && i < vMaxLines && vValorDataCelular <= DateTime.Now)
                 {
                     TTransfers vTransfer = new TTransfers();
-                    vTransfer.DATAOBS = vDataCelula;
+                    vTransfer.DATAOBS = vValorDataCelular;
                     vTransfer.FUNDO = (planilhaTransferencias.Cells[i, 4] as Range).Value;
                     if ((planilhaTransferencias.Cells[i, 6] as Range).Value == null)
                         vTransfer.DATALIQ = vTransfer.DATAOBS;
                     else
                         vTransfer.DATALIQ = (DateTime)(planilhaTransferencias.Cells[i, 6] as Range).Value;
 
-                    string vValor = (planilhaTransferencias.Cells[i, 5] as Range).Value.ToString();  
-                    vValor = vValor.Replace("R$", "");
+                    string vValor = (planilhaResgates.Cells[i, 5] as Range).Value.ToString();
+                    vValor = vValor.Replace("R$", "").Replace(",", ".");
+                    while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
+                        vValor = vValor.Remove(vValor.IndexOf("."));
+
                     vTransfer.VALOR = double.Parse(vValor);
                     string vCancelado = (planilhaTransferencias.Cells[i, 9] as Range).Value;
                     vTransfer.CANCELADO = (!String.IsNullOrEmpty(vCancelado));
                     DateTime vDataCancelamento;
-                    if (DateTime.TryParse(planilhaTransferencias.Cells[i, 10], out vDataCancelamento))
+                    string vStringData = string.Empty;
+                    if ((planilhaResgates.Cells[i, 10] as Range).Value != null)
+                        vStringData = (planilhaResgates.Cells[i, 10] as Range).Value.ToString();
+                    if (DateTime.TryParse(vStringData, out vDataCancelamento))
                         vTransfer.DATACANCEL = vDataCancelamento;
                     else
                         vTransfer.DATACANCEL = new DateTime(2000, 01, 01);
 
                     vContexto.TTransfers.Add(vTransfer);
                     i++;
-                    vDataCelula = (DateTime)(planilhaTransferencias.Cells[i, 1] as Range).Value;
+                    vValorDataCelular = (planilhaTransferencias.Cells[i, 1] as Range).Value;
                 }
-                
+
                 vContexto.SaveChanges();
 
+                xlWorkbook.Close();
+                xlApp.Quit();
                 #endregion
             }
 

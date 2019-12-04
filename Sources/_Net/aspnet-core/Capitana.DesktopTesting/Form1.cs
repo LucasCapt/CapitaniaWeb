@@ -15,11 +15,17 @@ namespace Capitana.DesktopTesting
         public Form1()
         {
             InitializeComponent();
+            this.btnADTV.Enabled = false;
+            this.btnMaxCotistas.Enabled = false;
+            this.btnPricing.Enabled = false;
+            this.btnRiskSeries.Enabled = false;
+            this.btnTrades.Enabled = false;
         }
 
         private void btnResgates_Click(object sender, EventArgs e)
         {
             Capitania.Importer.Library.ImporterManager.ImportarResgates();
+            MessageBox.Show("Importação de trades concluída");
         }
 
         private void btnRiskSeries_Click(object sender, EventArgs e)
