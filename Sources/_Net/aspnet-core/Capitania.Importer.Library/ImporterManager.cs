@@ -306,7 +306,7 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.PAPEL_ISIN = cota.isin;
                                             vPosicLayout2.PAPEL_COD = cota.cnpjfundo.ToString();
                                             vPosicLayout2.QUANT = (double)(cota.qtdisponivel + cota.qtgarantia);
-                                            vPosicLayout2.VALOR = (double)((double)cota.puposicao + vPosicLayout2.QUANT);
+                                            vPosicLayout2.VALOR = (double)((double)cota.puposicao * vPosicLayout2.QUANT);
                                             vPosicLayout2.CNPJISSUE = cota.cnpjfundo.ToString();
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
@@ -1137,6 +1137,7 @@ namespace Capitania.Importer.Library
                     while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
                         vValor = vValor.Remove(vValor.IndexOf("."));
 
+                    vValor = vValor.Replace(".", ",");
                     vResgate.VALOR = double.Parse(vValor);
                     string vCancelado = (planilhaResgates.Cells[i, 9] as Range).Value;
                     vResgate.CANCELADO = (!String.IsNullOrEmpty(vCancelado));
@@ -1215,6 +1216,7 @@ namespace Capitania.Importer.Library
                     while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
                         vValor = vValor.Remove(vValor.IndexOf("."));
 
+                    vValor = vValor.Replace(".", ",");
                     vTransfer.VALOR = double.Parse(vValor);
                     string vCancelado = (planilhaTransferencias.Cells[i, 9] as Range).Value;
                     vTransfer.CANCELADO = (!String.IsNullOrEmpty(vCancelado));
@@ -1250,7 +1252,7 @@ namespace Capitania.Importer.Library
             string vArquivoLeitura = Path.Combine(ParameterManager.GetParameterValue(DBParametersConstants.HistFilePath), ParameterManager.GetParameterValue(DBParametersConstants.HistFileName));
             string vNomePlanilhaImportacao = ParameterManager.GetParameterValue(DBParametersConstants.HistFileTab);
             Application xlApp = new Application();
-            Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+            Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura, null, true);
             _Worksheet planilhaImportacao = (_Worksheet)xlWorkbook.Sheets[vNomePlanilhaImportacao];
 
 
@@ -1273,19 +1275,19 @@ namespace Capitania.Importer.Library
             vNomePlanilhaImportacao = ParameterManager.GetParameterValue(DBParametersConstants.HistFileRatingsTab);
             planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
             int i = 1;
-            while (planilhaImportacao.Cells[1, i] != string.Empty && i < 256)
+            string vConteudoCelula = (planilhaImportacao.Cells[1, i] as Range).Value;
+            while (!String.IsNullOrEmpty(vConteudoCelula) && i < 256)
             {
-                string a = planilhaImportacao.Cells[1, i];
-                if (a.Contains(" "))
+                if (vConteudoCelula.Contains(" "))
                 {
-                    a = a.Substring(0, a.LastIndexOf(" ") - 1);
-                    DateTime vDate = new DateTime();
-                    if (DateTime.TryParse(planilhaImportacao.Cells[4, i], out vDate))
+                    vConteudoCelula = vConteudoCelula.Substring(0, vConteudoCelula.LastIndexOf(" ") - 1);
+                    DateTime? vDate = (planilhaImportacao.Cells[4, i] as Range).Value;
+                    if (vDate != null)
                     {
                         StringBuilder vSQL = new StringBuilder();
                         vSQL.AppendLine("delete from TRATINGS");
-                        vSQL.AppendLine(String.Format(" where ID = '{0}'", a));
-                        vSQL.AppendLine(String.Format("   and DATA >= '{0}'", vDate.ToString("yyyy-MM-dd")));
+                        vSQL.AppendLine(String.Format(" where ID = '{0}'", vConteudoCelula));
+                        vSQL.AppendLine(String.Format("   and DATA >= '{0}'", vDate.Value.ToString("yyyy-MM-dd")));
                         using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                         {
                             vConection.Open();
@@ -1295,22 +1297,24 @@ namespace Capitania.Importer.Library
                             }
 
                             int j = 4;
-                            while (DateTime.TryParse(planilhaImportacao.Cells[j, i], out vDate))
+                            vDate = (planilhaImportacao.Cells[j, i] as Range).Value;
+                            while (vDate != null)
                             {
                                 vSQL.AppendLine("INSERT INTO TRATINGS (DATA, ID, RATING) values (");
-                                vSQL.AppendLine(String.Format("'{0}', '{1}', '{2}');", vDate.ToString("yyyy-MM-dd"), a, planilhaImportacao.Cells[j, i + 1]));
+                                vSQL.AppendLine(String.Format("'{0}', '{1}', '{2}');", vDate.Value.ToString("yyyy-MM-dd"), vConteudoCelula, (planilhaImportacao.Cells[j, i + 1] as Range).Value));
                                 using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
                                 {
                                     vComando.ExecuteNonQuery();
                                 }
                                 j++;
+                                vDate = (planilhaImportacao.Cells[j, i] as Range).Value;
                             }
                             vConection.Close();
                         }
                     }
-                    i++;
-                    i++;
                 }
+                i++;
+                i++;
             }
 
             #endregion
@@ -1321,47 +1325,49 @@ namespace Capitania.Importer.Library
             planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
 
             i = 1;
-            while (planilhaImportacao.Cells[1, i] != string.Empty && i < 256)
+            double? vValorCelula = (planilhaImportacao.Cells[1, i] as Range).Value;
+            while (vValorCelula != null && i < 256)
             {
-                int vIDFundo = 0;
-                if (int.TryParse(planilhaImportacao.Cells[1, i], out vIDFundo))
+                double vIDFundo = vValorCelula.Value;
+                DateTime? vDate = (planilhaImportacao.Cells[6, i] as Range).Value;
+                if (vDate != null)
                 {
-                    DateTime vDate = new DateTime();
-                    if (DateTime.TryParse(planilhaImportacao.Cells[6, i], out vDate))
+                    StringBuilder vSQL = new StringBuilder();
+                    vSQL.AppendLine("delete from TQUOTAS");
+                    vSQL.AppendLine(String.Format(" where FUNDO = '{0}'", vIDFundo));
+                    vSQL.AppendLine(String.Format("   and DATA >= '{0}'", vDate.Value.ToString("yyyy-MM-dd")));
+                    using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                     {
-                        StringBuilder vSQL = new StringBuilder();
-                        vSQL.AppendLine("delete from TQUOTAS");
-                        vSQL.AppendLine(String.Format(" where FUNDO = '{0}'", vIDFundo));
-                        vSQL.AppendLine(String.Format("   and DATA >= '{0}'", vDate.ToString("yyyy-MM-dd")));
-                        using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                        vConection.Open();
+                        using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
                         {
-                            vConection.Open();
+                            vComando.ExecuteNonQuery();
+                        }
+
+                        int j = 6;
+                        vDate = (planilhaImportacao.Cells[j, i] as Range).Value;
+                        while (vDate != null)
+                        {
+                            vSQL.AppendLine("INSERT INTO TQUOTAS (DATA, FUNDO, QUOTA) values (");
+                            vSQL.AppendLine(String.Format("'{0}', '{1}', {2});", vDate.Value.ToString("yyyy-MM-dd"), vIDFundo, (planilhaImportacao.Cells[j, i + 1] as Range).Value.ToString().Replace(",", ".")));
                             using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
                             {
                                 vComando.ExecuteNonQuery();
                             }
-
-                            int j = 6;
-                            while (DateTime.TryParse(planilhaImportacao.Cells[j, i], out vDate))
-                            {
-                                vSQL.AppendLine("INSERT INTO TQUOTAS (DATA, FUNDO, QUOTA) values (");
-                                vSQL.AppendLine(String.Format("'{0}', '{1}', '{2}');", vDate.ToString("yyyy-MM-dd"), vIDFundo, planilhaImportacao.Cells[j, i + 1]));
-                                using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
-                                {
-                                    vComando.ExecuteNonQuery();
-                                }
-                                j++;
-                            }
-                            vConection.Close();
+                            j++;
+                            vDate = (planilhaImportacao.Cells[j, i] as Range).Value;
                         }
+                        vConection.Close();
                     }
                 }
+
                 i = i + 3;
             }
 
             #endregion
 
             xlWorkbook.Close();
+            xlApp.Quit();
 
             //TODO: Marcar flag de importação do dia;
             //TODO: Logar importação
@@ -1372,7 +1378,7 @@ namespace Capitania.Importer.Library
             string vArquivoLeitura = Path.Combine(ParameterManager.GetParameterValue(DBParametersConstants.ShareFilePath), ParameterManager.GetParameterValue(DBParametersConstants.ShareFileName));
             string vNomePlanilhaImportacao = "DATA";
             Application xlApp = new Application();
-            Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+            Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura, null, true);
             _Worksheet planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
 
             DateTime vData = DateTime.Parse(planilhaImportacao.Cells[1, 1].ToString());
@@ -1428,10 +1434,13 @@ namespace Capitania.Importer.Library
                 }
                 foreach (var workSheet in xlWorkbook.Worksheets)
                 {
-
+                    //TODO: implementar 
                 }
                 vConection.Close();
             }
+
+            xlWorkbook.Close();
+            xlApp.Quit();
             //TODO: Marcar flag de importação do dia;
             //TODO: Logar importação
         }
@@ -1461,82 +1470,109 @@ namespace Capitania.Importer.Library
                 string vArquivoLeitura = ParameterManager.GetParameterValue(DBParametersConstants.RFETradeSheet);
                 string vNomePlanilhaResgates = ParameterManager.GetParameterValue(DBParametersConstants.RFETradeTab);
                 Application xlApp = new Application();
-                Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+                Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura, null, true);
                 _Worksheet planilhaTrades = (_Worksheet)xlWorkbook.Sheets[vNomePlanilhaResgates];
 
                 int hi = 16000;
                 int lo = 10;
                 int meio = (hi + lo) / 2;
-                DateTime celmeio = new DateTime(1990, 01, 01);
+                DateTime? celmeio = new DateTime(1990, 01, 01);
 
                 while (hi > lo && celmeio != vMaxData.Value)
                 {
                     meio = (hi + lo) / 2;
-                    string vValor = planilhaTrades.Cells[meio, 1];
-                    if (DateTime.TryParse(vValor, out celmeio))
-                        if (celmeio > vMaxData.Value)
-                            hi = meio;
-                        else
-                            lo = meio + 1;
+                    celmeio = (planilhaTrades.Cells[meio, 1] as Range).Value;
+                    if (celmeio == null || celmeio > vMaxData.Value)
+                        hi = meio - 1;
                     else
                         lo = meio + 1;
                 }
+
                 int i = meio;
-                while (planilhaTrades.Cells[i, 1] >= vMaxData && i > 5)
+                DateTime? vData = (planilhaTrades.Cells[i, 1] as Range).Value;
+                while (vData >= vMaxData && i > 5)
                 {
                     i--;
+                    vData = (planilhaTrades.Cells[i, 1] as Range).Value;
                 }
-                while (planilhaTrades.Cells[i, 1] != string.Empty && planilhaTrades.Cells[i, 1] < vMaxData)
+                vData = (planilhaTrades.Cells[i, 1] as Range).Value;
+                while (vData != null && vData < vMaxData)
                 {
                     i++;
+                    vData = (planilhaTrades.Cells[i, 1] as Range).Value;
                 }
 
-                while (planilhaTrades.Cells[i, 1] != string.Empty)
+                vData = (planilhaTrades.Cells[i, 1] as Range).Value;
+                while (vData != null)
                 {
 
                     TTrades vTrade = new TTrades();
-                    vTrade.DATA = DateTime.Parse(planilhaTrades.Cells[i, 1]);
+                    vTrade.DATA = vData;
                     vTrade.HORA = DateTime.Now;
                     vTrade.HORA_MS = (DateTime.Now - DateTime.Today).TotalSeconds;
-                    vTrade.FUNDO = planilhaTrades.Cells[i, 2];
-                    vTrade.ATIVO = planilhaTrades.Cells[i, 10];
-                    vTrade.CV = planilhaTrades.Cells[i, 4];
-                    vTrade.QUANT = planilhaTrades.Cells[i, 5];
+                    vTrade.FUNDO = (planilhaTrades.Cells[i, 2] as Range).Value.ToString();
+                    vTrade.ATIVO = (planilhaTrades.Cells[i, 10] as Range).Value.ToString();
+                    vTrade.CV = (planilhaTrades.Cells[i, 4] as Range).Value.ToString();
+                    string vValor = (planilhaTrades.Cells[i, 5] as Range).Value.ToString();
+                    vValor = vValor.Replace("R$", "").Replace(",", ".");
+                    while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
+                        vValor = vValor.Remove(vValor.IndexOf("."));
+
+                    vValor = vValor.Replace(".", ",");
+                    vTrade.QUANT = double.Parse(vValor);
                     vTrade.TAXA = 0;
-                    vTrade.PU = planilhaTrades.Cells[i, 6];
+                    vValor = (planilhaTrades.Cells[i, 6] as Range).Value.ToString();
+                    vValor = vValor.Replace("R$", "").Replace(",", ".");
+                    while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
+                        vValor = vValor.Remove(vValor.IndexOf("."));
+
+                    vValor = vValor.Replace(".", ",");
+                    vTrade.PU = double.Parse(vValor);
                     vTrade.PRICEREF = 0;
                     vTrade.PRICESRC = string.Empty;
-                    vTrade.BROKER = planilhaTrades.Cells[i, 3];
-                    vTrade.PRODUTO = planilhaTrades.Cells[i, 23];
-                    vTrade.NOMEATIVO = planilhaTrades.Cells[i, 24];
-                    vTrade.VALFIN = planilhaTrades.Cells[i, 7];
+                    vTrade.BROKER = (planilhaTrades.Cells[i, 3] as Range).Value.ToString();
+                    vTrade.PRODUTO = (planilhaTrades.Cells[i, 23] as Range).Value.ToString();
+                    vTrade.NOMEATIVO = (planilhaTrades.Cells[i, 24] as Range).Value.ToString();
+                    vValor = (planilhaTrades.Cells[i, 7] as Range).Value.ToString();
+                    vValor = vValor.Replace("R$", "").Replace(",", ".");
+                    while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
+                        vValor = vValor.Remove(vValor.IndexOf("."));
+
+                    vValor = vValor.Replace(".", ",");
+                    vTrade.VALFIN = double.Parse(vValor);
                     vContexto.TTrades.Add(vTrade);
+
+                    i++;
+                    vData = (planilhaTrades.Cells[i, 1] as Range).Value;
                 }
 
+                vContexto.SaveChanges();
                 //importar arquivo .negs
 
-                while (vMaxData.Value.Date <= DateTime.Now.Date)
+                DateTime vDataAtual = DateTime.Now;
+                vData = vMaxData;
+                while (vData <= vMaxData)
                 {
                     string vValorParametroNegsFilePrefixo = ParameterManager.GetParameterValue(DBParametersConstants.NegsFilePrefix);
                     string vPrefixoNegsFile = Path.GetFileName(vValorParametroNegsFilePrefixo);
                     string vNegFilePath = Path.GetDirectoryName(vValorParametroNegsFilePrefixo);
 
-                    foreach (string vFile in Directory.GetFiles(vNegFilePath, String.Format("{0}*{1}.txt", vPrefixoNegsFile, vMaxData.Value.ToString("dd_MM_yy"))))
+                    foreach (string vFile in Directory.GetFiles(vNegFilePath, String.Format("{0}*{1}.txt", vPrefixoNegsFile, vMaxData.Value.ToString("dd_MM_yyyy"))))
                     {
                         var vLinhas = File.ReadLines(vFile);
                         foreach (var vLinha in vLinhas)
                         {
-                            if (!vLinha.Equals("0#FU") && !vLinha.Equals("99#FU"))
+                            if (!vLinha.StartsWith("0#") && !vLinha.StartsWith("99#"))
                             {
                                 string[] vValores = vLinha.Substring(1).Split('#');
                                 string vFundo = vValores[1];
                                 string vCV = vValores[2];
                                 string vAtivo = vValores[5];
                                 string vBroker = vValores[7];
-                                decimal vQuantidade = decimal.Parse(vValores[9]);
-                                decimal vPreco = decimal.Parse(vValores[10]);
+                                decimal vQuantidade = decimal.Parse(vValores[9].Replace(".", ","));
+                                decimal vPreco = decimal.Parse(vValores[10].Replace(".", ","));
                                 TTrades vTrade = new TTrades();
-                                vTrade.DATA = vMaxData.Value;
+                                vTrade.DATA = vData;
                                 vTrade.HORA = DateTime.Now;
                                 vTrade.HORA_MS = (DateTime.Now - DateTime.Today).TotalSeconds;
                                 vTrade.FUNDO = vFundo;
@@ -1555,10 +1591,13 @@ namespace Capitania.Importer.Library
 
                     }
 
-                    vMaxData = vMaxData.Value.AddDays(1);
+                    vData = vData.Value.AddDays(1);
                 }
 
                 vContexto.SaveChanges();
+
+                xlWorkbook.Close();
+                xlApp.Quit();
 
                 vConection.Close();
             }
@@ -1582,7 +1621,7 @@ namespace Capitania.Importer.Library
                 string vArquivoLeitura = ParameterManager.GetParameterValue(DBParametersConstants.FIIFileName);
                 string vNomePlanilhaPricing = ParameterManager.GetParameterValue(DBParametersConstants.FIIFileTab);
                 Application xlApp = new Application();
-                Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+                Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura, null, true);
                 _Worksheet planilaPricing = (_Worksheet)xlWorkbook.Sheets[vNomePlanilhaPricing];
 
                 vUltimaData = vUltimaData.Value.AddDays(1);
@@ -1592,24 +1631,68 @@ namespace Capitania.Importer.Library
                     string vFileName = string.Format("{0}{1}.txt", vFileNomePrefixo, vUltimaData.Value.ToString("yyyyMMdd"));
                     if (File.Exists(vFileName))
                     {
-                        //TODO: Processar arquivo texto de princing;
+                        var vLinhas = File.ReadLines(vFileName);
+                        List<string> vAtivosProcessados = new List<string>();
+                        foreach (var vLinha in vLinhas)
+                        {
+                            if (!String.IsNullOrEmpty(vLinha))
+                            {
+                                if (vLinha.StartsWith("RF;"))
+                                {
+                                    string[] vValores = vLinha.Split(';');
+                                    string vAtivo = vValores[2];
+                                    string TipoPr = vValores[5];
+                                    if (!TipoPr.Equals("CRIVT") && !TipoPr.Equals("CRIPR") && !TipoPr.Equals("DEBVT") && !TipoPr.Equals("DBPRV") && !vAtivosProcessados.Contains(String.Format(@"\{0}\", vAtivo)))
+                                        vAtivosProcessados.Add(String.Format(@"\{0}\", vAtivo));
+                                    decimal vValor = decimal.Parse(vValores[11].Replace(".", ","));
+                                    StringBuilder vSQL = new StringBuilder();
+                                    vSQL.AppendLine("DELETE FROM TPRICING");
+                                    vSQL.AppendLine(String.Format(" WHERE DATAOBS = '{0}' ", vUltimaData.Value.ToString("yyyy-MM-dd")));
+                                    vSQL.AppendLine(String.Format("   AND ATIVO = '{0}'", vAtivo));
+                                    using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                                    {
+                                        vConection.Open();
+                                        using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                        {
+                                            vComando.ExecuteNonQuery();
+                                        }
+
+                                        vSQL = new StringBuilder();
+                                        vSQL.AppendLine(String.Format("INSERT INTO TPRICING (DATAOBS, ATIVO, PRECO) VALUES ('{0}', '{1}', {2})", vUltimaData.Value.ToString("yyyy-MM-dd"), vAtivo, vValor.ToString().Replace(",", ".")));
+                                        using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                        {
+                                            vComando.ExecuteNonQuery();
+                                        }
+
+                                        vConection.Close();
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     int j = 1;
-                    while (planilaPricing.Cells[1, j] != string.Empty)
+                    var vConteudoCelula = (planilaPricing.Cells[1, j] as Range).Value;
+                    while (vConteudoCelula != null)
                     {
                         string vAtivo = string.Empty;
 
-                        if (planilaPricing.Cells[1, j].ToString().Contains(" "))
-                            vAtivo = planilaPricing.Cells[1, j].ToString().Substring(0, planilaPricing.Cells[1, j].ToString().IndexOf(" "));
+                        if (vConteudoCelula.ToString().Contains(" "))
+                            vAtivo = vConteudoCelula.ToString().Substring(0, vConteudoCelula.ToString().IndexOf(" "));
                         else
-                            vAtivo = planilaPricing.Cells[1, j].ToString();
+                            vAtivo = vConteudoCelula.ToString();
 
                         int i = 4;
-                        while (planilaPricing.Cells[i, j] != string.Empty && planilaPricing.Cells[i, j] != vUltimaData)
+                        DateTime? vDataCelula = (planilaPricing.Cells[i, j] as Range).Value;
+                        while (vDataCelula != null && vDataCelula != vUltimaData)
+                        {
                             i++;
+                            vDataCelula = (planilaPricing.Cells[i, j] as Range).Value;
+                        }
+                            
 
-                        if (planilaPricing.Cells[i, j] == vUltimaData)
+                        vDataCelula = (planilaPricing.Cells[i, j] as Range).Value;
+                        if (vDataCelula == vUltimaData)
                         {
                             using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                             {
@@ -1625,13 +1708,20 @@ namespace Capitania.Importer.Library
                                 TPricing vPricing = new TPricing();
                                 vPricing.DATAOBS = vUltimaData;
                                 vPricing.ATIVO = vAtivo;
-                                vPricing.PRECO = (double)planilaPricing.Cells[i, j + 1];
+                                string vValor = (planilaPricing.Cells[i, j + 1] as Range).Value.ToString();
+                                vValor = vValor.Replace("R$", "").Replace(",", ".");
+                                while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
+                                    vValor = vValor.Remove(vValor.IndexOf("."));
+
+                                vValor = vValor.Replace(".", ",");
+                                vPricing.PRECO = double.Parse(vValor);
                                 vContexto.TPricing.Add(vPricing);
 
                                 vConection.Close();
                             }
                         }
                         j = j + 3;
+                        vConteudoCelula = (planilaPricing.Cells[1, j] as Range).Value;
                     }
                     vUltimaData = vUltimaData.Value.AddDays(1);
                 }
@@ -1658,7 +1748,7 @@ namespace Capitania.Importer.Library
                 string vArquivoLeitura = ParameterManager.GetParameterValue(DBParametersConstants.FIIFileName);
                 string vNomePlanilhaPricing = ParameterManager.GetParameterValue(DBParametersConstants.FIIADTVTab);
                 Application xlApp = new Application();
-                Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura);
+                Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura, null, true);
                 _Worksheet planilaPricing = (_Worksheet)xlWorkbook.Sheets[vNomePlanilhaPricing];
 
                 int j = 1;
@@ -1725,7 +1815,8 @@ namespace Capitania.Importer.Library
         {
             DateTime vUltimaData = DateTime.Now.AddDays(-3650);
             Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
-            DateTime? vLastDate = vContexto.TFACTORHIST.Where(w => w.FACTORID.Equals(dbName) && w.DATA < DateTime.Now.Date && w.DATA > DateTime.Now.AddDays(-720).Date).Max(k => k.DATA);
+            DateTime dataLimite = DateTime.Now.AddDays(-720);
+            DateTime? vLastDate = vContexto.TFACTORHIST.Where(w => w.FACTORID.Equals(dbName) && w.DATA < DateTime.Now && w.DATA > dataLimite).Max(k => k.DATA);
             bool vImcompleta = false;
             if (vLastDate == null)
                 vImcompleta = true;
@@ -1739,18 +1830,21 @@ namespace Capitania.Importer.Library
             if (j != 0)
             {
                 int i = 4;
-                while (planilha.Cells[i, j] != "" && i < 2000)
+                DateTime? vConteudoCelula = (planilha.Cells[i, j] as Range).Value;
+                while (vConteudoCelula != null && i < 2000)
                 {
-                    if (planilha.Cells[i, j] > vUltimaData)
+                    DateTime vData;
+                    if (vConteudoCelula > vUltimaData)
                     {
                         TFACTORHIST vHist = new TFACTORHIST();
                         vHist.FACTORID = dbName;
-                        vHist.DATA = planilha.Cells[i, j];
-                        vHist.VALOR = planilha.Cells[i, j + 1];
+                        vHist.DATA = vConteudoCelula.Value;
+                        vHist.VALOR = (planilha.Cells[i, j + 1] as Range).Value;
                         vContexto.TFACTORHIST.Add(vHist);
                     }
 
                     i++;
+                    vConteudoCelula = (planilha.Cells[i, j] as Range).Value;
                 }
 
                 vContexto.SaveChanges();
@@ -1762,13 +1856,13 @@ namespace Capitania.Importer.Library
         {
             int i = 1;
 
-            while (planilha.Cells[1, i] != x && i < 100)
+            while ((planilha.Cells[1, i] as Range).Value != x && i < 100)
             {
                 i++;
                 i++;
             }
 
-            if (planilha.Cells[1, i] == x)
+            if ((planilha.Cells[1, i] as Range).Value == x)
                 return i;
             else
                 return 0;
