@@ -1315,6 +1315,7 @@ namespace Capitania.Importer.Library
                 }
                 i++;
                 i++;
+                vConteudoCelula = (planilhaImportacao.Cells[1, i] as Range).Value;
             }
 
             #endregion
@@ -1362,6 +1363,7 @@ namespace Capitania.Importer.Library
                 }
 
                 i = i + 3;
+                vValorCelula = (planilhaImportacao.Cells[1, i] as Range).Value;
             }
 
             #endregion
@@ -1381,10 +1383,10 @@ namespace Capitania.Importer.Library
             Workbook xlWorkbook = xlApp.Workbooks.Open(vArquivoLeitura, null, true);
             _Worksheet planilhaImportacao = xlWorkbook.Sheets[vNomePlanilhaImportacao];
 
-            DateTime vData = DateTime.Parse(planilhaImportacao.Cells[1, 1].ToString());
+            DateTime? vData = (planilhaImportacao.Cells[1, 1] as Range).Value;
             StringBuilder vSQL = new StringBuilder();
             vSQL.AppendLine("delete from TMAIORCOTISTA");
-            vSQL.AppendLine(String.Format(" where DATAOBS = '{0}'", vData.ToString("yyyy-MM-dd")));
+            vSQL.AppendLine(String.Format(" where DATAOBS = '{0}'", vData.Value.ToString("yyyy-MM-dd")));
             using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
             {
                 vConection.Open();
@@ -1393,49 +1395,50 @@ namespace Capitania.Importer.Library
                     vComando.ExecuteNonQuery();
                 }
 
-                for (int i = 0; i < xlWorkbook.Worksheets.Count; i++)
+                for (int i = 1; i <= xlWorkbook.Worksheets.Count; i++)
                 {
                     string vNomeQuota = xlWorkbook.Worksheets.Item[i].Name;
                     if (!vNomeQuota.Equals("DATA"))
                     {
-
-                        planilhaImportacao = xlWorkbook.Sheets[i];
+                        planilhaImportacao = xlWorkbook.Sheets[vNomeQuota]; ;
                         int Col = 3;
-                        decimal vValor;
-                        if (planilhaImportacao.Cells[1, 4].Equals("VALOR BRUTO") && !decimal.TryParse(planilhaImportacao.Cells[2, 3], out vValor))
-                        {
+                        double? vValor = (planilhaImportacao.Cells[2, 3] as Range).Value;
+
+                        string vValorHeader = (planilhaImportacao.Cells[1, 4] as Range).Value;
+                        if ((!String.IsNullOrEmpty(vValorHeader) && vValorHeader.ToString().Equals("VALOR BRUTO")) || vValor == null)
                             Col = 4;
-                        }
+                        
                         int k = 2;
                         int j = 1;
-                        decimal[] vValores = { 0, 0, 0 };
+                        double?[] vValores = { 0, 0, 0 };
 
-                        while (planilhaImportacao.Cells[k, 1] != "" && k < 100 && j < 4)
+                        string vConteudoCelula = (planilhaImportacao.Cells[k, 1] as Range).Value;
+                        while (!String.IsNullOrEmpty(vConteudoCelula) && k < 100 && j < 4)
                         {
-                            if (planilhaImportacao.Cells[i, Col + 1] == "")
+                            string vValorCelular = (planilhaImportacao.Cells[i, Col + 1] as Range).Value;
+                            if (String.IsNullOrEmpty(vValorCelular))
                             {
-                                decimal vValorCotista = 0;
-                                if (decimal.TryParse(planilhaImportacao.Cells[k, Col], out vValorCotista))
-                                    vValores[j] = vValorCotista;
+                                double? vValorCotista = (planilhaImportacao.Cells[k, Col] as Range).Value;
+                                if (vValorCotista != null)
+                                    vValores[j - 1] = vValorCotista;
                                 else
-                                    vValores[j] = 0;
+                                    vValores[j - 1] = 0;
                                 j++;
                             }
                             k++;
+                            vConteudoCelula = (planilhaImportacao.Cells[k, 1] as Range).Value;
                         }
 
+                        vSQL = new StringBuilder();
                         vSQL.AppendLine("INSERT INTO TMAIORCOTISTA (DATAOBS, FUNDO, MAXCOT1, MAXCOT2, MAXCOT3) VALUES (");
-                        vSQL.AppendLine(String.Format("'{0}', '{1}', {2}, {3}, {4});", vData, vNomeQuota, vValores[0], vValores[1], vValores[2]));
+                        vSQL.AppendLine(String.Format("'{0}', '{1}', {2}, {3}, {4});", vData.Value.ToString("yyyy-MM-dd"), vNomeQuota, vValores[0].ToString().Replace(",", "."), vValores[1].ToString().Replace(",", "."), vValores[2].ToString().Replace(",", ".")));
                         using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
                         {
                             vComando.ExecuteNonQuery();
                         }
                     }
                 }
-                foreach (var workSheet in xlWorkbook.Worksheets)
-                {
-                    //TODO: implementar 
-                }
+
                 vConection.Close();
             }
 
@@ -1689,7 +1692,7 @@ namespace Capitania.Importer.Library
                             i++;
                             vDataCelula = (planilaPricing.Cells[i, j] as Range).Value;
                         }
-                            
+
 
                         vDataCelula = (planilaPricing.Cells[i, j] as Range).Value;
                         if (vDataCelula == vUltimaData)
@@ -1736,7 +1739,7 @@ namespace Capitania.Importer.Library
         public static void ImportarADTV()
         {
             Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
-            DateTime? vUltimaData = vContexto.TADTV.Max(w => w.DATA);
+            DateTime? vUltimaData = vContexto.TADTV.Where(k => k.DATA <= DateTime.Now).Max(w => w.DATA);
             if (vUltimaData != null)
                 vUltimaData = vUltimaData.Value.AddDays(-5);
 
@@ -1752,28 +1755,32 @@ namespace Capitania.Importer.Library
                 _Worksheet planilaPricing = (_Worksheet)xlWorkbook.Sheets[vNomePlanilhaPricing];
 
                 int j = 1;
-                while (planilaPricing.Cells[1, j] != string.Empty)
+                var vConteudoCelula = (planilaPricing.Cells[1, j] as Range).Value;
+                while (vConteudoCelula != null)
                 {
                     string vAtivo = string.Empty;
 
-                    if (planilaPricing.Cells[1, j].ToString().Contains(" "))
-                        vAtivo = planilaPricing.Cells[1, j].ToString().Substring(0, planilaPricing.Cells[1, j].ToString().IndexOf(" "));
+                    if (vConteudoCelula.ToString().Contains(" "))
+                        vAtivo = vConteudoCelula.ToString().Substring(0, vConteudoCelula.ToString().IndexOf(" "));
                     else
-                        vAtivo = planilaPricing.Cells[1, j].ToString();
+                        vAtivo = vConteudoCelula.ToString();
 
                     int i = 4;
                     DateTime vData = new DateTime(2015, 10, 1);
-
-                    if (planilaPricing.Cells[i, j] != string.Empty && i < 100)
+                    DateTime? vDataCelula = (planilaPricing.Cells[i, j] as Range).Value;
+                    while (vDataCelula != null && i < 100)
                     {
-                        if (planilaPricing.Cells[i, j] > vUltimaData)
+                        if (vDataCelula > vUltimaData)
                         {
-                            vData = planilaPricing.Cells[i, j];
-                            double vValor = 0;
-                            if (planilaPricing.Cells[i, j] && double.TryParse(planilaPricing.Cells[1, j + 1], out vValor))
+                            vData = vDataCelula.Value;
+                            double? vValor = (planilaPricing.Cells[1, j + 1] as Range).Value;
+                            if (vValor != null)
                             {
-                                double vADTVCond = vValor;
-                                double.TryParse(planilaPricing.Cells[1, j + 2], out vADTVCond);
+                                double? vADTVCond = (planilaPricing.Cells[1, j + 2] as Range).Value;
+                                if (vADTVCond == null)
+                                {
+                                    vADTVCond = vValor;
+                                }
                                 using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                                 {
                                     vConection.Open();
@@ -1796,12 +1803,14 @@ namespace Capitania.Importer.Library
 
                                     vConection.Close();
                                 }
-
                             }
-                        }
 
+                        }
+                        i++;
+                        vDataCelula = (planilaPricing.Cells[i, j] as Range).Value;
                     }
                     j = j + 3;
+                    vConteudoCelula = (planilaPricing.Cells[1, j] as Range).Value;
                 }
 
                 vContexto.SaveChanges();

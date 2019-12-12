@@ -15,8 +15,8 @@ namespace Capitana.DesktopTesting
         public Form1()
         {
             InitializeComponent();
-            this.btnADTV.Enabled = false;
-            this.btnMaxCotistas.Enabled = false;
+            //this.btnADTV.Enabled = false;
+            //this.btnMaxCotistas.Enabled = false;
             //this.btnPricing.Enabled = false;
             //this.btnTrades.Enabled = false;
         }
