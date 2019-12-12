@@ -101,6 +101,8 @@
     <text name="TConfigurations.Code">Code</text>
     <text name="TConfigurations.Description">Description</text>
     <text name="TConfigurations.Value">Value</text>
+    <text name="EditConfiguration">Edit Config</text>
+    <text name="CreateNewConfig">Create new config</text>
     
   </texts>
 </localizationDictionary>

@@ -18,5 +18,8 @@ namespace Capitania.TConfiguracao.Dtos
 
         [Required]
         public string Valor { get; set; }
+
+        public bool IsTransient { get; set; }
+        
     }
 }

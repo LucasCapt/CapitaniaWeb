@@ -40,14 +40,19 @@ namespace Capitania.TConfiguracao
         [AbpAuthorize(PermissionNames.Pages_TConfiguracao_Create)]
         private async Task Create(CreateOrEditTConfiguracaoDto input)
         {
-            var mensagem = ObjectMapper.Map<TConfiguracao>(input);
-            await _TConfiguracaoRepository.InsertAsync(mensagem);
+            input.Id = input.Codigo;
+            TConfiguracao v = new TConfiguracao();
+            v.Codigo = input.Codigo;
+            v.Descricao = input.Descricao;
+            v.Id = input.Codigo;
+            v.Valor = input.Valor;
+            await _TConfiguracaoRepository.InsertAsync(v);
         }
 
         [AbpAuthorize(PermissionNames.Pages_TConfiguracao_Update)]
         private async Task Update(CreateOrEditTConfiguracaoDto input)
         {
-            var mensagem = await _TConfiguracaoRepository.FirstOrDefaultAsync((string)input.Id);
+            var mensagem = await _TConfiguracaoRepository.FirstOrDefaultAsync(input.Id);
             ObjectMapper.Map(input, mensagem);
         }
 
@@ -57,7 +62,7 @@ namespace Capitania.TConfiguracao
             await _TConfiguracaoRepository.DeleteAsync(input.Id);
         }
 
-        public async Task<PagedResultDto<GetTConfiguracaoForView>> GetAll(GetAllTConfiguracaoInput input)
+        public async Task<PagedResultDto<TConfiguracaoDto>> GetAll(GetAllTConfiguracaoInput input)
         {
             var filteredProcuracoes = _TConfiguracaoRepository.GetAll()
                         .WhereIf(!string.IsNullOrWhiteSpace(input.Filter), e => false);
@@ -67,17 +72,20 @@ namespace Capitania.TConfiguracao
                          join o1 in _TConfiguracaoRepository.GetAll() on o.Codigo equals o1.Codigo into j1
                          from s1 in j1.DefaultIfEmpty()
 
-                         select new GetTConfiguracaoForView()
+                         select new TConfiguracaoDto()
                          {
-                             Configuracao = o
+                             Codigo = o.Codigo,
+                             Descricao = o.Descricao,
+                             Valor = o.Valor,
+                             Id = o.Id
                          })
-                      .WhereIf(!string.IsNullOrWhiteSpace(input.Filter), e => e.Configuracao.Codigo.ToLower() == input.Filter.ToLower().Trim());
+                      .WhereIf(!string.IsNullOrWhiteSpace(input.Filter), e => e.Codigo.ToLower() == input.Filter.ToLower().Trim());
 
             var totalCount = query.Count();
 
-            var vConfiguracoes = query.OrderBy(k => k.Configuracao.Codigo).ToList();
+            var vConfiguracoes = query.OrderBy(k => k.Codigo).ToList();
 
-            return new PagedResultDto<GetTConfiguracaoForView>(
+            return new PagedResultDto<TConfiguracaoDto>(
                 totalCount,
                 vConfiguracoes
             );
@@ -139,5 +147,6 @@ namespace Capitania.TConfiguracao
 
             return output;
         }
+
     }
 }

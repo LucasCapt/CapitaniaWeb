@@ -11,7 +11,7 @@ namespace Capitania.TConfiguracao
 {
     public interface ITConfiguracaoAppService : IApplicationService
     {
-        Task<PagedResultDto<GetTConfiguracaoForView>> GetAll(GetAllTConfiguracaoInput input);
+        Task<PagedResultDto<TConfiguracaoDto>> GetAll(GetAllTConfiguracaoInput input);
 
         Task<GetTConfiguracaoForEditOutput> GetTConfiguracaoForEdit(EntityDto<string> input);
 
