@@ -84,7 +84,12 @@ namespace Capitania.Importer.Library
                                 vSQL.AppendLine("select *");
                                 vSQL.AppendLine("  from TFundos");
                                 vSQL.AppendLine(String.Format(" where CNPJ = '{0}'", vFundo.header.cnpj));
-                                vSQL.AppendLine(String.Format("    or NOME = '{0}'", vFundo.header.nome));
+                                vSQL.AppendLine(String.Format("  AND (DELETED = 0 OR DT_DELETED > '{0}')", vDataPosicao.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(" UNION");
+                                vSQL.AppendLine("select *");
+                                vSQL.AppendLine("  from TFundos");
+                                vSQL.AppendLine(String.Format(" where NOME = '{0}'", vFundo.header.nome));
+                                vSQL.AppendLine(String.Format("  AND (DELETED = 0 OR DT_DELETED > '{0}')", vDataPosicao.ToString("yyyy-MM-dd")));
 
                                 using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                                 {
@@ -439,6 +444,8 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
                                             vPosicLayout2.TIPO = "imoveis";
                                             vPosicLayout2.DATA = vDataPosicao;
+                                            vPosicLayout2.PAPEL_ISIN = "IMOVEL";
+                                            vPosicLayout2.QUANT = 1;
                                             vPosicLayout2.VALOR = (double)imovel.valoravaliacao;
                                             if (vPosicLayout2.VALOR == 0)
                                                 vPosicLayout2.VALOR = (double)imovel.valorcontabil;
@@ -923,14 +930,14 @@ namespace Capitania.Importer.Library
                                                     pp.Class_Rentab = "MATURITY";
                                                     pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
                                                     pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
-                                                    if (vReader.GetDecimal(vReader.GetOrdinal("pindex1")) == 100)
+                                                    if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
                                                     {
-                                                        pp.Coupon = (double)vReader.GetDecimal(vReader.GetOrdinal("cupom1"));
+                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
                                                         pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
                                                     }
                                                     else
                                                     {
-                                                        pp.Coupon = (double)vReader.GetDecimal(vReader.GetOrdinal("pindex1"));
+                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("pindex1"));
                                                         pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "%");
                                                     }
                                                     pp.TIPO = "TITPUBLICO";
@@ -958,7 +965,7 @@ namespace Capitania.Importer.Library
                                                     }
                                                     else
                                                     {
-                                                        pp.Coupon = (double)vReader.GetDecimal(vReader.GetOrdinal("pindex1")) / 100;
+                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("pindex1")) / 100;
                                                         pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "%");
                                                     }
                                                     pp.TIPO = "TITPRIVADO";
@@ -1280,7 +1287,7 @@ namespace Capitania.Importer.Library
             {
                 if (vConteudoCelula.Contains(" "))
                 {
-                    vConteudoCelula = vConteudoCelula.Substring(0, vConteudoCelula.LastIndexOf(" ") - 1);
+                    vConteudoCelula = vConteudoCelula.Trim().Substring(0, vConteudoCelula.IndexOf(" "));
                     DateTime? vDate = (planilhaImportacao.Cells[4, i] as Range).Value;
                     if (vDate != null)
                     {
@@ -1560,7 +1567,7 @@ namespace Capitania.Importer.Library
                     string vPrefixoNegsFile = Path.GetFileName(vValorParametroNegsFilePrefixo);
                     string vNegFilePath = Path.GetDirectoryName(vValorParametroNegsFilePrefixo);
 
-                    foreach (string vFile in Directory.GetFiles(vNegFilePath, String.Format("{0}*{1}.txt", vPrefixoNegsFile, vMaxData.Value.ToString("dd_MM_yyyy"))))
+                    foreach (string vFile in Directory.GetFiles(vNegFilePath, String.Format("{0}*{1}.txt", vPrefixoNegsFile, vData.Value.ToString("dd_MM_yyyy"))))
                     {
                         var vLinhas = File.ReadLines(vFile);
                         foreach (var vLinha in vLinhas)
