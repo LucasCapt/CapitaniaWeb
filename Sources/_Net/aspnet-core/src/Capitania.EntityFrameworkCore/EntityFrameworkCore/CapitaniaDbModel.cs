@@ -12,6 +12,7 @@ namespace Capitania.EntityFrameworkCore
         {
         }
 
+        public virtual DbSet<TConfiguracao.TConfiguracao> Configuracoes { get; set; }
         public virtual DbSet<TPOSICLAYOUT2> TPOSICLAYOUT2 { get; set; }
         public virtual DbSet<TAKA> TAKA { get; set; }
         public virtual DbSet<TBookRegra> TBookRegra { get; set; }
@@ -32,6 +33,9 @@ namespace Capitania.EntityFrameworkCore
         public virtual DbSet<TTransfers> TTransfers { get; set; }
         public virtual DbSet<TUsers> TUsers { get; set; }
         public virtual DbSet<TPosic> TPosic { get; set; }
+        public virtual DbSet<TFACTORHIST> TFACTORHIST { get; set; }
+        public virtual DbSet<TPricing> TPricing { get; set; }
+        public virtual DbSet<TADTV> TADTV { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

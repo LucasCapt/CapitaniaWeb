@@ -22,12 +22,14 @@ namespace Capitania.EntityFrameworkCore
         [Column(TypeName = "date")]
         public DateTime? DATACANCEL { get; set; }
 
-        [Key]
         [Column(Order = 0)]
         public bool CANCELADO { get; set; }
 
-        [Key]
+        
         [Column(Order = 1)]
         public bool TOTAL { get; set; }
+
+        [Key]
+        public long ID { get; set; }
     }
 }

@@ -44,8 +44,15 @@ namespace Capitania.Web.Startup
                         icon: "local_offer",
                         requiredPermissionName: PermissionNames.Pages_Roles
                     )
-                )
-                .AddItem(
+                ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.TConfiguracao,
+                        L("TConfigurations"),
+                        url: "TConfiguracao",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Roles
+                    )
+                ).AddItem(
                     new MenuItemDefinition(
                         PageNames.About,
                         L("About"),

@@ -97,6 +97,8 @@
     <text name="TConfigurations.Code">Código</text>
     <text name="TConfigurations.Description">Descrição</text>
     <text name="TConfigurations.Value">Valor</text>
+    <text name="EditConfiguration">Editar Configuração</text>
+    <text name="CreateNewConfig">Criar Nova Configuração</text>
     
   </texts>
 </localizationDictionary>

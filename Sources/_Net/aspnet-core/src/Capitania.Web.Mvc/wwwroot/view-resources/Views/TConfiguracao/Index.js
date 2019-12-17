@@ -1,7 +1,7 @@
 ﻿(function () {
 	$(function () {
 
-		var _roleService = abp.services.app.role;
+		var _roleService = abp.services.app.tConfiguracao;
 		var _$modal = $('#RoleCreateModal');
 		var _$form = _$modal.find('form');
 
@@ -24,7 +24,7 @@
 
 			e.preventDefault();
 			$.ajax({
-				url: abp.appPath + 'Roles/EditRoleModal?roleId=' + roleId,
+				url: abp.appPath + 'TConfiguracao/EditRoleModal?roleId=' + roleId,
 				type: 'POST',
 				contentType: 'application/html',
 				success: function (content) {
@@ -42,17 +42,9 @@
 			}
 
 			var role = _$form.serializeFormToObject(); //serializeFormToObject is defined in main.js
-            role.grantedPermissions = [];
-			var _$permissionCheckboxes = $("input[name='permission']:checked");
-			if (_$permissionCheckboxes) {
-				for (var permissionIndex = 0; permissionIndex < _$permissionCheckboxes.length; permissionIndex++) {
-					var _$permissionCheckbox = $(_$permissionCheckboxes[permissionIndex]);
-                    role.grantedPermissions.push(_$permissionCheckbox.val());
-				}
-			}
-
+            
 			abp.ui.setBusy(_$modal);
-			_roleService.create(role).done(function () {
+			_roleService.createOrEdit(role).done(function () {
 				_$modal.modal('hide');
 				location.reload(true); //reload page to see new role!
 			}).always(function () {

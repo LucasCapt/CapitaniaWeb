@@ -1,0 +1,49 @@
+﻿@using Capitania.Web.Models.Common.Modals
+@model Capitania.Web.Models.TConfiguracao.EditConfigurationModalViewModel
+@{
+    Layout = null;
+}
+@Html.Partial("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("EditConfiguration")))
+
+<div class="modal-body">
+    <form name="ConfigurationEditForm" role="form" novalidate class="form-validation">
+        <input type="hidden" name="Id" value="@Model.TConfiguracao.Id" />
+        <div class="row clearfix">
+            <div class="col-sm-12">
+                <div class="form-group form-float">
+                    <div class="form-line">
+                        <input id="rolename" disabled) type="text" name="Codigo" value="@Model.TConfiguracao.Codigo" required maxlength="5" minlength="3" class="validate form-control">
+                        <label for="rolename" class="form-label">@L("TConfigurations.Code")</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div class="col-sm-12">
+                <div class="form-group form-float">
+                    <div class="form-line">
+                        <input id="displayname" type="text" name="DisplayName" value="@Model.TConfiguracao.Descricao" required maxlength="150" minlength="2" class="validate form-control">
+                        <label for="displayname" class="form-label">@L("TConfigurations.Description")</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group form-float">
+                    <div class="form-line">
+                        <textarea id="config-value" name="Description" class="validate form-control">@Model.TConfiguracao.Valor</textarea>
+                        <label for="config-value" class="form-label">@L("TConfigurations.Value")</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+@Html.Partial("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+
+<script src="~/view-resources/Views/Roles/_EditConfigModal.js" asp-append-version="true"></script>

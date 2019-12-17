@@ -21,9 +21,21 @@ namespace Capitania.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = new TConfiguracaoListViewModel();
+            var vConfiguracoes = (await _messageAppService.GetAll(new TConfiguracao.Dtos.GetAllTConfiguracaoInput())).Items;
+            var model = new TConfiguracaoListViewModel
+            {
+                Configuracoes = vConfiguracoes,
+            };
 
             return View(model);
+        }
+
+        public async Task<ActionResult> EditConfigurationModal(string roleId)
+        {
+            var output = await _messageAppService.GetTConfiguracaoForEdit(new EntityDto<string>(roleId));
+            var model = new EditConfigurationModalViewModel(output);
+
+            return View("_EditConfigurationModal", model);
         }
 
         public async Task<ActionResult> TConfiguracaoDetalhesModal(string codigo)

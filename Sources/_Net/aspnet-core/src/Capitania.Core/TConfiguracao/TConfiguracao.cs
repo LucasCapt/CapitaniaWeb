@@ -21,5 +21,6 @@ namespace Capitania.TConfiguracao
 
         [Column("cfg_valor")]
         public string Valor { get; set; }
+
     }
 }

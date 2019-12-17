@@ -8,6 +8,6 @@ namespace Capitania.Web.Models.TConfiguracao
 {
     public class TConfiguracaoListViewModel
     {
-        public IReadOnlyList<TConfiguracaoDto> Roles { get; set; }
+        public IReadOnlyList<TConfiguracaoDto> Configuracoes { get; set; }
     }
 }
