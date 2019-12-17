@@ -552,13 +552,11 @@ Public Function ComputeRule(x As CRegra, Optional ForceCart As Collection = Noth
                 ClassPp(idx) = ClassPp(idx) + "[" + p.Papel.nome + "] "
 
                 'Soma quantidade ou valor, conforme for a regra
-                If x.Lim_Ref = "ISSUEV" Then
-                    ClassPL(idx) = ClassPL(idx) + p.Valor
-                    ClassPU(idx) = 1
-                ElseIf x.Lim_Ref = "ISSUEQ" Then
+                If x.Lim_Ref = "ISSUEQ" Then
                     ClassPL(idx) = ClassPL(idx) + p.Quant
                     If p.Quant <> 0 Then ClassPU(idx) = p.Valor / p.Quant
                 Else
+                    ClassPL(idx) = ClassPL(idx) + p.Valor
                     ClassPU(idx) = 1
                 End If
                 

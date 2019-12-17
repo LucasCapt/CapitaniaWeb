@@ -307,7 +307,7 @@ Public Sub AtualizaErros()
     Call rs.open("SELECT MAX (DATAHORA) AS LASTREVISION FROM TLOG WHERE ACAO = 'REVIU ERROS'", db, adOpenForwardOnly, adLockReadOnly)
     If rs.EOF Then d = LongTimeAgo Else d = CritD(rs("LASTREVISION"))
     Set rs = New ADODB.Recordset
-    Call rs.open("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>" + SQLD(d), db, adOpenForwardOnly, adLockReadOnly)
+    Call rs.open("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>'" + Format(d, "MM/DD/YYYY HH:MM:SS") + "'", db, adOpenForwardOnly, adLockReadOnly)
     If rs.EOF Then NumErrors = 0 Else NumErrors = CritNN(rs("NERROS"))
 End Sub
 

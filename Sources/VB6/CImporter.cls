@@ -13,6 +13,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 'V. 2.128 - Alterado o ImportaPricing
 '           para não repetir ativo nem pegar ativos tipo CRIPR e CRIVT
+'V. 2.133 - Alterado Layt22MainParaData --> desconsiderar ISIN que começa com BR0000 (default do Bradesco)
 
 Public LastDate
 
@@ -45,7 +46,7 @@ Sub importaADTV(Level As Integer, Optional f As Form)
         
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT MAX(DATA) AS LASTDATE FROM TADTV WHERE DATA<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
-        If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE") - 5
+        If Not IsNull(rs1("LASTDATE")) Then LastDate = CDate(rs1("LASTDATE")) - 5
         If LastDate < DateSerial(2015, 10, 1) Then LastDate = DateSerial(2015, 10, 1)
         rs1.Close
         
@@ -107,7 +108,7 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
         'Identifica a última data que consta do database de pricing
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT MAX(DATAOBS) AS LASTDATE FROM TPRICING WHERE DATAOBS<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
-        If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE") - 5
+        If Not IsNull(rs1("LASTDATE")) Then LastDate = CDate(rs1("LASTDATE")) - 5
         If LastDate < DateSerial(2015, 10, 1) Then LastDate = DateSerial(2015, 10, 1)
         rs1.Close
         
@@ -238,7 +239,7 @@ Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
         'Identifica a última data que consta do database de posicao
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT MAX(DATA) AS LASTDATE FROM TPOSIC WHERE DATA<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
-        If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE")
+        If Not IsNull(rs1("LASTDATE")) Then LastDate = CDate(rs1("LASTDATE"))
         If LastDate < DateSerial(2015, 1, 1) Then LastDate = DateSerial(2015, 1, 1)
         rs1.Close
         
@@ -322,7 +323,7 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
         'Identifica a última data que consta do database de resgates
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT MAX(DATAOBS) AS LASTDATE FROM TRESGATES WHERE DATAOBS<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
-        If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE")
+        If Not IsNull(rs1("LASTDATE")) Then LastDate = CDate(rs1("LASTDATE"))
         If LastDate < DateSerial(2012, 1, 1) Then LastDate = DateSerial(2012, 1, 1)
         rs1.Close
         
@@ -786,7 +787,7 @@ Private Sub ImportaSerie(DBName As String, WSName As String, w As Object, db As 
     ElseIf IsNull(rs("LASTDATE")) Then
         Incompleta = True
     Else
-        UltData = rs("LASTDATE")
+        UltData = CDate(rs("LASTDATE"))
         Incompleta = UltData < sub1util(Now())
     End If
     
@@ -1262,7 +1263,7 @@ Public Sub Layt22MainParaData(d As Date)
         '---------------------------------------------< Tenta achar o papel já existente (no database)
         PapelAchado = False
         Call FStart.Say("Importando posição XML " & d & " Fundo: " & rs("fundo") & " Papel: " & rs("PAPEL_ISIN"))
-        If rs("COMPROMISSADA") = 1 Then
+        If rs("COMPROMISSADA") Then
             'É compromissada
             Set rs1 = New ADODB.Recordset
             Call rs1.open("SELECT * FROM TPAPEL WHERE ID='OVER'", db, adOpenForwardOnly, adLockReadOnly)
@@ -1273,7 +1274,8 @@ Public Sub Layt22MainParaData(d As Date)
             PapelAchado = Not rs1.EOF
         End If
         
-        If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then
+        'If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then <--Antes da V. 2.133
+        If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 And Left(CritS(rs("PAPEL_ISIN")), 6) <> "BR0000" Then
             'Procura o papel na TPAPEL pelo ISIN = ISIN
             Set rs1 = New ADODB.Recordset
             Call rs1.open("SELECT * FROM TPAPEL WHERE ISIN='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
@@ -1371,7 +1373,7 @@ Public Sub Layt22MainParaData(d As Date)
             
             Set pp = New CPapel
             
-            If rs("COMPROMISSADA") = 1 Then
+            If rs("COMPROMISSADA") Then
             
                 pp.ID = "OVER"
                 pp.ISIN = "OVER"
