@@ -24,7 +24,7 @@
 
 			e.preventDefault();
 			$.ajax({
-				url: abp.appPath + 'TConfiguracao/EditRoleModal?roleId=' + roleId,
+                url: abp.appPath + 'TConfiguracao/TConfiguracaoDetalhesModal?codigo=' + roleId,
 				type: 'POST',
 				contentType: 'application/html',
 				success: function (content) {
