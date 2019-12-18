@@ -1303,7 +1303,7 @@ namespace Capitania.Importer.Library
                                 vComando.ExecuteNonQuery();
                             }
 
-                            int j = 4;
+                            int j = 3;
                             vDate = (planilhaImportacao.Cells[j, i] as Range).Value;
                             while (vDate != null)
                             {
@@ -1561,7 +1561,7 @@ namespace Capitania.Importer.Library
 
                 DateTime vDataAtual = DateTime.Now;
                 vData = vMaxData;
-                while (vData <= vMaxData)
+                while (vData <= vDataAtual)
                 {
                     string vValorParametroNegsFilePrefixo = ParameterManager.GetParameterValue(DBParametersConstants.NegsFilePrefix);
                     string vPrefixoNegsFile = Path.GetFileName(vValorParametroNegsFilePrefixo);
