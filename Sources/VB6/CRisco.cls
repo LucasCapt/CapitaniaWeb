@@ -198,7 +198,7 @@ Private Sub TrataSerie(DBName As String, vetor As Variant, Processo As String, _
         While Not rs.EOF
             i = i + 1
             vetor(i) = rs("VALOR")
-            d = rs("DATA")
+            d = CDate(rs("DATA"))
             rs.MoveNext
         Wend
         If d < LastDate Then LastDate = d

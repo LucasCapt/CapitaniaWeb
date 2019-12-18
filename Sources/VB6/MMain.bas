@@ -79,7 +79,10 @@ Public NumErrors As Double             'Número de erros desde a última revisão
 'Public Const Ver = "2.128"               '14-Out-2019 'Alteração no CImporter
 'Public Const Ver = "2.129"               '05-Nov-2019 'Alteração no CPapel (PresumedMaturity)
 'Public Const Ver = "2.130"               '18-Nov-2019 'Correção na criação de regras (erro ao inserir devido ao campo 'false'
-Public Const Ver = "2.131"               '18-Nov-2019 'Insert no método 'cria' de regras estava incorreto, desconsiderando campos da tabela.
+'Public Const Ver = "2.131"               '18-Nov-2019 'Insert no método 'cria' de regras estava incorreto, desconsiderando campos da tabela.
+'Public Const Ver = "2.132"               '25-Nov-2019 'Consertado o contador de erros no statusbar e a rotina
+'Public Const Ver = "2.133"               '28-Nov-2019 'Consertado o contador de erros no statusbar e a rotina
+Public Const Ver = "2.134"               '06-Dec-2019 'Incluido Cdate() para converter certas datas que vem da Base
 
 
 Sub Init()
