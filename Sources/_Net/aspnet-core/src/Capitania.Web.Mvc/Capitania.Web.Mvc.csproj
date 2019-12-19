@@ -23,6 +23,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Capitania.Application\Capitania.Application.csproj" />
+    <ProjectReference Include="..\Capitania.Core\Capitania.Core.csproj" />
+    <ProjectReference Include="..\Capitania.EntityFrameworkCore\Capitania.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Capitania.Web.Core\Capitania.Web.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -52,12 +55,20 @@
     <PackageReference Include="Abp.RedisCache" Version="4.8.1" />
     <PackageReference Include="Abp.Castle.Log4Net" Version="4.8.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.ViewCompilation" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="17.4.0.39" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Syncfusion.EJ">
+      <HintPath>C:\Program Files (x86)\Syncfusion\Essential Studio\ASP.NET MVC\16.4.0.42\Assemblies\4.6\Syncfusion.EJ.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.EJ.MVC">
+      <HintPath>C:\Program Files (x86)\Syncfusion\Essential Studio\ASP.NET MVC\16.4.0.42\Assemblies\MVC\MVC5\Syncfusion.EJ.MVC.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="wwwroot\view-resources\Views\DashboardFundos\" />
     <Folder Include="wwwroot\view-resources\Views\_Bundles\" />
   </ItemGroup>
 </Project>

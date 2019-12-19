@@ -9,5 +9,6 @@
         public const string Roles = "Roles";
 
         public const string TConfiguracao = "Configurações";
+        public const string DashboardFundo = "Fundos";
     }
 }

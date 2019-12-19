@@ -99,6 +99,8 @@
     <text name="TConfigurations.Value">Valor</text>
     <text name="EditConfiguration">Editar Configuração</text>
     <text name="CreateNewConfig">Criar Nova Configuração</text>
+    <text name="DashboardFundos">Fundos</text>
+    <text name="Fundo">Fundo</text>
     
   </texts>
 </localizationDictionary>

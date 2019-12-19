@@ -77,6 +77,8 @@ namespace Capitania.Web.Host.Startup
                 });
             });
 
+            string con = Configuration.AppConfigurations.Get("ConnectionStrings").GetConnectionString("Default");
+            
             // Configure Abp and Dependency Injection
             return services.AddAbp<CapitaniaWebHostModule>(
                 // Configure Log4Net logging

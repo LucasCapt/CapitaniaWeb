@@ -21,5 +21,7 @@
         public const string Pages_TProvFilter_Create = "Pages.ProvFilter.Create";
         public const string Pages_TProvFilter_Update = "Pages.ProvFilter.Update";
         public const string Pages_TProvFilter_Delete = "Pages.ProvFilter.Delete";
+
+        public const string Pages_DashboardFundos = "Pages.DashboardFundos";
     }
 }
