@@ -705,18 +705,25 @@ namespace Capitania.Importer.Library
                 {
                     using (IDataReader vReader = vComando.ExecuteReader())
                     {
+                        bool vPrimeiraIteracao = true;
                         while (vReader.Read())
                         {
+                            bool vPapelEncontrado = false;
+                            string PPISIN = string.Empty;
+                            string ppID = string.Empty;
 
-                            vSQL = new StringBuilder();
-                            vSQL.AppendLine("delete from TPosic");
-                            vSQL.AppendLine(String.Format(" where DATA = '{0}'", data.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   and FUNDO = {0}", vFundo));
-                            using (SqlCommand vComandoDelete = new SqlCommand(vSQL.ToString(), vConection))
+                            if (vPrimeiraIteracao)
                             {
-                                vComandoDelete.ExecuteNonQuery();
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("delete from TPosic");
+                                vSQL.AppendLine(String.Format(" where DATA = '{0}'", data.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   and FUNDO = {0}", vFundo));
+                                using (SqlCommand vComandoDelete = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    vComandoDelete.ExecuteNonQuery();
+                                }
+                                vPrimeiraIteracao = false;
                             }
-
 
                             vSQL = new StringBuilder();
                             if (vReader.GetBoolean(vReader.GetOrdinal("COMPROMISSADA")))
@@ -724,341 +731,490 @@ namespace Capitania.Importer.Library
                                 vSQL.AppendLine("select *");
                                 vSQL.AppendLine("  from TPAPEL");
                                 vSQL.AppendLine(" where ID = 'OVER'");
-                                vSQL.AppendLine(" UNION ");
-                                vSQL.AppendLine("select *");
-                                vSQL.AppendLine("  from TPAPEL");
-                                vSQL.AppendLine(" where ID = 'COMPROMISSADA'");
-                            }
 
-                            if (vSQL.Length > 0)
-                            {
-                                vSQL.AppendLine(" UNION");
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    if (!vReaderPapel.Read())
+                                    {
+                                        vSQL = new StringBuilder();
+                                        vSQL.AppendLine("select *");
+                                        vSQL.AppendLine("  from TPAPEL");
+                                        vSQL.AppendLine(" where ID = 'COMPROMISSADA'");
+                                        vComandoBuscaPapel.CommandText = vSQL.ToString();
+                                        vReaderPapel.Close();
+                                        vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                        vPapelEncontrado = vReaderPapel.Read();
+                                        if (vPapelEncontrado)
+                                        {
+                                            if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                                PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                            ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                        }
+                                    }
+                                }
                             }
 
                             string vPapelISIN = vReader.GetString(vReader.GetOrdinal("PAPEL_ISIN"));
 
-                            vSQL.AppendLine("SELECT *");
-                            vSQL.AppendLine("  FROM TPAPEL");
-                            vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND ISIN = '{0}'", vPapelISIN));
+                            if (!vPapelEncontrado && vPapelISIN.Contains("**") && !vPapelISIN.StartsWith("BR0000"))
+                            {
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("SELECT *");
+                                vSQL.AppendLine("  FROM TPAPEL");
+                                vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND ISIN = '{0}'", vPapelISIN));
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                            PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                        ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                    }
+                                }
+                            }
+                            if (!vPapelEncontrado && vPapelISIN.Contains("**"))
+                            {
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("SELECT *");
+                                vSQL.AppendLine("  FROM TPAPEL");
+                                vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND ID = '{0}'", vPapelISIN));
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                            PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                        ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                    }
+                                }
+                            }
 
-                            vSQL.AppendLine(" UNION ");
-
-                            vSQL.AppendLine("SELECT *");
-                            vSQL.AppendLine("  FROM TPAPEL");
-                            vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND ID = '{0}'", vPapelISIN));
-
-                            vSQL.AppendLine(" UNION ");
-
-                            vSQL.AppendLine("SELECT *");
-                            vSQL.AppendLine("  FROM TPAPEL");
-                            vSQL.AppendLine(" WHERE EXISTS (SELECT *");
-                            vSQL.AppendLine("                 FROM TAKA");
-                            vSQL.AppendLine(String.Format("                WHERE TAKA.FROMID = '{0}'", vPapelISIN));
-                            vSQL.AppendLine(String.Format("                  AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine("                  AND TPAPEL.ID = TAKA.TOID)");
+                            if (!vPapelEncontrado)
+                            {
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("SELECT *");
+                                vSQL.AppendLine("  FROM TAKA");
+                                vSQL.AppendLine(String.Format("   WHERE TAKA.FROMID = '{0}'", vPapelISIN));
+                                vSQL.AppendLine(String.Format("     AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("     AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        vSQL = new StringBuilder();
+                                        vSQL.AppendLine("SELECT *");
+                                        vSQL.AppendLine("  FROM TPAPEL");
+                                        vSQL.AppendLine(String.Format(" WHERE ID = '{0}'", vReaderPapel.GetString(vReaderPapel.GetOrdinal("TOID"))));
+                                        vComandoBuscaPapel.CommandText = vSQL.ToString();
+                                        vReaderPapel.Close();
+                                        vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                        vPapelEncontrado = vReaderPapel.Read();
+                                        if (vPapelEncontrado)
+                                        {
+                                            if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                                PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                            ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                        }
+                                    }
+                                }
+                            }
 
                             string vCNPJIssuer = vReader.GetString(vReader.GetOrdinal("CNPJISSUE"));
-                            if (vReader.GetString(vReader.GetOrdinal("TIPO1")).Equals("cotas"))
+                            if (!vPapelEncontrado && vReader.GetString(vReader.GetOrdinal("TIPO1")).Equals("cotas"))
                             {
-                                vSQL.AppendLine(" UNION ");
+                                vSQL = new StringBuilder();
                                 vSQL.AppendLine("SELECT *");
                                 vSQL.AppendLine("  FROM TPAPEL");
                                 vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
                                 vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
                                 vSQL.AppendLine(String.Format("   AND CNPJ = '{0}'", vCNPJIssuer));
-
-                                vSQL.AppendLine(" UNION ");
-
-                                vSQL.AppendLine("SELECT *");
-                                vSQL.AppendLine("  FROM TPAPEL");
-                                vSQL.AppendLine(" WHERE EXISTS (SELECT *");
-                                vSQL.AppendLine("                 FROM TFUNDOS");
-                                vSQL.AppendLine(String.Format("                WHERE TFUNDOS.CNPJ = '{0}'", vCNPJIssuer));
-                                vSQL.AppendLine(String.Format("                  AND TFUNDOS.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine(String.Format("                  AND (TFUNDOS.DELETED =0 OR TFUNDOS.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine("                  AND TPAPEL.ID = TFUNDOS.IDTITULO)");
-
-                                vSQL.AppendLine(" UNION ");
-
-                                vSQL.AppendLine("SELECT *");
-                                vSQL.AppendLine("  FROM TPAPEL");
-                                vSQL.AppendLine(" WHERE EXISTS (SELECT *");
-                                vSQL.AppendLine("                 FROM TAKA");
-                                vSQL.AppendLine(String.Format("                WHERE TAKA.FROMID = '{0}'", vCNPJIssuer));
-                                vSQL.AppendLine(String.Format("                  AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine("                  AND TPAPEL.ID = TAKA.TOID)");
-
-                            }
-
-                            vSQL.AppendLine(" UNION");
-
-                            string vPapelCod = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
-
-                            vSQL.AppendLine("SELECT *");
-                            vSQL.AppendLine("  FROM TPAPEL");
-                            vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND ID = '{0}'", vPapelCod));
-
-                            vSQL.AppendLine(" UNION");
-
-                            vSQL.AppendLine("SELECT *");
-                            vSQL.AppendLine("  FROM TPAPEL");
-                            vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("   AND CODCETIP = '{0}'", vPapelCod));
-
-                            vSQL.AppendLine(" UNION ");
-
-                            vSQL.AppendLine("SELECT *");
-                            vSQL.AppendLine("  FROM TPAPEL");
-                            vSQL.AppendLine(" WHERE EXISTS (SELECT *");
-                            vSQL.AppendLine("                 FROM TAKA");
-                            vSQL.AppendLine(String.Format("                WHERE TAKA.FROMID = '{0}'", vPapelCod));
-                            vSQL.AppendLine(String.Format("                  AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine(String.Format("                  AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
-                            vSQL.AppendLine("                  AND TPAPEL.ID = TAKA.TOID)");
-
-                            using (SqlCommand vComandoPapel = new SqlCommand(vSQL.ToString(), vConection))
-                            {
-                                using (IDataReader vReaderPapel = vComandoPapel.ExecuteReader())
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
                                 {
-                                    string PPISIN = string.Empty;
-                                    string ppID = string.Empty;
-
-                                    if (vReaderPapel.Read())
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
                                     {
-                                        //Papel Encontrado
                                         if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
                                             PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
                                         ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
                                     }
-                                    else
-                                    {
-                                        TPapel pp = new TPapel();
-
-                                        if (vReader.GetBoolean(vReader.GetOrdinal("COMPROMISSADA")))
-                                        {
-                                            pp.ID = "OVER";
-                                            pp.ISIN = "OVER";
-                                            pp.Nome = "COMPROMISSADA";
-                                            pp.Status = "AUTO_TIPO2";
-                                            pp.Data_Emissao = DateTime.Now;
-                                            pp.Data_Vencto = DateTime.Now;
-                                            pp.Index = "CDI+";
-                                            pp.Coupon = 0;
-                                            pp.DayCount = "Bus/252";
-                                            pp.CODCETIP = "OVER";
-                                            pp.TIPO = "TITPRIVADO";
-                                            pp.Class_Liq = "CASH";
-                                            pp.Class_Rentab = "OVER";
-                                            pp.SENIOR = "SR_SECURED";
-                                            pp.Holdings = 1;
-                                        }
-                                        else
-                                        {
-                                            pp.ISIN = vReader.GetString(vReader.GetOrdinal("PAPEL_ISIN"));
-                                            if (String.IsNullOrEmpty(pp.ISIN) || pp.ISIN.Contains("**"))
-                                                pp.ID = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
-                                            else
-                                                pp.ID = pp.ISIN;
-
-                                            TPapel vPapelTemp = vContexto.TPapel.FirstOrDefault(w => w.ID == pp.ID);
-                                            if (vPapelTemp != null)
-                                            {
-                                                long i = 1;
-                                                while (true)
-                                                {
-                                                    string vID = String.Format("{0}({1})", pp.ID, i);
-                                                    vPapelTemp = vContexto.TPapel.FirstOrDefault(w => w.ID.Equals(vID));
-                                                    if (vPapelTemp == null)
-                                                    {
-                                                        pp.ID = String.Format("{0}({1})", pp.ID, i);
-                                                        break;
-                                                    }
-                                                    i++;
-                                                }
-                                            }
-
-                                            //'Continua a criação do papel
-                                            //'Coloca os defaults
-                                            pp.Nome = "Unknown (" + pp.ID + ")";
-                                            pp.Status = "AUTO_TIPO2";
-                                            pp.Data_Emissao = DateTime.Now;
-                                            pp.Data_Vencto = DateTime.Now;
-                                            pp.Index = "CDI+";
-                                            pp.SENIOR = "SR_CLEAN";
-                                            pp.Holdings = 1;
-                                            pp.Coupon = 0;
-                                            pp.DayCount = "Bus/252";
-                                            pp.CODCETIP = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
-                                            pp.TIPO = "TITPRIVADO";
-                                            pp.CNPJ = "";
-                                            pp.NameCr = "";
-
-                                            switch (vReader.GetString(vReader.GetOrdinal("TIPO1")))
-                                            {
-                                                case "cotas":
-                                                    pp.Class_Liq = "FIDC";
-                                                    pp.Class_Rentab = "PERP";
-                                                    pp.TIPO = "COTAS";
-                                                    pp.CNPJ = vReader.GetString(vReader.GetOrdinal("CNPJISSUE"));
-                                                    break;
-                                                case "caixa":
-                                                    pp.Class_Liq = "CASH";
-                                                    pp.Class_Rentab = "OVER";
-                                                    pp.TIPO = "CAIXA";
-                                                    break;
-                                                case "DESPESA":
-                                                    pp.Class_Liq = "CASH";
-                                                    pp.Class_Rentab = "OVER";
-                                                    pp.TIPO = "DESPESA";
-                                                    break;
-                                                case "PROVISAO":
-                                                    pp.Class_Liq = "CASH";
-                                                    pp.Class_Rentab = "OVER";
-                                                    pp.TIPO = "PROVISAO";
-                                                    break;
-                                                case "titpublico":
-                                                    pp.Class_Liq = "TITPUB";
-                                                    pp.Class_Rentab = "MATURITY";
-                                                    pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
-                                                    pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
-                                                    if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
-                                                    {
-                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
-                                                        pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
-                                                    }
-                                                    else
-                                                    {
-                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("pindex1"));
-                                                        pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "%");
-                                                    }
-                                                    pp.TIPO = "TITPUBLICO";
-                                                    break;
-                                                case "titprivado":
-                                                    pp.Class_Liq = "DEB476";
-                                                    if (vReader.GetString(vReader.GetOrdinal("PAPEL_COD")).StartsWith("LF"))
-                                                    {
-                                                        pp.Class_Liq = "LF";
-                                                    }
-                                                    else
-                                                    {
-                                                        if (vReader.GetString(vReader.GetOrdinal("PAPEL_ISIN")).Substring(8, 3) == "CRI")
-                                                        {
-                                                            pp.Class_Liq = "CRI";
-                                                        }
-                                                    }
-                                                    pp.Class_Rentab = "MATURITY";
-                                                    pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
-                                                    pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
-                                                    if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
-                                                    {
-                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
-                                                        pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
-                                                    }
-                                                    else
-                                                    {
-                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("pindex1")) / 100;
-                                                        pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "%");
-                                                    }
-                                                    pp.TIPO = "TITPRIVADO";
-                                                    pp.CNPJ = vReader.GetString(vReader.GetOrdinal("CNPJISSUE"));
-                                                    break;
-
-                                                case "debenture":
-                                                    pp.Class_Liq = "DEB476";
-                                                    pp.Class_Rentab = "MATURITY";
-                                                    pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
-                                                    pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
-                                                    if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
-                                                    {
-                                                        pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
-                                                        pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
-                                                    }
-                                                    else
-                                                    {
-                                                        pp.Coupon = (double)vReader.GetDecimal(vReader.GetOrdinal("pindex1")) / 100;
-                                                        pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "%");
-                                                    }
-                                                    pp.TIPO = "DEBENTURE";
-                                                    pp.CNPJ = vReader.GetString(vReader.GetOrdinal("CNPJISSUE"));
-                                                    break;
-                                                case "acoes":
-                                                    string codigo = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
-                                                    if (decimal.Parse(codigo.Substring(codigo.Length - 2, 2)) > 10 || decimal.Parse(codigo.Substring(codigo.Length - 3, 3)) > 10)
-
-                                                    {
-                                                        //Fundo imobiliário
-                                                        pp.Class_Liq = "FIILIST";
-                                                        pp.Class_Rentab = "PERP";
-                                                        pp.TIPO = "COTAS";
-                                                    }
-                                                    else
-                                                    {
-                                                        // 'Ação
-                                                        pp.Class_Liq = "CASH";
-                                                        pp.Class_Rentab = "PERP";
-                                                        pp.TIPO = "ACOES";
-                                                    }
-                                                    break;
-
-                                                case "futuros":
-                                                    pp.Class_Liq = "CASH";
-                                                    pp.Class_Rentab = "OVER";
-                                                    pp.TIPO = "FUTUROS";
-                                                    pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
-                                                    pp.Nome = "Fut" + pp.CODCETIP;
-                                                    break;
-                                                case "imoveis":
-                                                    pp.Class_Liq = "FIINLIST";
-                                                    pp.Class_Rentab = "PERP";
-                                                    pp.TIPO = "IMOVEL";
-                                                    pp.Nome = "Imovel " + pp.CODCETIP;
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-
-                                            if (pp.Coupon > 0.5 || (pp.Coupon > 2 && pp.Index == "%CDI"))
-                                            {
-                                                //TODO: Gerar notificação
-                                                //WriteLogError "Importação de cupom anormal", pp.ID
-                                                pp.Coupon = 0;
-                                            }
-
-                                            if (!String.IsNullOrEmpty(pp.CNPJ))
-                                            {
-                                                TCNPJNome vNome = vContexto.TCNPJNome.FirstOrDefault(w => w.CNPJ.Equals(pp.CNPJ));
-                                                if (vNome != null)
-                                                    pp.NameCr = vNome.NOMECREDITO;
-                                            }
-                                        }
-
-                                        vContexto.TPapel.Add(pp);
-                                        vContexto.SaveChanges();
-                                        PPISIN = pp.ISIN;
-                                        ppID = pp.ID;
-                                    }
-
-                                    TPosic vPosicao = new TPosic();
-                                    vPosicao.FUNDO = vReader.GetInt32(vReader.GetOrdinal("fundo"));
-                                    vPosicao.PAPEL = ppID;
-                                    vPosicao.ISIN = PPISIN;
-                                    vPosicao.Valor = vReader.GetDouble(vReader.GetOrdinal("sv"));
-                                    vPosicao.DATA = data;
-                                    vPosicao.QUANT = vReader.GetDouble(vReader.GetOrdinal("sq"));
-                                    vPosicao.TIPO = 2;
-
-                                    vContexto.TPosic.Add(vPosicao);
                                 }
                             }
+                            if (!vPapelEncontrado && vReader.GetString(vReader.GetOrdinal("TIPO1")).Equals("cotas"))
+                            {
+
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("SELECT *");
+                                vSQL.AppendLine("  FROM TFUNDOS");
+                                vSQL.AppendLine(String.Format("   WHERE TFUNDOS.CNPJ = '{0}'", vCNPJIssuer));
+                                vSQL.AppendLine(String.Format("     AND TFUNDOS.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("     AND (TFUNDOS.DELETED =0 OR TFUNDOS.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        vSQL = new StringBuilder();
+                                        vSQL.AppendLine("SELECT *");
+                                        vSQL.AppendLine("  FROM TPAPEL");
+                                        vSQL.AppendLine(string.Format(" WHERE ID = '{0}'", vReaderPapel.GetString(vReaderPapel.GetOrdinal("IDTITULO"))));
+                                        vComandoBuscaPapel.CommandText = vSQL.ToString();
+                                        vReaderPapel.Close();
+                                        vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                        vPapelEncontrado = vReaderPapel.Read();
+                                        if (vPapelEncontrado)
+                                        {
+                                            if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                                PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                            ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (!vPapelEncontrado && vReader.GetString(vReader.GetOrdinal("TIPO1")).Equals("cotas"))
+                            {
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("SELECT *");
+                                vSQL.AppendLine("  FROM TAKA");
+                                vSQL.AppendLine(String.Format("   WHERE TAKA.FROMID = '{0}'", vCNPJIssuer));
+                                vSQL.AppendLine(String.Format("     AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("     AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        vSQL = new StringBuilder();
+                                        vSQL.AppendLine("SELECT *");
+                                        vSQL.AppendLine("  FROM TPAPEL");
+                                        vSQL.AppendLine(String.Format(" WHERE ID = '{0}'", vReaderPapel.GetString(vReaderPapel.GetOrdinal("TOID"))));
+                                        vComandoBuscaPapel.CommandText = vSQL.ToString();
+                                        vReaderPapel.Close();
+                                        vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                        vPapelEncontrado = vReaderPapel.Read();
+                                        if (vPapelEncontrado)
+                                        {
+                                            if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                                PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                            ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                        }
+                                    }
+                                }
+                            }
+
+
+
+                            string vPapelCod = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
+                            if (!vPapelEncontrado)
+                            {
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("SELECT *");
+                                vSQL.AppendLine("  FROM TPAPEL");
+                                vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND ID = '{0}'", vPapelCod));
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                            PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                        ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                    }
+                                }
+                            }
+
+                            if (!vPapelEncontrado)
+                            {
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("SELECT *");
+                                vSQL.AppendLine("  FROM TPAPEL");
+                                vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("   AND CODCETIP = '{0}'", vPapelCod));
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                            PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                        ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                    }
+                                }
+
+                            }
+
+                            if (!vPapelEncontrado)
+                            {
+                                vSQL = new StringBuilder();
+                                vSQL.AppendLine("SELECT *");
+                                vSQL.AppendLine("  FROM TAKA");
+                                vSQL.AppendLine(String.Format("   WHERE TAKA.FROMID = '{0}'", vPapelCod));
+                                vSQL.AppendLine(String.Format("     AND TAKA.DT_CREATED <= '{0}'", data.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format("     AND (TAKA.DELETED =0 OR TAKA.DT_CREATED >= '{0}')", data.ToString("yyyy-MM-dd")));
+                                using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
+                                {
+                                    IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        vSQL = new StringBuilder();
+                                        vSQL.AppendLine("SELECT *");
+                                        vSQL.AppendLine("  FROM TPAPEL");
+                                        vSQL.AppendLine(String.Format(" WHERE ID = '{0}'", vReaderPapel.GetString(vReaderPapel.GetOrdinal("TOID"))));
+                                        vComandoBuscaPapel.CommandText = vSQL.ToString();
+                                        vReaderPapel.Close();
+                                        vReaderPapel = vComandoBuscaPapel.ExecuteReader();
+                                        vPapelEncontrado = vReaderPapel.Read();
+                                        if (vPapelEncontrado)
+                                        {
+                                            if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                                PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                            ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (!vPapelEncontrado)
+                            {
+                                TPapel pp = new TPapel();
+
+                                if (vReader.GetBoolean(vReader.GetOrdinal("COMPROMISSADA")))
+                                {
+                                    pp.ID = "OVER";
+                                    pp.ISIN = "OVER";
+                                    pp.Nome = "COMPROMISSADA";
+                                    pp.Status = "AUTO_TIPO2";
+                                    pp.Data_Emissao = DateTime.Now;
+                                    pp.Data_Vencto = DateTime.Now;
+                                    pp.Index = "CDI+";
+                                    pp.Coupon = 0;
+                                    pp.DayCount = "Bus/252";
+                                    pp.CODCETIP = "OVER";
+                                    pp.TIPO = "TITPRIVADO";
+                                    pp.Class_Liq = "CASH";
+                                    pp.Class_Rentab = "OVER";
+                                    pp.SENIOR = "SR_SECURED";
+                                    pp.Holdings = 1;
+                                }
+                                else
+                                {
+                                    pp.ISIN = vReader.GetString(vReader.GetOrdinal("PAPEL_ISIN"));
+                                    if (String.IsNullOrEmpty(pp.ISIN) || pp.ISIN.Contains("**"))
+                                        pp.ID = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
+                                    else
+                                        pp.ID = pp.ISIN;
+
+                                    TPapel vPapelTemp = vContexto.TPapel.FirstOrDefault(w => w.ID == pp.ID);
+                                    if (vPapelTemp != null)
+                                    {
+                                        long i = 1;
+                                        while (true)
+                                        {
+                                            string vID = String.Format("{0}({1})", pp.ID, i);
+                                            vPapelTemp = vContexto.TPapel.FirstOrDefault(w => w.ID.Equals(vID));
+                                            if (vPapelTemp == null)
+                                            {
+                                                pp.ID = String.Format("{0}({1})", pp.ID, i);
+                                                break;
+                                            }
+                                            i++;
+                                        }
+                                    }
+
+                                    //'Continua a criação do papel
+                                    //'Coloca os defaults
+                                    pp.Nome = "Unknown (" + pp.ID + ")";
+                                    pp.Status = "AUTO_TIPO2";
+                                    pp.Data_Emissao = DateTime.Now;
+                                    pp.Data_Vencto = DateTime.Now;
+                                    pp.Index = "CDI+";
+                                    pp.SENIOR = "SR_CLEAN";
+                                    pp.Holdings = 1;
+                                    pp.Coupon = 0;
+                                    pp.DayCount = "Bus/252";
+                                    pp.CODCETIP = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
+                                    pp.TIPO = "TITPRIVADO";
+                                    pp.CNPJ = "";
+                                    pp.NameCr = "";
+
+                                    switch (vReader.GetString(vReader.GetOrdinal("TIPO1")))
+                                    {
+                                        case "cotas":
+                                            pp.Class_Liq = "FIDC";
+                                            pp.Class_Rentab = "PERP";
+                                            pp.TIPO = "COTAS";
+                                            pp.CNPJ = vReader.GetString(vReader.GetOrdinal("CNPJISSUE"));
+                                            break;
+                                        case "caixa":
+                                            pp.Class_Liq = "CASH";
+                                            pp.Class_Rentab = "OVER";
+                                            pp.TIPO = "CAIXA";
+                                            break;
+                                        case "DESPESA":
+                                            pp.Class_Liq = "CASH";
+                                            pp.Class_Rentab = "OVER";
+                                            pp.TIPO = "DESPESA";
+                                            break;
+                                        case "PROVISAO":
+                                            pp.Class_Liq = "CASH";
+                                            pp.Class_Rentab = "OVER";
+                                            pp.TIPO = "PROVISAO";
+                                            break;
+                                        case "titpublico":
+                                            pp.Class_Liq = "TITPUB";
+                                            pp.Class_Rentab = "MATURITY";
+                                            pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
+                                            pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
+                                            if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
+                                            {
+                                                pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
+                                                pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
+                                            }
+                                            else
+                                            {
+                                                pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("pindex1"));
+                                                pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "%");
+                                            }
+                                            pp.TIPO = "TITPUBLICO";
+                                            break;
+                                        case "titprivado":
+                                            pp.Class_Liq = "DEB476";
+                                            if (vReader.GetString(vReader.GetOrdinal("PAPEL_COD")).StartsWith("LF"))
+                                            {
+                                                pp.Class_Liq = "LF";
+                                            }
+                                            else
+                                            {
+                                                if (vReader.GetString(vReader.GetOrdinal("PAPEL_ISIN")).Substring(8, 3) == "CRI")
+                                                {
+                                                    pp.Class_Liq = "CRI";
+                                                }
+                                            }
+                                            pp.Class_Rentab = "MATURITY";
+                                            pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
+                                            pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
+                                            if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
+                                            {
+                                                pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
+                                                pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
+                                            }
+                                            else
+                                            {
+                                                pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("pindex1")) / 100;
+                                                pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "%");
+                                            }
+                                            pp.TIPO = "TITPRIVADO";
+                                            pp.CNPJ = vReader.GetString(vReader.GetOrdinal("CNPJISSUE"));
+                                            break;
+
+                                        case "debenture":
+                                            pp.Class_Liq = "DEB476";
+                                            pp.Class_Rentab = "MATURITY";
+                                            pp.Data_Emissao = vReader.GetDateTime(vReader.GetOrdinal("DTISSUE1"));
+                                            pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
+                                            if (vReader.GetDouble(vReader.GetOrdinal("pindex1")) == 100)
+                                            {
+                                                pp.Coupon = vReader.GetDouble(vReader.GetOrdinal("cupom1"));
+                                                pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "+");
+                                            }
+                                            else
+                                            {
+                                                pp.Coupon = (double)vReader.GetDecimal(vReader.GetOrdinal("pindex1")) / 100;
+                                                pp.Index = ConvIndex(vReader.GetString(vReader.GetOrdinal("INDEX1")), "%");
+                                            }
+                                            pp.TIPO = "DEBENTURE";
+                                            pp.CNPJ = vReader.GetString(vReader.GetOrdinal("CNPJISSUE"));
+                                            break;
+                                        case "acoes":
+                                            string codigo = vReader.GetString(vReader.GetOrdinal("PAPEL_COD"));
+                                            if (decimal.Parse(codigo.Substring(codigo.Length - 2, 2)) > 10 || decimal.Parse(codigo.Substring(codigo.Length - 3, 3)) > 10)
+
+                                            {
+                                                //Fundo imobiliário
+                                                pp.Class_Liq = "FIILIST";
+                                                pp.Class_Rentab = "PERP";
+                                                pp.TIPO = "COTAS";
+                                            }
+                                            else
+                                            {
+                                                // 'Ação
+                                                pp.Class_Liq = "CASH";
+                                                pp.Class_Rentab = "PERP";
+                                                pp.TIPO = "ACOES";
+                                            }
+                                            break;
+
+                                        case "futuros":
+                                            pp.Class_Liq = "CASH";
+                                            pp.Class_Rentab = "OVER";
+                                            pp.TIPO = "FUTUROS";
+                                            pp.Data_Vencto = vReader.GetDateTime(vReader.GetOrdinal("DTVENC1"));
+                                            pp.Nome = "Fut" + pp.CODCETIP;
+                                            break;
+                                        case "imoveis":
+                                            pp.Class_Liq = "FIINLIST";
+                                            pp.Class_Rentab = "PERP";
+                                            pp.TIPO = "IMOVEL";
+                                            pp.Nome = "Imovel " + pp.CODCETIP;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+
+                                    if (pp.Coupon > 0.5 || (pp.Coupon > 2 && pp.Index == "%CDI"))
+                                    {
+                                        //TODO: Gerar notificação
+                                        //WriteLogError "Importação de cupom anormal", pp.ID
+                                        pp.Coupon = 0;
+                                    }
+
+                                    if (!String.IsNullOrEmpty(pp.CNPJ))
+                                    {
+                                        TCNPJNome vNome = vContexto.TCNPJNome.FirstOrDefault(w => w.CNPJ.Equals(pp.CNPJ));
+                                        if (vNome != null)
+                                            pp.NameCr = vNome.NOMECREDITO;
+                                    }
+                                }
+
+                                vContexto.TPapel.Add(pp);
+                                vContexto.SaveChanges();
+                                PPISIN = pp.ISIN;
+                                ppID = pp.ID;
+                            }
+
+
+                            TPosic vPosicao = new TPosic();
+                            vPosicao.FUNDO = vReader.GetInt32(vReader.GetOrdinal("fundo"));
+                            vPosicao.PAPEL = ppID;
+                            vPosicao.ISIN = PPISIN;
+                            vPosicao.Valor = vReader.GetDouble(vReader.GetOrdinal("sv"));
+                            vPosicao.DATA = data;
+                            vPosicao.QUANT = vReader.GetDouble(vReader.GetOrdinal("sq"));
+                            vPosicao.TIPO = 2;
+
+                            vContexto.TPosic.Add(vPosicao);
+
+
                         }
                         vContexto.SaveChanges();
                     }
@@ -1303,7 +1459,7 @@ namespace Capitania.Importer.Library
                                 vComando.ExecuteNonQuery();
                             }
 
-                            int j = 3;
+                            int j = 4;
                             vDate = (planilhaImportacao.Cells[j, i] as Range).Value;
                             while (vDate != null)
                             {
@@ -1414,7 +1570,7 @@ namespace Capitania.Importer.Library
                         string vValorHeader = (planilhaImportacao.Cells[1, 4] as Range).Value;
                         if ((!String.IsNullOrEmpty(vValorHeader) && vValorHeader.ToString().Equals("VALOR BRUTO")) || vValor == null)
                             Col = 4;
-                        
+
                         int k = 2;
                         int j = 1;
                         double?[] vValores = { 0, 0, 0 };
@@ -1466,6 +1622,7 @@ namespace Capitania.Importer.Library
             if (vMaxData.Value.Date > DateTime.Now.Date)
                 vMaxData = DateTime.Now.AddDays(-1);
 
+            vMaxData = vMaxData.Value.AddDays(-15);
             StringBuilder vSQL = new StringBuilder();
             vSQL.AppendLine("delete from TTRADES");
             vSQL.AppendLine(String.Format(" where DATA >= '{0}'", vMaxData.Value.ToString("yyyy-MM-dd")));
@@ -1548,7 +1705,7 @@ namespace Capitania.Importer.Library
                     while (vValor.IndexOf(".") != vValor.LastIndexOf("."))
                         vValor = vValor.Remove(vValor.IndexOf("."));
 
-                    vValor = vValor.Replace(".", ",");
+                    vValor = vValor.Trim().Replace(".", ",");
                     vTrade.VALFIN = double.Parse(vValor);
                     vContexto.TTrades.Add(vTrade);
 
