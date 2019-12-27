@@ -17,6 +17,7 @@ namespace Capitania.Importer.Library
     public static class ImporterManager
     {
         private static List<FileSystemWatcher> vFileWatchers = new List<FileSystemWatcher>();
+        
 
         public static void Initialize()
         {
@@ -60,6 +61,7 @@ namespace Capitania.Importer.Library
 
         private static void ImportXmlAnbima(string vXmlFileToImport, string vNomePastaProcessamento)
         {
+            List<int> vListaFundos = new List<int>();
             try
             {
                 //Carregar os arquivos;
@@ -108,20 +110,24 @@ namespace Capitania.Importer.Library
 
                                 if (vFundos.Count > 0)
                                 {
-                                    vSQL = new StringBuilder();
-                                    vSQL.AppendLine("delete from TPOSICLAYOUT2");
-                                    vSQL.AppendLine(String.Format(" where DATA = '{0}'", vDataPosicao.ToString("yyyy-MM-dd")));
-                                    vSQL.AppendLine(String.Format("   and FUNDO = {0}", vFundos[0].Field<int>("ID")));
-                                    using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
+                                    int vFundoEmProcessamento = vFundos[0].Field<int>("ID");
+                                    if (!vListaFundos.Contains(vFundoEmProcessamento))
                                     {
-                                        vConection.Open();
-                                        using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                        vListaFundos.Add(vFundoEmProcessamento);
+                                        vSQL = new StringBuilder();
+                                        vSQL.AppendLine("delete from TPOSICLAYOUT2");
+                                        vSQL.AppendLine(String.Format(" where DATA = '{0}'", vDataPosicao.ToString("yyyy-MM-dd")));
+                                        vSQL.AppendLine(String.Format("   and FUNDO = {0}", vFundoEmProcessamento));
+                                        using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                                         {
-                                            vComando.ExecuteNonQuery();
+                                            vConection.Open();
+                                            using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
+                                            {
+                                                vComando.ExecuteNonQuery();
+                                            }
+                                            vConection.Close();
                                         }
-                                        vConection.Close();
                                     }
-
                                     float vTotalDespesas = 0;
                                     float vValorAResgatar = (float)vFundo.header.vlcotasresgatar;
                                     float vTotalProvisao = -vValorAResgatar;
@@ -135,7 +141,7 @@ namespace Capitania.Importer.Library
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
                                             //FUNDO, TIPO, PAPEL_ISIN, PAPEL_COD, QUANT, VALOR, DATA, DTVENC, DTISSUE, [INDEX], CUPOM,PINDEX,CNPJISSUE, IMPORTFOLDER, COMPROMISSADA
-                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                            vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                             vPosicLayout2.TIPO = "acoes";
                                             vPosicLayout2.PAPEL_ISIN = acao.isin;
                                             vPosicLayout2.PAPEL_COD = acao.codativo;
@@ -165,7 +171,7 @@ namespace Capitania.Importer.Library
                                         foreach (var tituloPrivado in vFundo.titprivado)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                            vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                             vPosicLayout2.TIPO = "titprivado";
                                             vPosicLayout2.PAPEL_ISIN = tituloPrivado.isin;
                                             vPosicLayout2.PAPEL_COD = tituloPrivado.codativo;
@@ -202,7 +208,7 @@ namespace Capitania.Importer.Library
                                         foreach (var tituloPublico in vFundo.titpublico)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                            vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                             vPosicLayout2.TIPO = "titpublico";
                                             vPosicLayout2.PAPEL_ISIN = tituloPublico.isin;
                                             vPosicLayout2.PAPEL_COD = tituloPublico.codativo;
@@ -239,7 +245,7 @@ namespace Capitania.Importer.Library
                                         foreach (var debenture in vFundo.debenture)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                            vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                             vPosicLayout2.TIPO = "debenture";
                                             vPosicLayout2.PAPEL_ISIN = debenture.isin;
                                             vPosicLayout2.PAPEL_COD = debenture.coddeb;
@@ -277,7 +283,7 @@ namespace Capitania.Importer.Library
                                         foreach (var caixa in vFundo.caixa)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                            vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                             vPosicLayout2.TIPO = "caixa";
                                             vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.PAPEL_ISIN = caixa.isininstituicao;
@@ -305,7 +311,7 @@ namespace Capitania.Importer.Library
                                         foreach (var cota in vFundo.cotas)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                            vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                             vPosicLayout2.TIPO = "cotas";
                                             vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.PAPEL_ISIN = cota.isin;
@@ -349,7 +355,7 @@ namespace Capitania.Importer.Library
                                             object vProvedorFiltro = null;
                                             foreach (var filtro in vFilter)
                                             {
-                                                if (vFundos[0].Field<int>("ID") == filtro.FUNDO && filtro.PROV_COD == provisao.codprov.ToString() && filtro.PROV_DATA == provisao.dt)
+                                                if (vFundoEmProcessamento == filtro.FUNDO && filtro.PROV_COD == provisao.codprov.ToString() && filtro.PROV_DATA == provisao.dt)
                                                 {
                                                     vProvedorFiltro = filtro;
                                                 }
@@ -365,7 +371,7 @@ namespace Capitania.Importer.Library
                                             else
                                             {
                                                 TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                                vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                                vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                                 vPosicLayout2.TIPO = (vProvedorFiltro as TProvFilter.TProvFilter).PP_TIPO;
                                                 vPosicLayout2.PAPEL_ISIN = (vProvedorFiltro as TProvFilter.TProvFilter).PP_ISIN;
                                                 vPosicLayout2.PAPEL_COD = (vProvedorFiltro as TProvFilter.TProvFilter).PP_COD;
@@ -397,7 +403,7 @@ namespace Capitania.Importer.Library
                                         foreach (var futuro in vFundo.futuros)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                            vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                             vPosicLayout2.TIPO = "futuros";
                                             vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.PAPEL_ISIN = futuro.isin;
@@ -441,7 +447,7 @@ namespace Capitania.Importer.Library
                                         foreach (var imovel in vFundo.imoveis)
                                         {
                                             TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                            vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                            vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                             vPosicLayout2.TIPO = "imoveis";
                                             vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.PAPEL_ISIN = "IMOVEL";
@@ -468,7 +474,7 @@ namespace Capitania.Importer.Library
                                     if (vTotalProvisao != 0)
                                     {
                                         TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                        vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                        vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                         vPosicLayout2.TIPO = "PROVISAO";
                                         vPosicLayout2.PAPEL_ISIN = "PROVISAO";
                                         vPosicLayout2.PAPEL_COD = "PROVISAO";
@@ -496,7 +502,7 @@ namespace Capitania.Importer.Library
                                     if (vTotalDespesas != 0)
                                     {
                                         TPOSICLAYOUT2 vPosicLayout2 = new TPOSICLAYOUT2();
-                                        vPosicLayout2.FUNDO = vFundos[0].Field<int>("ID");
+                                        vPosicLayout2.FUNDO = vFundoEmProcessamento;
                                         vPosicLayout2.TIPO = "DESPESA";
                                         vPosicLayout2.PAPEL_ISIN = "DESPESA";
                                         vPosicLayout2.PAPEL_COD = "DESPESA";
@@ -522,73 +528,73 @@ namespace Capitania.Importer.Library
 
                                     if (vFundo.corretagem != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "corretagem");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "corretagem");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.fidc != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "fidc");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "fidc");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.forwardsmoedas != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "forwardsmoedas");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "forwardsmoedas");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.opcoesacoes != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "opcoesacoes");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "opcoesacoes");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.opcoesderiv != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "opcoesderiv");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "opcoesderiv");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.opcoesflx != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "opcoesflx");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "opcoesflx");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.opcoesmoedasotc != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "opcoesmoedasotc");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "opcoesmoedasotc");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.participacoes != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "participacoes");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "participacoes");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.partplanprev != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "partplanprev");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "partplanprev");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.swap != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "swap");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "swap");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.termorf != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "termorf");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "termorf");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
                                     if (vFundo.termorv != null)
                                     {
-                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundos[0].Field<int>("ID"), "termorv");
+                                        TPOSICLAYOUT2 vPosicLayout2 = DadosOutros(vNomePastaProcessamento, vDataPosicao, vFundoEmProcessamento, "termorv");
 
                                         vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                     }
@@ -605,7 +611,7 @@ namespace Capitania.Importer.Library
                                     End If
                                     */
                                     vContexto.SaveChanges();
-                                    ProcessImportedXml(vDataPosicao, vFundos[0].Field<int>("ID"));
+                                    ProcessImportedXml(vDataPosicao, vFundoEmProcessamento);
                                 }
 
 
@@ -689,7 +695,8 @@ namespace Capitania.Importer.Library
             StringBuilder vSQL = new StringBuilder();
 
             vSQL.AppendLine("SELECT FUNDO, PAPEL_ISIN, SUM(QUANT) AS SQ, SUM(VALOR) AS SV, DATA, PAPEL_COD,");
-            vSQL.AppendLine("       MAX(TIPO) AS TIPO1, MAX(DTVENC) AS DTVENC1, MIN(DTISSUE) AS DTISSUE1, MAX([INDEX]) AS INDEX1, MIN(CUPOM) AS CUPOM1, MIN(PINDEX) AS PINDEX1, CNPJISSUE, IMPORTFOLDER, COMPROMISSADA");
+            vSQL.AppendLine("       MAX(TIPO) AS TIPO1, MAX(DTVENC) AS DTVENC1, MIN(DTISSUE) AS DTISSUE1, MAX([INDEX]) AS INDEX1,");
+            vSQL.AppendLine("       MIN(CUPOM) AS CUPOM1, MIN(PINDEX) AS PINDEX1, CNPJISSUE, IMPORTFOLDER, COMPROMISSADA");
             vSQL.AppendLine("  FROM TPOSICLAYOUT2");
             vSQL.AppendLine(String.Format(" WHERE DATA= '{0}'", data.ToString("yyyy-MM-dd")));
             vSQL.AppendLine(String.Format("   AND FUNDO = {0}", vFundo));
