@@ -1,4 +1,5 @@
-﻿@using Abp.Authorization.Users
+﻿
+@using Abp.Authorization.Users
 @using Capitania.Web.Startup
 @model Capitania.Web.Models.DashboardFundos.TFundoViewModel
 @{
@@ -22,6 +23,9 @@
             gridObj.excelExport();
         }
     }
+    ej.base.L10n.Load({ 'pt-BR': {} });
+    ej.base.setCulture('pt-BR');
+
 </script>
 
 <div class="row clearfix">
@@ -137,17 +141,16 @@
                 <div>
 
 
-                    <ejs-grid id="Grid" dataSource="@ViewBag.DadosDash" allowExcelExport="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })" allowPaging="true" allowSorting="true" allowFiltering="true">
+                    <ejs-grid id="Grid" dataSource="@ViewBag.DadosDash" allowExcelExport="true" rowHeight="20" locale="pt-BR" allowResizing="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })" allowSorting="true" allowFiltering="true">
                         <e-grid-columns>
-                            <e-grid-column field="NomeFundo" headerText="Fundo" textAlign="Right" width="120"></e-grid-column>
-                            <e-grid-column field="PL" headerText="PL" width="150"></e-grid-column>
-                            <e-grid-column field="Caixa" headerText="Caixa" width="150"></e-grid-column>
-                            <e-grid-column field="CRD_EL1" headerText="CRD_EL1" width="150"></e-grid-column>
-                            <e-grid-column field="VAR" headerText="VAR" width="150"></e-grid-column>
-                            <e-grid-column field="Stress" headerText="Stress" width="150"></e-grid-column>
-                            <e-grid-column field="LIQSTRESSPERCENTILE" headerText="Percentil" width="150"></e-grid-column>
-                            <e-grid-column field="DataInfo" headerText="DataInfo" width="130" textAlign="Right" format="dd/MM/yyyy"></e-grid-column>
-                            <e-grid-column field="DataRun" headerText="DataRun" width="130" textAlign="Right" format="dd/MM/yyyy"></e-grid-column>
+                            <e-grid-column field="NomeFundo" headerText="Fundo" textAlign="Left" autoFit="true"></e-grid-column>
+                            <e-grid-column field="PL" headerText="PL" textAlign="Right" format="N2" autoFit="true"></e-grid-column>
+                            <e-grid-column field="Caixa" headerText="Caixa" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                            <e-grid-column field="CRD_EL1" headerText="Credit Loss" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                            <e-grid-column field="VAR" headerText="VAR" textAlign="Right" autoFit="true" format="N1" ></e-grid-column>
+                            <e-grid-column field="Stress" headerText="Stress" textAlign="Right" autoFit="true" format="N1" ></e-grid-column>
+                            <e-grid-column field="LIQSTRESSPERCENTILE" headerText="Percentil" textAlign="Right" autoFit="true" format="N1" ></e-grid-column>
+                            <e-grid-column field="DataInfo" headerText="DataInfo" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
                         </e-grid-columns>
                     </ejs-grid>
                 </div>

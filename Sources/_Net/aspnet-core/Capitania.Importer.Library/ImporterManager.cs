@@ -324,7 +324,6 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
                                             vPosicLayout2.CUPOM = 0;
                                             vPosicLayout2.PINDEX = 0;
-                                            vPosicLayout2.CNPJISSUE = string.Empty;
                                             vPosicLayout2.COMPROMISSADA = false;
                                             vTotalGeral += (float)vPosicLayout2.VALOR;
 
@@ -742,7 +741,14 @@ namespace Capitania.Importer.Library
                                 using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
                                 {
                                     IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
-                                    if (!vReaderPapel.Read())
+                                    vPapelEncontrado = vReaderPapel.Read();
+                                    if (vPapelEncontrado)
+                                    {
+                                        if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
+                                            PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
+                                        ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
+                                    }
+                                    else
                                     {
                                         vSQL = new StringBuilder();
                                         vSQL.AppendLine("select *");
@@ -764,7 +770,7 @@ namespace Capitania.Importer.Library
 
                             string vPapelISIN = vReader.GetString(vReader.GetOrdinal("PAPEL_ISIN"));
 
-                            if (!vPapelEncontrado && vPapelISIN.Contains("**") && !vPapelISIN.StartsWith("BR0000"))
+                            if (!vPapelEncontrado && !vPapelISIN.Contains("**") && !vPapelISIN.StartsWith("BR0000"))
                             {
                                 vSQL = new StringBuilder();
                                 vSQL.AppendLine("SELECT *");
@@ -784,7 +790,7 @@ namespace Capitania.Importer.Library
                                     }
                                 }
                             }
-                            if (!vPapelEncontrado && vPapelISIN.Contains("**"))
+                            if (!vPapelEncontrado && !vPapelISIN.Contains("**"))
                             {
                                 vSQL = new StringBuilder();
                                 vSQL.AppendLine("SELECT *");
@@ -845,7 +851,7 @@ namespace Capitania.Importer.Library
                                 vSQL.AppendLine("  FROM TPAPEL");
                                 vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
                                 vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine(String.Format("   AND CNPJ = '{0}'", vCNPJIssuer));
+                                vSQL.AppendLine(String.Format("   AND CNPJ <> '' AND CNPJ = '{0}'", vCNPJIssuer));
                                 using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
                                 {
                                     IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();
@@ -1900,6 +1906,9 @@ namespace Capitania.Importer.Library
                     vUltimaData = vUltimaData.Value.AddDays(1);
                 }
                 vContexto.SaveChanges();
+
+                xlWorkbook.Close();
+                xlApp.Quit();
             }
 
 
@@ -1985,6 +1994,8 @@ namespace Capitania.Importer.Library
                 }
 
                 vContexto.SaveChanges();
+                xlWorkbook.Close();
+                xlApp.Quit();
             }
 
 
