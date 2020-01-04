@@ -1412,7 +1412,7 @@ namespace Capitania.Importer.Library
 
                 vContexto.SaveChanges();
 
-                xlWorkbook.Close();
+                xlWorkbook.Close(false);
                 xlApp.Quit();
                 #endregion
             }
@@ -1544,7 +1544,7 @@ namespace Capitania.Importer.Library
 
             #endregion
 
-            xlWorkbook.Close();
+            xlWorkbook.Close(false);
             xlApp.Quit();
 
             //TODO: Marcar flag de importação do dia;
@@ -1618,7 +1618,7 @@ namespace Capitania.Importer.Library
                 vConection.Close();
             }
 
-            xlWorkbook.Close();
+            xlWorkbook.Close(false);
             xlApp.Quit();
             //TODO: Marcar flag de importação do dia;
             //TODO: Logar importação
@@ -1776,7 +1776,7 @@ namespace Capitania.Importer.Library
 
                 vContexto.SaveChanges();
 
-                xlWorkbook.Close();
+                xlWorkbook.Close(false);
                 xlApp.Quit();
 
                 vConection.Close();
@@ -1907,7 +1907,7 @@ namespace Capitania.Importer.Library
                 }
                 vContexto.SaveChanges();
 
-                xlWorkbook.Close();
+                xlWorkbook.Close(false);
                 xlApp.Quit();
             }
 
@@ -1994,7 +1994,7 @@ namespace Capitania.Importer.Library
                 }
 
                 vContexto.SaveChanges();
-                xlWorkbook.Close();
+                xlWorkbook.Close(false);
                 xlApp.Quit();
             }
 
