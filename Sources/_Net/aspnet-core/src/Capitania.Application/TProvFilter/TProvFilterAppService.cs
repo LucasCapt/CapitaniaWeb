@@ -17,10 +17,10 @@ namespace Capitania.TProvFilter
     [AbpAuthorize(PermissionNames.Pages_TProvFilter)]
     public class TProvFilterAppService : CapitaniaAppServiceBase, ITProvFilterAppService
     {
-        private readonly IRepository<TProvFilter, int> _TConfiguracaoRepository;
+        private readonly IRepository<TProvFilter, long> _TConfiguracaoRepository;
         private readonly IRepository<Tenant> _tenantRepository;
         
-        public TProvFilterAppService(IRepository<TProvFilter, int> tConfiguracaoRepository, IRepository<Tenant> tenantRepositorio)
+        public TProvFilterAppService(IRepository<TProvFilter, long> tConfiguracaoRepository, IRepository<Tenant> tenantRepositorio)
         {
             _TConfiguracaoRepository = tConfiguracaoRepository;
             _tenantRepository = tenantRepositorio;

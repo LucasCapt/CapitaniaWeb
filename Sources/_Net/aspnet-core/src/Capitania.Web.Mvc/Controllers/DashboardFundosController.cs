@@ -23,8 +23,8 @@ namespace Capitania.Web.Mvc.Controllers
         public async Task<IActionResult> Index()
         {
             //Carregar dados 
-
             ViewBag.DadosDash = _dashboardAppService.ObterDadosDashPrincipal();
+
             ViewBag.ListaFundos = await GetIdiomaList();
 
             return View();

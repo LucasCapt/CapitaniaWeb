@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Capitania.TProvFilter
 {
     [Table("TProvFilter")]
-    public partial class TProvFilter : Entity<int>
+    public partial class TProvFilter : Entity<long>
     {
         [Key]
         [Column(Order = 0)]
