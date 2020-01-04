@@ -334,6 +334,7 @@ namespace Capitania.Importer.Library
 
                                     #region Despesas
 
+                                    if(vFundo.despesas!=null)
                                     vTotalDespesas -= (float)vFundo.despesas.txadm;
                                     if (vFundo.outrasdespesas != null)
                                     {
