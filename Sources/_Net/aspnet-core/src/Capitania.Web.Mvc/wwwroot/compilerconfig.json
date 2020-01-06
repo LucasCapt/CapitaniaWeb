@@ -32,6 +32,10 @@
     "inputFile": "scss/themes/theme-cyan.scss"
   },
   {
+    "outputFile": "css/themes/theme-capitania.css",
+    "inputFile": "scss/themes/theme-capitania.scss"
+  },
+  {
     "outputFile": "css/themes/theme-deep-orange.css",
     "inputFile": "scss/themes/theme-deep-orange.scss"
   },

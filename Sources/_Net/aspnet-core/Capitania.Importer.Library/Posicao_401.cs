@@ -458,15 +458,15 @@ namespace Capitania.Importer.Library
 
         private string nomeadmField;
 
-        private long cnpjadmField;
+        private string cnpjadmField;
 
         private string nomegestorField;
 
-        private long cnpjgestorField;
+        private string cnpjgestorField;
 
         private string nomecustodianteField;
 
-        private long cnpjcustodianteField;
+        private string cnpjcustodianteField;
 
         private decimal valorcotaField;
 
@@ -558,7 +558,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjadm
+        public string cnpjadm
         {
             get
             {
@@ -584,7 +584,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjgestor
+        public string cnpjgestor
         {
             get
             {
@@ -610,7 +610,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjcustodiante
+        public string cnpjcustodiante
         {
             get
             {
@@ -825,11 +825,11 @@ namespace Capitania.Importer.Library
 
         private string nomegestorField;
 
-        private long cnpjgestorField;
+        private string cnpjgestorField;
 
         private string nomecustodianteField;
 
-        private long cnpjcustodianteField;
+        private string cnpjcustodianteField;
 
         private decimal patliqField;
 
@@ -933,7 +933,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjgestor
+        public string cnpjgestor
         {
             get
             {
@@ -959,7 +959,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjcustodiante
+        public string cnpjcustodiante
         {
             get
             {
@@ -2239,7 +2239,7 @@ namespace Capitania.Importer.Library
 
         private string dtvencimentoField;
 
-        private long cnpjemissorField;
+        private string cnpjemissorField;
 
         private decimal qtdisponivelField;
 
@@ -2368,7 +2368,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjemissor
+        public string cnpjemissor
         {
             get
             {
@@ -2722,7 +2722,7 @@ namespace Capitania.Importer.Library
 
         private string dtvencimentoField;
 
-        private long cnpjemissorField;
+        private string cnpjemissorField;
 
         private decimal qtdisponivelField;
 
@@ -2890,7 +2890,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjemissor
+        public string cnpjemissor
         {
             get
             {
@@ -4872,7 +4872,7 @@ namespace Capitania.Importer.Library
 
         private string ativoField;
 
-        private long cnpjcorretoraField;
+        private string cnpjcorretoraField;
 
         private string serieField;
 
@@ -4919,7 +4919,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjcorretora
+        public string cnpjcorretora
         {
             get
             {
@@ -5067,7 +5067,7 @@ namespace Capitania.Importer.Library
 
         private string dtvencimentoField;
 
-        private long cnpjcontraparteField;
+        private string cnpjcontraparteField;
 
         private int garantiaField;
 
@@ -5163,7 +5163,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjcontraparte
+        public string cnpjcontraparte
         {
             get
             {
@@ -5948,7 +5948,7 @@ namespace Capitania.Importer.Library
     public partial class corretagem_type
     {
 
-        private long cnpjcorretoraField;
+        private string cnpjcorretoraField;
 
         private bool cnpjcorretoraFieldSpecified;
 
@@ -5973,7 +5973,7 @@ namespace Capitania.Importer.Library
         private decimal vlrepasseoutbolField;
 
         /// <remarks/>
-        public long cnpjcorretora
+        public string cnpjcorretora
         {
             get
             {
@@ -7149,12 +7149,12 @@ namespace Capitania.Importer.Library
     public partial class participacoes_type
     {
 
-        private long cnpjpartField;
+        private string cnpjpartField;
 
         private decimal valorfinanceiroField;
 
         /// <remarks/>
-        public long cnpjpart
+        public string cnpjpart
         {
             get
             {
