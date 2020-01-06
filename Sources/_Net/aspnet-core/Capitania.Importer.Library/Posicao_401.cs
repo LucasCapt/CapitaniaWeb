@@ -482,7 +482,7 @@ namespace Capitania.Importer.Library
 
         private decimal vlcotasemitirField;
 
-        private decimal vlcotasresgatarField;
+        private double vlcotasresgatarField;
 
         private string codanbidField;
 
@@ -714,7 +714,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal vlcotasresgatar
+        public double vlcotasresgatar
         {
             get
             {
@@ -5491,7 +5491,7 @@ namespace Capitania.Importer.Library
 
         private string isinField;
 
-        private long cnpjfundoField;
+        private string cnpjfundoField;
 
         private decimal qtdisponivelField;
 
@@ -5519,7 +5519,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjfundo
+        public string cnpjfundo
         {
             get
             {
@@ -5619,7 +5619,7 @@ namespace Capitania.Importer.Library
     public partial class despesas_type
     {
 
-        private decimal txadmField;
+        private double txadmField;
 
         private decimal tributosField;
 
@@ -5646,7 +5646,7 @@ namespace Capitania.Importer.Library
         private string indexadorField;
 
         /// <remarks/>
-        public decimal txadm
+        public double txadm
         {
             get
             {
@@ -5829,7 +5829,7 @@ namespace Capitania.Importer.Library
 
         private int coddespField;
 
-        private decimal valorField;
+        private double valorField;
 
         /// <remarks/>
         public int coddesp
@@ -5845,7 +5845,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal valor
+        public double valor
         {
             get
             {
@@ -5872,7 +5872,7 @@ namespace Capitania.Importer.Library
 
         private string dtField;
 
-        private decimal valorField;
+        private double valorField;
 
         /// <remarks/>
         public int codprov
@@ -5914,7 +5914,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal valor
+        public double valor
         {
             get
             {

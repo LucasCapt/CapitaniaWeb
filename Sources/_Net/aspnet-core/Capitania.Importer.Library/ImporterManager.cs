@@ -128,10 +128,10 @@ namespace Capitania.Importer.Library
                                             vConection.Close();
                                         }
                                     }
-                                    float vTotalDespesas = 0;
-                                    float vValorAResgatar = (float)vFundo.header.vlcotasresgatar;
-                                    float vTotalProvisao = -vValorAResgatar;
-                                    float vTotalGeral = 0;
+                                    double vTotalDespesas = 0;
+                                    double vValorAResgatar = vFundo.header.vlcotasresgatar;
+                                    double vTotalProvisao = -vValorAResgatar;
+                                    double vTotalGeral = 0;
 
                                     #region Ações
 
@@ -158,7 +158,7 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.CNPJISSUE = "";
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = false;
-                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vTotalGeral += vPosicLayout2.VALOR.Value;
                                             vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                         }
                                     }
@@ -194,7 +194,7 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.CNPJISSUE = tituloPrivado.cnpjemissor.ToString();
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = (tituloPrivado.compromisso != null);
-                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vTotalGeral += vPosicLayout2.VALOR.Value;
 
                                             vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                         }
@@ -231,7 +231,7 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.CNPJISSUE = "";
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = (tituloPublico.compromisso != null);
-                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vTotalGeral += vPosicLayout2.VALOR.Value;
 
                                             vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                         }
@@ -269,7 +269,7 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = false;
 
-                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vTotalGeral += vPosicLayout2.VALOR.Value;
 
                                             vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                         }
@@ -297,7 +297,7 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.CNPJISSUE = string.Empty;
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = false;
-                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vTotalGeral += vPosicLayout2.VALOR.Value;
 
                                             vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                         }
@@ -325,7 +325,7 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.CUPOM = 0;
                                             vPosicLayout2.PINDEX = 0;
                                             vPosicLayout2.COMPROMISSADA = false;
-                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vTotalGeral += vPosicLayout2.VALOR.Value;
 
                                             vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                         }
@@ -335,12 +335,12 @@ namespace Capitania.Importer.Library
                                     #region Despesas
 
                                     if(vFundo.despesas!=null)
-                                    vTotalDespesas -= (float)vFundo.despesas.txadm;
+                                    vTotalDespesas -= vFundo.despesas.txadm;
                                     if (vFundo.outrasdespesas != null)
                                     {
                                         foreach (var outraDespesas in vFundo.outrasdespesas)
                                         {
-                                            vTotalDespesas -= (float)outraDespesas.valor;
+                                            vTotalDespesas -= outraDespesas.valor;
                                         }
                                     }
                                     #endregion
@@ -364,9 +364,9 @@ namespace Capitania.Importer.Library
                                             if (vProvedorFiltro == null)
                                             {
                                                 if (provisao.credeb == credeb_type.C)
-                                                    vTotalProvisao += (float)provisao.valor;
+                                                    vTotalProvisao += provisao.valor;
                                                 else
-                                                    vTotalProvisao -= (float)provisao.valor;
+                                                    vTotalProvisao -= provisao.valor;
                                             }
                                             else
                                             {
@@ -388,7 +388,7 @@ namespace Capitania.Importer.Library
                                                 vPosicLayout2.CNPJISSUE = string.Empty;
                                                 vPosicLayout2.COMPROMISSADA = false;
 
-                                                vTotalGeral += (float)vPosicLayout2.VALOR;
+                                                vTotalGeral += vPosicLayout2.VALOR.Value;
                                                 vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                             }
                                         }
@@ -424,7 +424,7 @@ namespace Capitania.Importer.Library
                                             int vMes = int.Parse(futuro.dtvencimento.Substring(4, 2));
                                             int vDia = int.Parse(futuro.dtvencimento.Substring(6, 2));
                                             vPosicLayout2.DTISSUE = new DateTime(vAno, vMes, vDia);
-                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vTotalGeral += vPosicLayout2.VALOR.Value;
                                             vPosicLayout2.DTVENC = new DateTime(2000, 01, 01);
                                             vPosicLayout2.DTISSUE = new DateTime(2000, 01, 01);
                                             vPosicLayout2.CUPOM = 0;
@@ -433,7 +433,7 @@ namespace Capitania.Importer.Library
 
                                             vPosicLayout2.IMPORTFOLDER = vNomePastaProcessamento;
                                             vPosicLayout2.COMPROMISSADA = false;
-                                            vTotalGeral += (float)vPosicLayout2.VALOR;
+                                            vTotalGeral += vPosicLayout2.VALOR.Value;
 
                                             vContexto.TPOSICLAYOUT2.Add(vPosicLayout2);
                                         }
