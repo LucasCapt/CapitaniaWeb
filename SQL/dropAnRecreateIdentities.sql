@@ -8,14 +8,13 @@ alter table TFACTORHIST
 drop column ID ;
 
 alter table TFACTORHIST
-add ID [bigint] IDENTITY(1,1) NOT NULL
- CONSTRAINT [PK_TFACTORHIST] PRIMARY KEY CLUSTERED ;
+add ID [bigint] IDENTITY(1,1) NOT NULL;
 
 alter table tpapel
 drop column idpapel;
 
 alter table tpapel
-add [IDPapel] [bigint] IDENTITY(1,1) NOT NULL, CONSTRAINT [PK_TPapel] PRIMARY KEY CLUSTERED ;
+add [IDPapel] [bigint] IDENTITY(1,1) NOT NULL;
 
 alter table tposic
 drop column id;
