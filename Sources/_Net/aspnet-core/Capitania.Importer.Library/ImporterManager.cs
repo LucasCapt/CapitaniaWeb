@@ -17,7 +17,7 @@ namespace Capitania.Importer.Library
     public static class ImporterManager
     {
         private static List<FileSystemWatcher> vFileWatchers = new List<FileSystemWatcher>();
-        
+
 
         public static void Initialize()
         {
@@ -37,7 +37,7 @@ namespace Capitania.Importer.Library
         {
             System.Threading.Thread.Sleep(20000);
             string vPath = Path.GetDirectoryName(e.FullPath);
-            foreach (var xmlFile in Directory.GetFiles(vPath, "*.xml"))
+            foreach (var xmlFile in Directory.GetFiles(vPath, "*.xml").OrderBy(k => k))
             {
                 string vFolder = Path.GetFileName(Path.GetDirectoryName(xmlFile));
                 ImportXmlAnbima(xmlFile, vFolder);
@@ -334,8 +334,8 @@ namespace Capitania.Importer.Library
 
                                     #region Despesas
 
-                                    if(vFundo.despesas!=null)
-                                    vTotalDespesas -= vFundo.despesas.txadm;
+                                    if (vFundo.despesas != null)
+                                        vTotalDespesas -= vFundo.despesas.txadm;
                                     if (vFundo.outrasdespesas != null)
                                     {
                                         foreach (var outraDespesas in vFundo.outrasdespesas)
@@ -776,9 +776,10 @@ namespace Capitania.Importer.Library
                                 vSQL = new StringBuilder();
                                 vSQL.AppendLine("SELECT *");
                                 vSQL.AppendLine("  FROM TPAPEL");
-                                vSQL.AppendLine(String.Format(" WHERE DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
+                                vSQL.AppendLine(String.Format(" WHERE ISIN = '{0}'", vPapelISIN));
+                                vSQL.AppendLine(String.Format("   AND DT_CREATED <= '{0}'", data.Date.ToString("yyyy-MM-dd")));
                                 vSQL.AppendLine(String.Format("   AND (DELETED = 0 OR DT_DELETED >='{0}')", data.Date.ToString("yyyy-MM-dd")));
-                                vSQL.AppendLine(String.Format("   AND ISIN = '{0}'", vPapelISIN));
+
                                 using (SqlCommand vComandoBuscaPapel = new SqlCommand(vSQL.ToString(), vConection))
                                 {
                                     IDataReader vReaderPapel = vComandoBuscaPapel.ExecuteReader();

@@ -45,14 +45,14 @@ namespace Capitania.DashboardFundo
             }
 
             //formatar os dados;
-            foreach (var item in vDados)
-            {
-                item.Caixa = Math.Round(item.Caixa * 100, 1);
-                item.CRD_EL1 = Math.Round(item.CRD_EL1 * 100, 1);
-                item.LIQSTRESSPERCENTILE = Math.Round(item.LIQSTRESSPERCENTILE * 100, 1);
-                item.Stress = Math.Round(item.Stress * 100, 1);
-                item.VAR = Math.Round(item.VAR * 100, 1);
-            }
+            //foreach (var item in vDados)
+            //{
+            //    item.Caixa = Math.Round(item.Caixa * 100, 1);
+            //    item.CRD_EL1 = Math.Round(item.CRD_EL1 * 100, 1);
+            //    item.LIQSTRESSPERCENTILE = Math.Round(item.LIQSTRESSPERCENTILE * 100, 1);
+            //    item.Stress = Math.Round(item.Stress * 100, 1);
+            //    item.VAR = Math.Round(item.VAR * 100, 1);
+            //}
 
             return vDados;
         }
