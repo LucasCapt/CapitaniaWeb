@@ -90,6 +90,7 @@ namespace Capitania.EntityFrameworkCore
         public const string RStress5 = "080";
         public const string email = "081";
         public const string senha = "082";
+        public const string PathXmlAnbimaRaiz = "083";
 
     }
 }

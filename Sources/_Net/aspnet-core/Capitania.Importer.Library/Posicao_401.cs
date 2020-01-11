@@ -472,7 +472,7 @@ namespace Capitania.Importer.Library
 
         private decimal quantidadeField;
 
-        private decimal patliqField;
+        private double patliqField;
 
         private decimal valorativosField;
 
@@ -649,7 +649,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal patliq
+        public double patliq
         {
             get
             {

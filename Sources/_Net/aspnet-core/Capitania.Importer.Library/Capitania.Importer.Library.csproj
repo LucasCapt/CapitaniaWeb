@@ -58,6 +58,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Capitania.LogManager\Capitania.LogManager.csproj">
+      <Project>{52fd9826-ebdd-4083-8143-da7eaf720df1}</Project>
+      <Name>Capitania.LogManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\src\Capitania.Application\Capitania.Application.csproj">
       <Project>{3870c648-4aea-4b85-ba3f-f2f63b96136a}</Project>
       <Name>Capitania.Application</Name>

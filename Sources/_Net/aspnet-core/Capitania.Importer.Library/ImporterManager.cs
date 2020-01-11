@@ -17,11 +17,14 @@ namespace Capitania.Importer.Library
     public static class ImporterManager
     {
         private static List<FileSystemWatcher> vFileWatchers = new List<FileSystemWatcher>();
-
+        private static string vPathRaiz = string.Empty;
 
         public static void Initialize()
         {
-            foreach (string vPasta in Directory.GetDirectories(ConfigurationManager.AppSettings["pathRaizXml"]))
+            LogManager.Manager.LogTrace("Iniciando Importer", typeof(ImporterManager));
+            vPathRaiz = ParameterManager.GetParameterValue(DBParametersConstants.PathXmlAnbimaRaiz);
+
+            foreach (string vPasta in Directory.GetDirectories(vPathRaiz))
             {
                 FileSystemWatcher vWatcher = new FileSystemWatcher();
                 vWatcher.Path = vPasta;
@@ -30,7 +33,10 @@ namespace Capitania.Importer.Library
                 vWatcher.Created += new FileSystemEventHandler(OnCreate);
                 vWatcher.EnableRaisingEvents = true;
                 vFileWatchers.Add(vWatcher);
+                LogManager.Manager.LogTrace(String.Format("Pasta adicionada ao watcher: {0}", vPasta), typeof(ImporterManager));
             }
+
+            LogManager.Manager.LogTrace("Initializer finalizado", typeof(ImporterManager));
         }
 
         private static void OnCreate(object source, FileSystemEventArgs e)
@@ -61,6 +67,9 @@ namespace Capitania.Importer.Library
 
         private static void ImportXmlAnbima(string vXmlFileToImport, string vNomePastaProcessamento)
         {
+            LogManager.Manager.LogTrace("Iniciando ImportXmlAnbima", typeof(ImporterManager));
+            LogManager.Manager.LogTrace(String.Format("Arquivo: {0}", vXmlFileToImport), typeof(ImporterManager));
+
             List<int> vListaFundos = new List<int>();
             try
             {
@@ -93,6 +102,7 @@ namespace Capitania.Importer.Library
                                 vSQL.AppendLine(String.Format(" where NOME = '{0}'", vFundo.header.nome));
                                 vSQL.AppendLine(String.Format("  AND (DELETED = 0 OR DT_DELETED > '{0}')", vDataPosicao.ToString("yyyy-MM-dd")));
 
+                                LogManager.Manager.LogTrace(String.Format("Iniciando processamento fundo {0}", vFundo.header.nome), typeof(ImporterManager));
                                 using (SqlConnection vConection = new SqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["ConexaoDB"]].ConnectionString))
                                 {
                                     vConection.Open();
@@ -111,6 +121,7 @@ namespace Capitania.Importer.Library
                                 if (vFundos.Count > 0)
                                 {
                                     int vFundoEmProcessamento = vFundos[0].Field<int>("ID");
+                                    LogManager.Manager.LogTrace(String.Format("Fundo encontrado. Iniciando processamento do fundo {0}", vFundoEmProcessamento), typeof(ImporterManager));
                                     if (!vListaFundos.Contains(vFundoEmProcessamento))
                                     {
                                         vListaFundos.Add(vFundoEmProcessamento);
@@ -128,6 +139,7 @@ namespace Capitania.Importer.Library
                                             vConection.Close();
                                         }
                                     }
+                                    double pLind = vFundo.header.patliq;
                                     double vTotalDespesas = 0;
                                     double vValorAResgatar = vFundo.header.vlcotasresgatar;
                                     double vTotalProvisao = -vValorAResgatar;
@@ -603,23 +615,26 @@ namespace Capitania.Importer.Library
 
                                     vTotalGeral = vTotalGeral + vTotalProvisao + vTotalDespesas;
 
-                                    /*
-                                     * Gerar notificação
-                                    If Abs(TPL -plind) > 0.05 * plind Then
-                                       If Notify Then MsgBox("Fundo " + nome + " inconsistente na importação XML:" + Chr(13) + Format(TPL, "###,###,##0") + " x " + Format(plind, "###,###,##0"))
-                                        WriteLogError "Importação PL inconsistente", nome
-                                    End If
-                                    */
+                                    if (Math.Abs(vTotalGeral - pLind) > (0.05 * pLind))
+                                    {
+                                        LogManager.Manager.LogTrace(String.Format("Importação PL Inconsistente", vFundoEmProcessamento), typeof(ImporterManager));
+                                        LogManager.Manager.WriteLogError("Importação PL inconsistente.", vFundo.header.nome, "ImporterService");
+                                    }
+
+
                                     vContexto.SaveChanges();
                                     ProcessImportedXml(vDataPosicao, vFundoEmProcessamento);
                                 }
-
+                                else
+                                {
+                                    LogManager.Manager.WriteLogError("Fundo não encontrado durante Importação", vFundo.header.nome, "ImporterService");
+                                }
 
                             }
                         fileStream.Close();
                     }
 
-                    string pathProcessados = Path.Combine(Path.GetDirectoryName(ConfigurationManager.AppSettings["pathRaizXml"]), "Processados");
+                    string pathProcessados = Path.Combine(Path.GetDirectoryName(vPathRaiz), "Processados");
                     if (!Directory.Exists(pathProcessados))
                         Directory.CreateDirectory(pathProcessados);
                     pathProcessados = Path.Combine(pathProcessados, vNomePastaProcessamento);
@@ -633,7 +648,8 @@ namespace Capitania.Importer.Library
             }
             catch (Exception ex)
             {
-                string pathRejeitados = Path.Combine(Path.GetDirectoryName(ConfigurationManager.AppSettings["pathRaizXml"]), "Rejeitados");
+                LogManager.Manager.LogError(String.Format("Erro ao importar arquivo {0}", vXmlFileToImport), ex);
+                string pathRejeitados = Path.Combine(Path.GetDirectoryName(vPathRaiz), "Rejeitados");
                 if (!Directory.Exists(pathRejeitados))
                     Directory.CreateDirectory(pathRejeitados);
                 pathRejeitados = Path.Combine(pathRejeitados, vNomePastaProcessamento);
@@ -692,6 +708,7 @@ namespace Capitania.Importer.Library
 
         private static void ProcessImportedXml(DateTime data, int vFundo)
         {
+            LogManager.Manager.LogTrace(String.Format("Iniciando processamento de fundo importado {0}", vFundo), typeof(ImporterManager));
             StringBuilder vSQL = new StringBuilder();
 
             vSQL.AppendLine("SELECT FUNDO, PAPEL_ISIN, SUM(QUANT) AS SQ, SUM(VALOR) AS SV, DATA, PAPEL_COD,");
@@ -735,6 +752,7 @@ namespace Capitania.Importer.Library
                             vSQL = new StringBuilder();
                             if (vReader.GetBoolean(vReader.GetOrdinal("COMPROMISSADA")))
                             {
+                                LogManager.Manager.LogTrace(String.Format("Registro compromissado.", vFundo), typeof(ImporterManager));
                                 vSQL.AppendLine("select *");
                                 vSQL.AppendLine("  from TPAPEL");
                                 vSQL.AppendLine(" where ID = 'OVER'");
@@ -745,6 +763,7 @@ namespace Capitania.Importer.Library
                                     vPapelEncontrado = vReaderPapel.Read();
                                     if (vPapelEncontrado)
                                     {
+                                        LogManager.Manager.LogTrace(String.Format("Papel Over encontrado", vFundo), typeof(ImporterManager));
                                         if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
                                             PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
                                         ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
@@ -761,6 +780,7 @@ namespace Capitania.Importer.Library
                                         vPapelEncontrado = vReaderPapel.Read();
                                         if (vPapelEncontrado)
                                         {
+                                            LogManager.Manager.LogTrace(String.Format("Papel COMPROMISSADA encontrado", vFundo), typeof(ImporterManager));
                                             if (!String.IsNullOrEmpty(vReaderPapel[vReaderPapel.GetOrdinal("ISIN")].ToString()))
                                                 PPISIN = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ISIN"));
                                             ppID = vReaderPapel.GetString(vReaderPapel.GetOrdinal("ID"));
@@ -773,6 +793,7 @@ namespace Capitania.Importer.Library
 
                             if (!vPapelEncontrado && !vPapelISIN.Contains("**") && !vPapelISIN.StartsWith("BR0000"))
                             {
+                                LogManager.Manager.LogTrace(String.Format("Procudando papel por ISIN {0}", vPapelISIN), typeof(ImporterManager));
                                 vSQL = new StringBuilder();
                                 vSQL.AppendLine("SELECT *");
                                 vSQL.AppendLine("  FROM TPAPEL");
@@ -1412,6 +1433,13 @@ namespace Capitania.Importer.Library
                     vValorDataCelular = (planilhaTransferencias.Cells[i, 1] as Range).Value;
                 }
 
+
+                THistImportReport vHist = new THistImportReport();
+                vHist.DATARUN = DateTime.Now;
+                vHist.QUAL = "RESGATES";
+                vHist.QUEM = "ImporterService";
+                vContexto.THistImportReport.Add(vHist);
+
                 vContexto.SaveChanges();
 
                 xlWorkbook.Close(false);
@@ -1419,8 +1447,7 @@ namespace Capitania.Importer.Library
                 #endregion
             }
 
-            //TODO: Marcar flag de importação do dia;
-            //TODO: Logar importação
+            LogManager.Manager.WriteLog("IMPORTOU RESGATES", "ImporterService");
 
         }
 
@@ -1546,11 +1573,18 @@ namespace Capitania.Importer.Library
 
             #endregion
 
+            THistImportReport vHist = new THistImportReport();
+            vHist.DATARUN = DateTime.Now;
+            vHist.QUAL = "SERIES";
+            vHist.QUEM = "ImporterService";
+            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
+            vContexto.THistImportReport.Add(vHist);
+            vContexto.SaveChanges();
+
             xlWorkbook.Close(false);
             xlApp.Quit();
 
-            //TODO: Marcar flag de importação do dia;
-            //TODO: Logar importação
+            LogManager.Manager.WriteLog("IMPORTOU SERIES", "ImporterService");
         }
 
         public static void ImportarMaiorCotistas()
@@ -1620,10 +1654,17 @@ namespace Capitania.Importer.Library
                 vConection.Close();
             }
 
+            THistImportReport vHist = new THistImportReport();
+            vHist.DATARUN = DateTime.Now;
+            vHist.QUAL = "MAXCOTISTAS";
+            vHist.QUEM = "ImporterService";
+            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
+            vContexto.THistImportReport.Add(vHist);
+            vContexto.SaveChanges();
+
             xlWorkbook.Close(false);
             xlApp.Quit();
-            //TODO: Marcar flag de importação do dia;
-            //TODO: Logar importação
+            LogManager.Manager.WriteLog("IMPORTOU MAXCOTISTAS", "ImporterService");
         }
 
         public static void ImportarTrades()
@@ -1776,6 +1817,12 @@ namespace Capitania.Importer.Library
                     vData = vData.Value.AddDays(1);
                 }
 
+                THistImportReport vHist = new THistImportReport();
+                vHist.DATARUN = DateTime.Now;
+                vHist.QUAL = "TRADES";
+                vHist.QUEM = "ImporterService";
+                vContexto.THistImportReport.Add(vHist);
+
                 vContexto.SaveChanges();
 
                 xlWorkbook.Close(false);
@@ -1784,8 +1831,7 @@ namespace Capitania.Importer.Library
                 vConection.Close();
             }
 
-            //TODO: Marcar flag de importação do dia;
-            //TODO: Logar importação
+            LogManager.Manager.WriteLog("IMPORTOU TRADES", "ImporterService");
         }
 
         public static void ImportarPrincing()
@@ -1907,6 +1953,13 @@ namespace Capitania.Importer.Library
                     }
                     vUltimaData = vUltimaData.Value.AddDays(1);
                 }
+
+                THistImportReport vHist = new THistImportReport();
+                vHist.DATARUN = DateTime.Now;
+                vHist.QUAL = "PRICING";
+                vHist.QUEM = "ImporterService";
+                vContexto.THistImportReport.Add(vHist);
+
                 vContexto.SaveChanges();
 
                 xlWorkbook.Close(false);
@@ -1914,8 +1967,7 @@ namespace Capitania.Importer.Library
             }
 
 
-            //TODO: Marcar flag de importação do dia;
-            //TODO: Logar importação
+            LogManager.Manager.WriteLog("IMPORTOU PRICING", "ImporterService");
         }
 
         public static void ImportarADTV()
@@ -1995,15 +2047,20 @@ namespace Capitania.Importer.Library
                     vConteudoCelula = (planilaPricing.Cells[1, j] as Range).Value;
                 }
 
+                THistImportReport vHist = new THistImportReport();
+                vHist.DATARUN = DateTime.Now;
+                vHist.QUAL = "ADTV";
+                vHist.QUEM = "ImporterService";
+                vContexto.THistImportReport.Add(vHist);
+
                 vContexto.SaveChanges();
                 xlWorkbook.Close(false);
                 xlApp.Quit();
             }
 
-
-            //TODO: Marcar flag de importação do dia;
-            //TODO: Logar importação
+            LogManager.Manager.WriteLog("IMPORTOU ADTV", "ImporterService");
         }
+
         private static void ImportarSerie(string dbName, string nomePlanilha, _Worksheet planilha)
         {
             DateTime vUltimaData = DateTime.Now.AddDays(-3650);
