@@ -1528,7 +1528,7 @@ namespace Capitania.Importer.Library
 
         private decimal valorfinemgarField;
 
-        private decimal coupomField;
+        private double coupomField;
 
         private string indexadorField;
 
@@ -1816,7 +1816,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal coupom
+        public double coupom
         {
             get
             {
@@ -2265,7 +2265,7 @@ namespace Capitania.Importer.Library
 
         private decimal valorfinemgarField;
 
-        private decimal coupomField;
+        private double coupomField;
 
         private string indexadorField;
 
@@ -2538,7 +2538,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal coupom
+        public double coupom
         {
             get
             {
@@ -2748,7 +2748,7 @@ namespace Capitania.Importer.Library
 
         private decimal valorfinemgarField;
 
-        private decimal coupomField;
+        private double coupomField;
 
         private string indexadorField;
 
@@ -3060,7 +3060,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal coupom
+        public double coupom
         {
             get
             {
@@ -3245,15 +3245,15 @@ namespace Capitania.Importer.Library
 
         private string codativoField;
 
-        private decimal qtdisponivelField;
+        private double qtdisponivelField;
 
         private int loteField;
 
-        private decimal qtgarantiaField;
+        private double qtgarantiaField;
 
-        private decimal valorfindispField;
+        private double valorfindispField;
 
-        private decimal valorfinemgarField;
+        private double valorfinemgarField;
 
         private decimal tributosField;
 
@@ -3313,7 +3313,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal qtdisponivel
+        public double qtdisponivel
         {
             get
             {
@@ -3339,7 +3339,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal qtgarantia
+        public double qtgarantia
         {
             get
             {
@@ -3352,7 +3352,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal valorfindisp
+        public double valorfindisp
         {
             get
             {
@@ -3365,7 +3365,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal valorfinemgar
+        public double valorfinemgar
         {
             get
             {
@@ -4536,7 +4536,7 @@ namespace Capitania.Importer.Library
 
         private decimal tributosField;
 
-        private decimal coupomField;
+        private double coupomField;
 
         private string indexadorField;
 
@@ -4713,7 +4713,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal coupom
+        public double coupom
         {
             get
             {
@@ -5493,11 +5493,11 @@ namespace Capitania.Importer.Library
 
         private string cnpjfundoField;
 
-        private decimal qtdisponivelField;
+        private double qtdisponivelField;
 
-        private decimal qtgarantiaField;
+        private double qtgarantiaField;
 
-        private decimal puposicaoField;
+        private double puposicaoField;
 
         private decimal tributosField;
 
@@ -5532,7 +5532,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal qtdisponivel
+        public double qtdisponivel
         {
             get
             {
@@ -5545,7 +5545,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal qtgarantia
+        public double qtgarantia
         {
             get
             {
@@ -5558,7 +5558,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal puposicao
+        public double puposicao
         {
             get
             {

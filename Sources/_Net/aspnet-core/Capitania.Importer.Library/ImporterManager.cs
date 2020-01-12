@@ -157,8 +157,8 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.TIPO = "acoes";
                                             vPosicLayout2.PAPEL_ISIN = acao.isin;
                                             vPosicLayout2.PAPEL_COD = acao.codativo;
-                                            vPosicLayout2.QUANT = (double)(acao.qtdisponivel + acao.qtgarantia);
-                                            vPosicLayout2.VALOR = (double)(acao.valorfindisp + acao.valorfinemgar);
+                                            vPosicLayout2.QUANT = (acao.qtdisponivel + acao.qtgarantia);
+                                            vPosicLayout2.VALOR = (acao.valorfindisp + acao.valorfinemgar);
                                             if (acao.classeoperacao == classeCDTV_type.V)
                                                 vPosicLayout2.VALOR = vPosicLayout2.VALOR * -1;
                                             vPosicLayout2.DATA = vDataPosicao;

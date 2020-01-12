@@ -136,7 +136,7 @@ namespace Capitania.LogManager
             vSQL.AppendLine(String.Format("'{0}',", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
             vSQL.AppendLine(String.Format("'{0}',", ErrMsg));
             vSQL.AppendLine(String.Format("'{0}',", ErrItem));
-            vSQL.AppendLine(String.Format("'{0}'),", userName));
+            vSQL.AppendLine(String.Format("'{0}')", userName));
 
             using (SqlCommand vCommand = new SqlCommand(vSQL.ToString(), sqlConection, sqlTransaction))
             {
