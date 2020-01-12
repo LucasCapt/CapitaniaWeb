@@ -11,7 +11,7 @@ namespace Capitania.DashboardXml.Dto
         public DateTime DataHora { get; set; }
         public string Arquivo { get; set; }
         public string Pasta { get; set; }
-        public short Situacao { get; set; }
+        public string Situacao { get; set; }
         public string Observacao { get; set; }
     }
 }

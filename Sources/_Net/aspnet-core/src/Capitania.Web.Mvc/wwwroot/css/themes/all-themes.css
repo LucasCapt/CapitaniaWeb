@@ -900,27 +900,27 @@
 
 
 .theme-capitania .navbar {
-    background-color: #295A90;
+    background-color: #ffffff;
 }
 
 .theme-capitania .navbar-brand {
-    color: #fff;
+    color: #295A90;
 }
 
     .theme-capitania .navbar-brand:hover {
-        color: #fff;
+        color: #295A90;
     }
 
     .theme-capitania .navbar-brand:active {
-        color: #fff;
+        color: #295A90;
     }
 
     .theme-capitania .navbar-brand:focus {
-        color: #fff;
+        color: #295A90;
     }
 
 .theme-capitania .nav > li > a {
-    color: #fff;
+    color: #295A90;
 }
 
     .theme-capitania .nav > li > a:hover {
@@ -944,7 +944,7 @@
     }
 
 .theme-capitania .bars {
-    color: #fff;
+    color: #295A90;
 }
 
 .theme-capitania .sidebar .menu .list li.active {

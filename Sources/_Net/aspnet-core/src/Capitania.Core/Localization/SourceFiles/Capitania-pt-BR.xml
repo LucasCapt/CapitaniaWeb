@@ -102,6 +102,7 @@
     <text name="DashboardFundos">Fundos</text>
     <text name="Fundo">Fundo</text>
     <text name="XmlAnbimaFileLog">Log Xml Anbima</text>
+    <text name="DataBase">Data Processamento</text>
     
   </texts>
 </localizationDictionary>

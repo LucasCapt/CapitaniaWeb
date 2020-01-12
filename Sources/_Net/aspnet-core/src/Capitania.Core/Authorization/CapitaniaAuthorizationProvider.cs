@@ -13,6 +13,7 @@ namespace Capitania.Authorization
             context.CreatePermission(PermissionNames.Pages_Tenants, L("Tenants"), multiTenancySides: MultiTenancySides.Host);
             context.CreatePermission(PermissionNames.Pages_TConfiguracao, L("TConfigurations"), multiTenancySides: MultiTenancySides.Host);
             context.CreatePermission(PermissionNames.Pages_DashboardFundos, L("DashboardFundos"), multiTenancySides: MultiTenancySides.Host);
+            context.CreatePermission(PermissionNames.Pages_DashboardXml, L("XmlAnbimaFileLog"), multiTenancySides: MultiTenancySides.Host);
         }
 
         private static ILocalizableString L(string name)

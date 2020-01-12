@@ -3,7 +3,7 @@
 @using Capitania.Web.Startup
 @model Capitania.Web.Models.DashboardFundos.TFundoViewModel
 @{
-    ViewBag.CurrentPageName = PageNames.DashboardFundo; // The menu item will be active for this page.
+    ViewBag.CurrentPageName = PageNames.DashboardXml; // The menu item will be active for this page.
 }
 @section scripts
     {
@@ -23,8 +23,15 @@
             gridObj.excelExport();
         }
     }
-            ej.base.L10n.Load({ 'pt-BR': {} });
-    ej.base.setCulture('pt-BR');
+
+    function rowDataBound(e) {
+
+        if (e.data.Situacao == "OK")
+            e.row.css("background-color", 'green');//change the row background color based on customerID value 
+        else
+            e.row.css("background-color", 'red');//change the row background color based on customerID value 
+
+    } 
 </script>
 
 <div class="row clearfix">
@@ -34,22 +41,29 @@
                 <h2>
                     @L("XmlAnbimaFileLog")
                 </h2>
-                <ul class="header-dropdown m-r--5">
-                    <li class="dtp-date">
-                        <ejs-datepicker id="dtpData" value="@ViewBag.DataBase"></ejs-datepicker>
-                    </li>
-                </ul>
-                <div>
-                    <ejs-grid id="Grid" dataSource="@ViewBag.DadosDash" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })" allowSorting="true" allowFiltering="true">
+            </div>
+            <div class="portlet-body">
+                <div class="row clearfix">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="label-required" for="dtpData">@L("DataBase")</label>
+                            <ejs-datepicker id="dtpData" cssClass="form-control" format="dd/MM/yyyy" value="@ViewBag.DataBase"></ejs-datepicker>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <ejs-grid id="Grid" dataSource="@ViewBag.DadosDash" allowExcelExport="true" rowHeight="20" locale="pt" 
+                        allowResizing="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })" allowSorting="true" allowFiltering="true"
+                        row-data-bound="rowDataBound">
                         <e-grid-columns>
                             <e-grid-column field="DataHora" headerText="Data Processamento" textAlign="Left" autoFit="true"></e-grid-column>
-                            <e-grid-column field="Arquivo" headerText="Arquivo" textAlign="Left"  autoFit="true"></e-grid-column>
-                            <e-grid-column field="Pasta" headerText="Pasta" textAlign="Left"  autoFit="true"></e-grid-column>
-                            <e-grid-column field="Situacao" headerText="Situacao" textAlign="Left" autoFit="true"  ></e-grid-column>
-                            <e-grid-column field="Observacao" headerText="Observação" textAlign="Left" autoFit="true" ></e-grid-column>
+                            <e-grid-column field="Arquivo" headerText="Arquivo" textAlign="Left" autoFit="true"></e-grid-column>
+                            <e-grid-column field="Pasta" headerText="Pasta" textAlign="Left" autoFit="true"></e-grid-column>
+                            <e-grid-column field="Situacao" headerText="Situacao" textAlign="Left" autoFit="true"></e-grid-column>
+                            <e-grid-column field="Observacao" headerText="Observação" textAlign="Left" autoFit="true"></e-grid-column>
                         </e-grid-columns>
                     </ejs-grid>
                 </div>
+            </div>
         </div>
     </div>
-</div>
