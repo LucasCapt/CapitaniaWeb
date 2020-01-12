@@ -23,5 +23,7 @@
         public const string Pages_TProvFilter_Delete = "Pages.ProvFilter.Delete";
 
         public const string Pages_DashboardFundos = "Pages.DashboardFundos";
+
+        public const string Pages_DashboardXml = "Pages.DashboardXml";
     }
 }

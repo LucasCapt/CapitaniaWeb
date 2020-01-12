@@ -40,6 +40,7 @@ namespace Capitania.EntityFrameworkCore
         public virtual DbSet<TLOGERRO> TLOGERRO { get; set; }
         public virtual DbSet<TLOGPERF> TLOGPERF { get; set; }
         public virtual DbSet<THistImportReport> THistImportReport { get; set; }
+        public virtual DbSet<TLogArquivoXml> TLogArquivoXml { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -89,6 +90,18 @@ namespace Capitania.EntityFrameworkCore
 
             modelBuilder.Entity<TResgates>()
                 .Property(e => e.FUNDO)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<TLogArquivoXml>()
+                .Property(e => e.Arquivo)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<TLogArquivoXml>()
+                .Property(e => e.Pasta)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<TLogArquivoXml>()
+                .Property(e => e.Observacao)
                 .IsUnicode(false);
         }
     }

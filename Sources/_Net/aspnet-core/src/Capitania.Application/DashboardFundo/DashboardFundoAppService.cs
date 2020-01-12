@@ -28,22 +28,8 @@ namespace Capitania.DashboardFundo
             vSQL.AppendLine("                   where Fundo.nome = risco1.Fundo)");
             vSQL.AppendLine(" order by Nome");
 
-            List<DashboardGeralDto> vDados;
-
-            using (SqlConnection vConection = new SqlConnection("data source=win10dev\\sqlexpress;initial catalog=db_capitania_prd;persist security info=True;user id=sa;password=Capitania2019;MultipleActiveResultSets=True;App=EntityFramework"))
-            //using (SqlConnection vConection = new SqlConnection("data source =.; initial catalog = db_capitania_prd; Trusted_Connection = True"))
-            {
-                vConection.Open();
-                using (SqlCommand vComando = new SqlCommand(vSQL.ToString(), vConection))
-                {
-                    using (SqlDataReader vReader = vComando.ExecuteReader())
-                    {
-                        vDados = DataReaderMapToList<DashboardGeralDto>(vReader);
-                    }
-                }
-                vConection.Close();
-            }
-
+            List<DashboardGeralDto> vDados = GeneralHelper.GetData<DashboardGeralDto>(vSQL.ToString());
+            
             //formatar os dados;
             //foreach (var item in vDados)
             //{
@@ -55,26 +41,6 @@ namespace Capitania.DashboardFundo
             //}
 
             return vDados;
-        }
-
-
-        private static List<T> DataReaderMapToList<T>(IDataReader dr)
-        {
-            List<T> list = new List<T>();
-            T obj = default(T);
-            while (dr.Read())
-            {
-                obj = Activator.CreateInstance<T>();
-                foreach (PropertyInfo prop in obj.GetType().GetProperties())
-                {
-                    if (!object.Equals(dr[prop.Name], DBNull.Value))
-                    {
-                        prop.SetValue(obj, dr[prop.Name], null);
-                    }
-                }
-                list.Add(obj);
-            }
-            return list;
         }
     }
 }

@@ -69,6 +69,7 @@ namespace Capitania.Importer.Library
         {
             LogManager.Manager.LogTrace("Iniciando ImportXmlAnbima", typeof(ImporterManager));
             LogManager.Manager.LogTrace(String.Format("Arquivo: {0}", vXmlFileToImport), typeof(ImporterManager));
+            Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
 
             List<int> vListaFundos = new List<int>();
             try
@@ -76,9 +77,7 @@ namespace Capitania.Importer.Library
                 //Carregar os arquivos;
                 XmlSerializer serializer = new XmlSerializer(typeof(ArquivoPosicao_4_01_type));
 
-                Capitania.EntityFrameworkCore.CapitaniaDbModel vContexto = new EntityFrameworkCore.CapitaniaDbModel();
                 //Para cada pasta no arquivo raiz
-
                 if (File.Exists(vXmlFileToImport))
                 {
                     using (FileStream fileStream = new FileStream(vXmlFileToImport, FileMode.Open))
@@ -634,6 +633,15 @@ namespace Capitania.Importer.Library
                         fileStream.Close();
                     }
 
+                    TLogArquivoXml vLogArquivo = new TLogArquivoXml();
+                    vLogArquivo.Arquivo = Path.GetFileName(vXmlFileToImport);
+                    vLogArquivo.DataHora = DateTime.Now;
+                    vLogArquivo.Observacao = "Arquivo importado com sucesso.";
+                    vLogArquivo.Pasta = vNomePastaProcessamento;
+                    vLogArquivo.Situacao = 1;//1=Processamento OK
+                    vContexto.TLogArquivoXml.Add(vLogArquivo);
+                    vContexto.SaveChanges();
+
                     string pathProcessados = Path.Combine(Path.GetDirectoryName(vPathRaiz), "Processados");
                     if (!Directory.Exists(pathProcessados))
                         Directory.CreateDirectory(pathProcessados);
@@ -648,6 +656,15 @@ namespace Capitania.Importer.Library
             }
             catch (Exception ex)
             {
+                TLogArquivoXml vLogArquivo = new TLogArquivoXml();
+                vLogArquivo.Arquivo = Path.GetFileName(vXmlFileToImport);
+                vLogArquivo.DataHora = DateTime.Now;
+                vLogArquivo.Observacao = String.Format("Erro ao processar arquivo: {0}", ex.Message);
+                vLogArquivo.Pasta = vNomePastaProcessamento;
+                vLogArquivo.Situacao = 0;//1=Processamento NOK
+                vContexto.TLogArquivoXml.Add(vLogArquivo);
+                vContexto.SaveChanges();
+
                 LogManager.Manager.LogError(String.Format("Erro ao importar arquivo {0}", vXmlFileToImport), ex);
                 string pathRejeitados = Path.Combine(Path.GetDirectoryName(vPathRaiz), "Rejeitados");
                 if (!Directory.Exists(pathRejeitados))

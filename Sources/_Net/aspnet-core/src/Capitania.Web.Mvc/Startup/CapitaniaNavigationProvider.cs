@@ -62,6 +62,14 @@ namespace Capitania.Web.Startup
                     )
                 ).AddItem(
                     new MenuItemDefinition(
+                        PageNames.DashboardXml,
+                        L("XmlAnbimaFileLog"),
+                        url: "DashboardXml",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Roles
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
                         PageNames.About,
                         L("About"),
                         url: "About",

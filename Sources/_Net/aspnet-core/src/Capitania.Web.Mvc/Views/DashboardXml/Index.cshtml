@@ -1,0 +1,55 @@
+﻿
+@using Abp.Authorization.Users
+@using Capitania.Web.Startup
+@model Capitania.Web.Models.DashboardFundos.TFundoViewModel
+@{
+    ViewBag.CurrentPageName = PageNames.DashboardFundo; // The menu item will be active for this page.
+}
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/DashboardFundos/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/DashboardFundos/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<script>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+            ej.base.L10n.Load({ 'pt-BR': {} });
+    ej.base.setCulture('pt-BR');
+</script>
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    @L("XmlAnbimaFileLog")
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dtp-date">
+                        <ejs-datepicker id="dtpData" value="@ViewBag.DataBase"></ejs-datepicker>
+                    </li>
+                </ul>
+                <div>
+                    <ejs-grid id="Grid" dataSource="@ViewBag.DadosDash" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })" allowSorting="true" allowFiltering="true">
+                        <e-grid-columns>
+                            <e-grid-column field="DataHora" headerText="Data Processamento" textAlign="Left" autoFit="true"></e-grid-column>
+                            <e-grid-column field="Arquivo" headerText="Arquivo" textAlign="Left"  autoFit="true"></e-grid-column>
+                            <e-grid-column field="Pasta" headerText="Pasta" textAlign="Left"  autoFit="true"></e-grid-column>
+                            <e-grid-column field="Situacao" headerText="Situacao" textAlign="Left" autoFit="true"  ></e-grid-column>
+                            <e-grid-column field="Observacao" headerText="Observação" textAlign="Left" autoFit="true" ></e-grid-column>
+                        </e-grid-columns>
+                    </ejs-grid>
+                </div>
+        </div>
+    </div>
+</div>

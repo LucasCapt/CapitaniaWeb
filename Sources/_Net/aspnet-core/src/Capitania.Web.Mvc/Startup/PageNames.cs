@@ -10,5 +10,6 @@
 
         public const string TConfiguracao = "Configurações";
         public const string DashboardFundo = "Fundos";
+        public const string DashboardXml = "Importação XML";
     }
 }

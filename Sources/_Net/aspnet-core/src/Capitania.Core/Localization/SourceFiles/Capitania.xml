@@ -105,6 +105,7 @@
     <text name="CreateNewConfig">Create new config</text>
     <text name="DashboardFundos">Fundos</text>
     <text name="Fundo">Fundo</text>
+    <text name="XmlAnbimaFileLog">XML Anbima File Log</text>
     
   </texts>
 </localizationDictionary>
