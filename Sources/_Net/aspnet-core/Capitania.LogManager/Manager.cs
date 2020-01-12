@@ -132,7 +132,7 @@ namespace Capitania.LogManager
         public static void WriteLogError(SqlConnection sqlConection, SqlTransaction sqlTransaction, string ErrMsg, string ErrItem, string userName)
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("insert into TLOGERRO (DATAHORA, MSGERRO, ITEM, [USER]) VALUES");
+            vSQL.AppendLine("insert into TLOGERRO (DATAHORA, MSGERRO, ITEM, [USER]) VALUES(");
             vSQL.AppendLine(String.Format("'{0}',", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
             vSQL.AppendLine(String.Format("'{0}',", ErrMsg));
             vSQL.AppendLine(String.Format("'{0}',", ErrItem));
@@ -169,7 +169,7 @@ namespace Capitania.LogManager
         public static void WriteLog(SqlConnection sqlConection, SqlTransaction sqlTransaction, string acao, string userName)
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("INSERT INTO TLOG (DATAHORA, ACAO, [USER], COMPUTER) VALUES");
+            vSQL.AppendLine("INSERT INTO TLOG (DATAHORA, ACAO, [USER], COMPUTER) VALUES(");
             vSQL.AppendLine(String.Format("'{0}',", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
             vSQL.AppendLine(String.Format("'{0}',", acao));
             vSQL.AppendLine(String.Format("'{0}',", userName));
@@ -212,7 +212,7 @@ namespace Capitania.LogManager
             if (itensProcessados > 0)
                 vSegundosPorItem = segundos / itensProcessados;
 
-            vSQL.AppendLine("INSERT INTO TLOGPERF (DATAHORA, OPER, [USER], ITENS, SECS, ITEMPERSEC, SECPERITEM) VALUES ");
+            vSQL.AppendLine("INSERT INTO TLOGPERF (DATAHORA, OPER, [USER], ITENS, SECS, ITEMPERSEC, SECPERITEM) VALUES (");
             vSQL.AppendLine(String.Format("'{0}',", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
             vSQL.AppendLine(String.Format("'{0}',", acao));
             vSQL.AppendLine(String.Format("'{0}',", userName));
