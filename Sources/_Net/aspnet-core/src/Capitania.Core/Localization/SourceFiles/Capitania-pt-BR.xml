@@ -103,6 +103,9 @@
     <text name="Fundo">Fundo</text>
     <text name="XmlAnbimaFileLog">Log Xml Anbima</text>
     <text name="DataBase">Data Processamento</text>
-    
+    <text name="TabAsset">ASSET</text>
+    <text name="TabAdv">ADV</text>
+    <text name="TabExternos">EXTERNOS</text>
+    <text name="TabTodos">TODOS</text>
   </texts>
 </localizationDictionary>

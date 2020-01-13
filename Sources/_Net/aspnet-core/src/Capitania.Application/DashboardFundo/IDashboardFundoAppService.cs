@@ -10,6 +10,13 @@ namespace Capitania.DashboardFundo
 {
     public interface IDashboardFundoAppService : IApplicationService
     {
-        List<DashboardGeralDto> ObterDadosDashPrincipal();
+        List<DashboardGeralDto> ObterDadosDashTodos();
+
+        List<DashboardGeralDto> ObterDadosDashAsset();
+
+        List<DashboardGeralDto> ObterDadosDashADV();
+
+        List<DashboardGeralDto> ObterDadosDashExterno();
+
     }
 }
