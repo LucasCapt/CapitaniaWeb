@@ -2142,5 +2142,17 @@ namespace Capitania.Importer.Library
             else
                 return (vData < vData.AddDays(-1));
         }
+
+        public static void Dispose()
+        {
+            LogManager.Manager.LogTrace("Interrompendo filewatchers", typeof(ImporterManager));
+            foreach (FileSystemWatcher item in vFileWatchers)
+            {
+                item.EnableRaisingEvents = false;
+                item.Dispose();
+            }
+
+            LogManager.Manager.LogTrace("Filewatchers interrompidos", typeof(ImporterManager));
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace Capitania.Importer
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new ServiceImporter()
             };
             ServiceBase.Run(ServicesToRun);
         }

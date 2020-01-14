@@ -10,19 +10,21 @@ using System.Threading.Tasks;
 
 namespace Capitania.Importer
 {
-    public partial class Service1 : ServiceBase
+    public partial class ServiceImporter : ServiceBase
     {
-        public Service1()
+        public ServiceImporter()
         {
             InitializeComponent();
         }
 
         protected override void OnStart(string[] args)
         {
+            Capitania.Importer.Library.ImporterManager.Initialize();
         }
 
         protected override void OnStop()
         {
+            Capitania.Importer.Library.ImporterManager.Dispose();
         }
     }
 }

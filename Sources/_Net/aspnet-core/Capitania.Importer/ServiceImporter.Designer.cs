@@ -1,6 +1,6 @@
 ﻿namespace Capitania.Importer
 {
-    partial class Service1
+    partial class ServiceImporter
     {
         /// <summary> 
         /// Required designer variable.
