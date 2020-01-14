@@ -107,5 +107,16 @@
     <text name="TabAdv">ADV</text>
     <text name="TabExternos">EXTERNOS</text>
     <text name="TabTodos">TODOS</text>
+
+    <text name="Dashboards">Dashboards</text>
+    
+    <text name="DashboardControl">Relatório de Risco e Compliance</text>
+    <text name="TabControleAsset">ASSET</text>
+    <text name="TabControleADV">ADV</text>
+    <text name="TabControleLiquidez">Liquidez</text>
+    <text name="TabControleCaixa">Caixa</text>
+    <text name="TabControleBreach">Breachs</text>
+    <text name="TabControleWarning">Warnings</text>
+    
   </texts>
 </localizationDictionary>
