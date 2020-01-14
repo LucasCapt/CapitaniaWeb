@@ -21,12 +21,11 @@ namespace Capitania.DashboardControle
             vSQL.AppendLine(String.Format("   AND AREA = '{0}'", Area));
             vSQL.AppendLine("   AND FUNDSTATUS <> 'INV'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo + ' - DADOS INVÁLIDOS', 0 as Size, 0 as Dispd0, 0 as Caixa, 0 as Var, 0 as VarQuot, 0 as Stress, 0 as MKTRisk, 0 as ElExt, '' as Data");
+            vSQL.AppendLine("SELECT Fundo + ' - DADOS INVÁLIDOS', 0 as Size, 0 as Dispd0, 0 as Caixa, 0 as Var, 0 as VarQuot, 0 as Stress, '' as MKTRisk, 0 as ElExt, '' as Data");
             vSQL.AppendLine("  FROM THISTRISK");
             vSQL.AppendLine(String.Format(" WHERE [DATARUN] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine(String.Format("   AND AREA = '{0}'", Area));
             vSQL.AppendLine("   AND FUNDSTATUS = 'INV'");
-            vSQL.AppendLine(" ORDER BY VAR DESC");
 
             List <DashBoardControleFundoDto> vDados = GeneralHelper.GetData<DashBoardControleFundoDto>(vSQL.ToString());
 
@@ -77,7 +76,7 @@ namespace Capitania.DashboardControle
         public List<DashboardControleViolacoesDto> ObterDadosViolacoesBreachs(DateTime vDataBase)
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000000) as Alocacao, RegraTexto, Papeis");
+            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000000) as Alocacao, RegraTexto as TextoRegra, Papeis");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE = 'V'");
@@ -85,7 +84,7 @@ namespace Capitania.DashboardControle
             vSQL.AppendLine("   AND TIPO = 'BREACH'");
             vSQL.AppendLine("   AND ESCOPO = 'CTRL'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000) as Alocacao, RegraTexto, Papeis");
+            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000) as Alocacao, RegraTexto as TextoRegra, Papeis");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE = 'V'");
@@ -93,7 +92,7 @@ namespace Capitania.DashboardControle
             vSQL.AppendLine("   AND TIPO = 'BREACH'");
             vSQL.AppendLine("   AND ESCOPO = 'CTRL'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo, Regra, Alocacao, RegraTexto, Papeis");
+            vSQL.AppendLine("SELECT Fundo, Regra, Alocacao, RegraTexto as TextoRegra, Papeis");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE <> 'V'");
@@ -108,7 +107,7 @@ namespace Capitania.DashboardControle
         public List<DashboardControleViolacoesDto> ObterDadosViolacoesWarnings(DateTime vDataBase)
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000000) as Alocacao, RegraTexto, Papeis");
+            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000000) as Alocacao, RegraTexto as TextoRegra, Papeis");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE = 'V'");
@@ -116,7 +115,7 @@ namespace Capitania.DashboardControle
             vSQL.AppendLine("   AND TIPO = 'BREACH'");
             vSQL.AppendLine("   AND ESCOPO = 'WARN'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000) as Alocacao, RegraTexto, Papeis");
+            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000) as Alocacao, RegraTexto as TextoRegra, Papeis");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE = 'V'");
@@ -124,7 +123,7 @@ namespace Capitania.DashboardControle
             vSQL.AppendLine("   AND TIPO = 'WARN'");
             vSQL.AppendLine("   AND ESCOPO = 'CTRL'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo, Regra, Alocacao, RegraTexto, Papeis");
+            vSQL.AppendLine("SELECT Fundo, Regra, Alocacao, RegraTexto as TextoRegra, Papeis");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE <> 'V'");

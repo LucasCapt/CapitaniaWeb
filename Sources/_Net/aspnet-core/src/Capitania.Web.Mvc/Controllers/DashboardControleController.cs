@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Capitania.Controllers;
 using Capitania.DashboardControle;
+using Capitania.Web.Models.DashboardControle;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Capitania.Web.Mvc.Controllers
@@ -20,17 +21,39 @@ namespace Capitania.Web.Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
+            DashboardControleModel vModel = new DashboardControleModel();
+            DateTime vDataBase = DateTime.Now;
+
+            vModel.DataBase = vDataBase;
+
             //Carregar dados 
-            ViewBag.DadosAsset = _dashboardAppService.ObterDadosFundoAsset(DateTime.Now);
-            ViewBag.DadosADV = _dashboardAppService.ObterDadosFundoADV(DateTime.Now);
-            ViewBag.DadosLiquidez = _dashboardAppService.ObterDadosLiquidez(DateTime.Now);
-            ViewBag.DadosCaixa = _dashboardAppService.ObterDadosNecessidadeCaixa(DateTime.Now);
-            ViewBag.DadosBreach = _dashboardAppService.ObterDadosViolacoesBreachs(DateTime.Now);
-            ViewBag.DadosWarning = _dashboardAppService.ObterDadosViolacoesWarnings(DateTime.Now);
+            ViewBag.DadosAsset = _dashboardAppService.ObterDadosFundoAsset(vDataBase);
+            ViewBag.DadosADV = _dashboardAppService.ObterDadosFundoADV(vDataBase);
+            ViewBag.DadosLiquidez = _dashboardAppService.ObterDadosLiquidez(vDataBase);
+            ViewBag.DadosCaixa = _dashboardAppService.ObterDadosNecessidadeCaixa(vDataBase);
+            ViewBag.DadosBreach = _dashboardAppService.ObterDadosViolacoesBreachs(vDataBase);
+            ViewBag.DadosWarning = _dashboardAppService.ObterDadosViolacoesWarnings(vDataBase);
 
-            ViewBag.DataBase = DateTime.Now;
+            ViewBag.DataBase = vDataBase;
 
-            return View();
+            return View(vModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(DashboardControleModel vModel)
+        {
+            DateTime vDataBase = vModel.DataBase;
+            //Carregar dados 
+            ViewBag.DadosAsset = _dashboardAppService.ObterDadosFundoAsset(vDataBase);
+            ViewBag.DadosADV = _dashboardAppService.ObterDadosFundoADV(vDataBase);
+            ViewBag.DadosLiquidez = _dashboardAppService.ObterDadosLiquidez(vDataBase);
+            ViewBag.DadosCaixa = _dashboardAppService.ObterDadosNecessidadeCaixa(vDataBase);
+            ViewBag.DadosBreach = _dashboardAppService.ObterDadosViolacoesBreachs(vDataBase);
+            ViewBag.DadosWarning = _dashboardAppService.ObterDadosViolacoesWarnings(vDataBase);
+
+            ViewBag.DataBase = vDataBase;
+
+            return View(vModel);
         }
     }
 }
