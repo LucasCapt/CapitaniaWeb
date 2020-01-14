@@ -111,7 +111,17 @@
     <text name="TabAdv">ADV</text>
     <text name="TabExternos">EXTERNALS</text>
     <text name="TabTodos">ALL</text>
+
+
+    <text name="Dashboards">Dashboards</text>
     
+    <text name="DashboardControl">Risk and Compliance Report</text>
+    <text name="TabControleAsset">ASSET</text>
+    <text name="TabControleADV">ADV</text>
+    <text name="TabControleLiquidez">Liquity</text>
+    <text name="TabControleCaixa">Cash Register</text>
+    <text name="TabControleBreach">Breachs</text>
+    <text name="TabControleWarning">Warnings</text>
     
   </texts>
 </localizationDictionary>
