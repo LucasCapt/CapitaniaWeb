@@ -13,7 +13,7 @@ namespace Capitania.Importer.Library
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlRootAttribute("arquivoposicao_4_01", Namespace = "", IsNullable = false)]
-    public partial class ArquivoPosicao_4_01_type
+    internal partial class ArquivoPosicao_4_01_type
     {
 
         private Fundo_type[] fundoField;
@@ -54,7 +54,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class Fundo_type
+    internal partial class Fundo_type
     {
 
         private header_fundo_type headerField;
@@ -445,7 +445,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class header_fundo_type
+    internal partial class header_fundo_type
     {
 
         private string isinField;
@@ -783,7 +783,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum nivelrsc_type
+    internal enum nivelrsc_type
     {
 
         /// <remarks/>
@@ -808,7 +808,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class header_carteira_type
+    internal partial class header_carteira_type
     {
 
         private string cnpjcpfField;
@@ -1040,7 +1040,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tpcli_type
+    internal enum tpcli_type
     {
 
         /// <remarks/>
@@ -1055,7 +1055,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class Carteira_type
+    internal partial class Carteira_type
     {
 
         private header_carteira_type headerField;
@@ -1446,7 +1446,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class partplanprev_type
+    internal partial class partplanprev_type
     {
 
         private long cnpbField;
@@ -1485,7 +1485,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class titpublico_type
+    internal partial class titpublico_type
     {
 
         private string isinField;
@@ -1977,7 +1977,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum caracteristica_type
+    internal enum caracteristica_type
     {
 
         /// <remarks/>
@@ -1992,7 +1992,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class compromisso_type
+    internal partial class compromisso_type
     {
 
         private string dtretornoField;
@@ -2089,7 +2089,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum classeCV_type
+    internal enum classeCV_type
     {
 
         /// <remarks/>
@@ -2102,7 +2102,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum classeCDTV_type
+    internal enum classeCDTV_type
     {
 
         /// <remarks/>
@@ -2123,7 +2123,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class aluguel_type
+    internal partial class aluguel_type
     {
 
         private string dtvencalugField;
@@ -2224,7 +2224,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class titprivado_type
+    internal partial class titprivado_type
     {
 
         private string isinField;
@@ -2701,7 +2701,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class debenture_type
+    internal partial class debenture_type
     {
 
         private string isinField;
@@ -3221,7 +3221,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum sn_type
+    internal enum sn_type
     {
 
         /// <remarks/>
@@ -3236,7 +3236,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class acoes_type
+    internal partial class acoes_type
     {
 
         private string isinField;
@@ -3501,7 +3501,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class opcoesacoes_type
+    internal partial class opcoesacoes_type
     {
 
         private string isinField;
@@ -3766,7 +3766,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class opcoesderiv_type
+    internal partial class opcoesderiv_type
     {
 
         private string isinField;
@@ -3998,7 +3998,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum callput_type
+    internal enum callput_type
     {
 
         /// <remarks/>
@@ -4013,7 +4013,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class opcoesflx_type
+    internal partial class opcoesflx_type
     {
 
         private string isinField;
@@ -4260,7 +4260,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tipoopcao_type
+    internal enum tipoopcao_type
     {
 
         /// <remarks/>
@@ -4275,7 +4275,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class termorv_type
+    internal partial class termorv_type
     {
 
         private string isinField;
@@ -4509,7 +4509,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class termorf_type
+    internal partial class termorf_type
     {
 
         private string isinField;
@@ -4847,7 +4847,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum classeCVA_type
+    internal enum classeCVA_type
     {
 
         /// <remarks/>
@@ -4865,7 +4865,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class futuros_type
+    internal partial class futuros_type
     {
 
         private string isinField;
@@ -5054,7 +5054,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class swap_type
+    internal partial class swap_type
     {
 
         private cetipbmf_type cetipbmfField;
@@ -5361,7 +5361,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum cetipbmf_type
+    internal enum cetipbmf_type
     {
 
         /// <remarks/>
@@ -5379,7 +5379,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class caixa_type
+    internal partial class caixa_type
     {
 
         private string isininstituicaoField;
@@ -5462,7 +5462,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tpcontacc_type
+    internal enum tpcontacc_type
     {
 
         /// <remarks/>
@@ -5486,7 +5486,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class cotas_type
+    internal partial class cotas_type
     {
 
         private string isinField;
@@ -5616,7 +5616,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class despesas_type
+    internal partial class despesas_type
     {
 
         private double txadmField;
@@ -5824,7 +5824,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class outrasdespesas_type
+    internal partial class outrasdespesas_type
     {
 
         private int coddespField;
@@ -5863,7 +5863,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class provisao_type
+    internal partial class provisao_type
     {
 
         private int codprovField;
@@ -5930,7 +5930,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum credeb_type
+    internal enum credeb_type
     {
 
         /// <remarks/>
@@ -5945,7 +5945,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class corretagem_type
+    internal partial class corretagem_type
     {
 
         private string cnpjcorretoraField;
@@ -6137,7 +6137,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class imovel_type
+    internal partial class imovel_type
     {
 
         private string logradouroField;
@@ -6600,7 +6600,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tipoimovel_type
+    internal enum tipoimovel_type
     {
 
         /// <remarks/>
@@ -6651,7 +6651,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tipouso_type
+    internal enum tipouso_type
     {
 
         /// <remarks/>
@@ -6680,7 +6680,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class opcoesmoedasotcl_type
+    internal partial class opcoesmoedasotcl_type
     {
 
         private string codoperField;
@@ -6959,7 +6959,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class forwardsmoedas_type
+    internal partial class forwardsmoedas_type
     {
 
         private tipooperacao_type tipooperacaoField;
@@ -7131,7 +7131,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tipooperacao_type
+    internal enum tipooperacao_type
     {
 
         /// <remarks/>
@@ -7146,7 +7146,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class participacoes_type
+    internal partial class participacoes_type
     {
 
         private string cnpjpartField;
@@ -7185,7 +7185,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class fidc_type
+    internal partial class fidc_type
     {
 
         private decimal valorfinanceiroField;

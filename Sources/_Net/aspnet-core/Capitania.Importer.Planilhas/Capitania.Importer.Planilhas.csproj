@@ -4,16 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ABAD8BB4-1D26-47DC-9C51-CFAFC7A9BE51}</ProjectGuid>
+    <ProjectGuid>{0018EC66-FA45-44FD-85F3-A67906159B72}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Capitania.Importer</RootNamespace>
-    <AssemblyName>Capitania.Importer</AssemblyName>
+    <RootNamespace>Capitania.Importer.Planilhas</RootNamespace>
+    <AssemblyName>Capitania.Importer.Planilhas</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -55,17 +53,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ServiceImporterInstaller.cs">
+    <Compile Include="ServiceImporterSheet.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ServiceImporterInstaller.Designer.cs">
-      <DependentUpon>ServiceImporterInstaller.cs</DependentUpon>
+    <Compile Include="ServiceImporterSheet.Designer.cs">
+      <DependentUpon>ServiceImporterSheet.cs</DependentUpon>
     </Compile>
-    <Compile Include="ServiceImporter.cs">
+    <Compile Include="ServiceImporterPlanilhas.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ServiceImporter.Designer.cs">
-      <DependentUpon>ServiceImporter.cs</DependentUpon>
+    <Compile Include="ServiceImporterPlanilhas.Designer.cs">
+      <DependentUpon>ServiceImporterPlanilhas.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -126,8 +124,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ServiceImporterInstaller.resx">
-      <DependentUpon>ServiceImporterInstaller.cs</DependentUpon>
+    <EmbeddedResource Include="ServiceImporterSheet.resx">
+      <DependentUpon>ServiceImporterSheet.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

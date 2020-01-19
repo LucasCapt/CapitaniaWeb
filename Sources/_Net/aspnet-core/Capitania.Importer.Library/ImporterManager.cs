@@ -18,6 +18,12 @@ namespace Capitania.Importer.Library
     {
         private static List<FileSystemWatcher> vFileWatchers = new List<FileSystemWatcher>();
         private static string vPathRaiz = string.Empty;
+        private static double vTimerInterval = 0;
+
+        public static double GetTimerIntervalForSheetProcessing()
+        {
+            return vTimerInterval;
+        }
 
         public static void Initialize()
         {
@@ -37,6 +43,13 @@ namespace Capitania.Importer.Library
             }
 
             LogManager.Manager.LogTrace("Initializer finalizado", typeof(ImporterManager));
+        }
+
+        public static void InitializeSheetImporter()
+        {
+            LogManager.Manager.LogTrace("Iniciando Importer Planilhas", typeof(ImporterManager));
+            vTimerInterval = double.Parse(ParameterManager.GetParameterValue(DBParametersConstants.IntervaloTempoProcessamentoImportacaoPlanilhas));
+            LogManager.Manager.LogTrace("Initializer Planilha finalizado", typeof(ImporterManager));
         }
 
         private static void OnCreate(object source, FileSystemEventArgs e)

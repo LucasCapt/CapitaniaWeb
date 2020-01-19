@@ -91,6 +91,7 @@ namespace Capitania.EntityFrameworkCore
         public const string email = "081";
         public const string senha = "082";
         public const string PathXmlAnbimaRaiz = "083";
+        public const string IntervaloTempoProcessamentoImportacaoPlanilhas = "084";
 
     }
 }

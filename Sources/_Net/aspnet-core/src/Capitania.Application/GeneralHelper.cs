@@ -11,7 +11,8 @@ namespace Capitania
 {
     public static class GeneralHelper
     {
-        public static string ConnectionString = "data source=win10dev\\sqlexpress;initial catalog=db_capitania_prd;persist security info=True;user id=sa;password=Capitania2019;MultipleActiveResultSets=True;App=EntityFramework";
+        public static string ConnectionString = @"data source=s14;initial catalog=db_capitania_prd;persist security info=True;user id=sa;password=DS!2002nt;MultipleActiveResultSets=True;App=EntityFramework";
+        //public static string ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
         //public static string ConnectionString = "data source=.;initial catalog=db_capitania_prd;Trusted_Connection=True;";
 
         private static List<T> DataReaderMapToList<T>(IDataReader dr)
