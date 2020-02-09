@@ -52,5 +52,24 @@ namespace Capitania
 
             return vDados;
         }
+
+        public static int GetCount(string sql)
+        {
+            int vRetorno;
+            using (SqlConnection vConection = new SqlConnection(GeneralHelper.ConnectionString))
+            {
+                vConection.Open();
+                using (SqlCommand vComando = new SqlCommand(sql, vConection))
+                {
+                    using (SqlDataReader vReader = vComando.ExecuteReader())
+                    {
+                        vRetorno = vReader.GetInt32(0);
+                    }
+                }
+                vConection.Close();
+            }
+
+            return vRetorno;
+        }
     }
 }

@@ -114,8 +114,8 @@
     <text name="TabControleAsset">ASSET</text>
     <text name="TabControleADV">ADV</text>
     <text name="TabControleLiquidez">Liquidez</text>
-    <text name="TabControleCaixa">Caixa</text>
-    <text name="TabControleBreach">Breachs</text>
+    <text name="TabControleCaixa">Requisitos de Caixa</text>
+    <text name="TabControleBreach">Breaches</text>
     <text name="TabControleWarning">Warnings</text>
     
   </texts>

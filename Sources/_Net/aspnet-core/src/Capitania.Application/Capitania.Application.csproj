@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <VersionPrefix>1.0.0.0</VersionPrefix>
     <TargetFramework>net461</TargetFramework>
@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capitania.Core\Capitania.Core.csproj" />
+    <ProjectReference Include="..\Capitania.EntityFrameworkCore\Capitania.EntityFrameworkCore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

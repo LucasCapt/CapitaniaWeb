@@ -119,8 +119,8 @@
     <text name="TabControleAsset">ASSET</text>
     <text name="TabControleADV">ADV</text>
     <text name="TabControleLiquidez">Liquity</text>
-    <text name="TabControleCaixa">Cash Register</text>
-    <text name="TabControleBreach">Breachs</text>
+    <text name="TabControleCaixa">Cash Requirement</text>
+    <text name="TabControleBreach">Breaches</text>
     <text name="TabControleWarning">Warnings</text>
     
   </texts>

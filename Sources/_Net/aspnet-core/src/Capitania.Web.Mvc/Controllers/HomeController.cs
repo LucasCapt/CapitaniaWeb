@@ -1,15 +1,35 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Abp.AspNetCore.Mvc.Authorization;
 using Capitania.Controllers;
+using Capitania.DashboardHome;
+using System.Threading.Tasks;
+using Capitania.Web.Models.Home;
 
 namespace Capitania.Web.Controllers
 {
     [AbpMvcAuthorize]
     public class HomeController : CapitaniaControllerBase
     {
-        public ActionResult Index()
+        private readonly IDahboardHomeAppService _dashboardHome;
+
+        public HomeController(
+            IDahboardHomeAppService dashBoard)
         {
-            return View();
+            _dashboardHome = dashBoard;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            HomeDataModel vModel = new HomeDataModel();
+            //Carregar dados 
+            vModel.HistoricoPLConsolidadado = _dashboardHome.ObterDadosHistoricoPLConsolidado();
+            vModel.CaixaConsolidado = _dashboardHome.ObterDadosCaixaPLConsolidado();
+            vModel.AtivoTotal = _dashboardHome.ObterDadosPLAtivoTotal();
+            vModel.Numeros = _dashboardHome.ObterDadosNumeros();
+            vModel.Concentracao = _dashboardHome.ObterDadosConcentracao();
+            vModel.HistoricoFalhas = _dashboardHome.ObterDadosHistoricoBreaches();
+
+            return View(vModel);
         }
 	}
 }
