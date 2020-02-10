@@ -10,5 +10,13 @@ namespace Capitania.DashboardHome.Dto
     {
         public DateTime DataInfo { get; set; }
         public double Caixa { get; set; }
+
+        public double CaixaSintetico
+        {
+            get
+            {
+                return this.Caixa / 1000000;
+            }
+        }
     }
 }

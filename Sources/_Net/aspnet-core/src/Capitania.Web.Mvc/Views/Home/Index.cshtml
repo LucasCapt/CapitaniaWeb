@@ -12,7 +12,6 @@
     <environment names="Development">
         <script src="~/lib/jquery-countTo/jquery.countTo.js" asp-append-version="true"></script>
         <script src="~/lib/raphael/raphael.js" asp-append-version="true"></script>
-        <script src="~/lib/morris.js/morris.js" asp-append-version="true"></script>
         <script src="~/lib/chart.js/dist/Chart.bundle.js" asp-append-version="true"></script>
         <script src="~/lib/Flot/jquery.flot.js" asp-append-version="true"></script>
         <script src="~/lib/Flot/jquery.flot.resize.js" asp-append-version="true"></script>
@@ -20,6 +19,7 @@
         <script src="~/lib/Flot/jquery.flot.categories.js" asp-append-version="true"></script>
         <script src="~/lib/Flot/jquery.flot.time.js" asp-append-version="true"></script>
         <script src="~/lib/jquery-sparkline/dist/jquery.sparkline.js" asp-append-version="true"></script>
+        <script src="~/lib/morris.js/morris.js" asp-append-version="true"></script>
         <script src="~/view-resources/Views/Home/Index.js" asp-append-version="true"></script>
     </environment>
 
@@ -35,9 +35,6 @@
 <div class="row clearfix">
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="info-box bg-pink hover-expand-effect">
-            <div class="icon">
-                <i class="material-icons">playlist_add_check</i>
-            </div>
             <div class="content">
                 <div class="text">FUNDOS</div>
                 <div class="number count-to" data-from="0" data-to="@Model.Numeros.NumeroFundos" data-speed="1000" data-fresh-interval="20"></div>
@@ -46,31 +43,22 @@
     </div>
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="info-box bg-cyan hover-expand-effect">
-            <div class="icon">
-                <i class="material-icons">help</i>
-            </div>
             <div class="content">
-                <div class="text">INSTRUMENTOS</div>
+                <div class="text">ATIVOS</div>
                 <div class="number count-to" data-from="0" data-to="@Model.Numeros.NumeroInstrumentos" data-speed="1000" data-fresh-interval="20"></div>
             </div>
         </div>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="info-box bg-light-green hover-expand-effect">
-            <div class="icon">
-                <i class="material-icons">forum</i>
-            </div>
             <div class="content">
-                <div class="text">REGRAS ATIVOS</div>
-                <div class="number count-to" data-from="0" data-to="@Model.Numeros.NumeroFundos" data-speed="1000" data-fresh-interval="20"></div>
+                <div class="text">REGRAS ATIVAS</div>
+                <div class="number count-to" data-from="0" data-to="@Model.Numeros.NumeroRegras" data-speed="1000" data-fresh-interval="20"></div>
             </div>
         </div>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="info-box bg-orange hover-expand-effect">
-            <div class="icon">
-                <i class="material-icons">person_add</i>
-            </div>
             <div class="content">
                 <div class="text">PAPÉIS</div>
                 <div class="number count-to" data-from="0" data-to="@Model.Numeros.NumeroPapeis" data-speed="1000" data-fresh-interval="20"></div>
@@ -80,172 +68,115 @@
 </div>
 <!-- #END# Widgets -->
 <!-- PL Consolidado e Caixa -->
-<div class="row clearfix">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
-            <div class="header">
-                <div class="row clearfix">
-                    <div class="col-xs-12 col-sm-6">
-                        <h2>Histórico Consolidado</h2>
-                    </div>
-                </div>
-                <ul class="header-dropdown m-r--5">
-                    <li class="dropdown">
-                        <ejs-chart id="idHistoricoPLConsolidado" title="Histórico PL/Caixa Consolidado" width="60%">
-                            <e-chart-primaryxaxis valueType="DateTime"
-                                                  labelFormat="y"
-                                                  intervalType="Days"
-                                                  edgeLabelPlacement="Shift"></e-chart-primaryxaxis>
-                            <e-series-collection>
-                                <e-series dataSource="@Model.HistoricoPLConsolidadado" name="PL" xName="DataInfo" width="2" opacity="1" yName="PL" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line"></e-series>
-                                <e-series dataSource="@Model.CaixaConsolidado" name="PL" xName="DataInfo" width="2" opacity="1" yName="Caixa" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line"></e-series>
-                            </e-series-collection>
-                        </ejs-chart>
-                    </li>
-                </ul>
-            </div>
-            <div class="body">
-                <div id="real_time_chart" class="dashboard-flot-chart"></div>
-            </div>
+<div class="row clearfix" style="overflow-x:auto;white-space:nowrap">
+    <div class="body" style="overflow-x:auto">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+            <ejs-chart id="idHistoricoPLConsolidado" title="Histórico PL/Caixa Consolidado">
+                <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                <e-chart-primaryxaxis valueType="DateTime"
+                                      labelFormat="dd/MM/yyyy"
+                                      edgeLabelPlacement="Shift">
+                </e-chart-primaryxaxis>
+                <e-series-collection>
+                    <e-series dataSource="@Model.HistoricoPLConsolidadado" name="PL" xName="DataInfo" width="2" opacity="1" yName="PLSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                    </e-series>
+                    <e-series dataSource="@Model.CaixaConsolidado" name="Caixa" xName="DataInfo" width="2" opacity="1" yName="CaixaSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                    </e-series>
+                </e-series-collection>
+            </ejs-chart>
         </div>
     </div>
 </div>
+
 <!-- #END# PL Consolidado e Caixa -->
 <!-- PL Ativo Total -->
 <div class="row clearfix">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
-            <div class="header">
-                <div class="row clearfix">
-                    <div class="col-xs-12 col-sm-6">
-                        <h2>Histórico Consolidado</h2>
-                    </div>
-                </div>
-                <ul class="header-dropdown m-r--5">
-                    <li class="dropdown">
-                        <ejs-chart id="idPLTotal" title="PL Ativo Total" width="60%">
-                            <e-chart-primaryxaxis valueType="DateTime"
-                                                  labelFormat="y"
-                                                  intervalType="Days"
-                                                  edgeLabelPlacement="Shift"></e-chart-primaryxaxis>
-                            <e-series-collection>
-                                <e-series dataSource="@Model.AtivoTotal" name="PL" xName="DataInfo" width="2" opacity="1" yName="PL" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line"></e-series>
-                            </e-series-collection>
-                        </ejs-chart>
-                    </li>
-                </ul>
-            </div>
-            <div class="body">
-                <div id="real_time_chart" class="dashboard-flot-chart"></div>
-            </div>
-        </div>
+        <ejs-chart id="idPLTotal" title="PL Ativo Total">
+            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+            <e-chart-primaryxaxis valueType="DateTime"
+                                  labelFormat="dd/MM/yyyy"
+                                  edgeLabelPlacement="Shift">
+            </e-chart-primaryxaxis>
+            <e-series-collection>
+                <e-series dataSource="@Model.AtivoTotal" name="PL" xName="DataInfo" width="2" opacity="1" yName="PLSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                </e-series>
+            </e-series-collection>
+        </ejs-chart>
     </div>
 </div>
-<!-- #END# PL Ativo Total -->
 <!-- Concentração -->
 <div class="row clearfix">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
-            <div class="header">
-                <div class="row clearfix">
-                    <div class="col-xs-12 col-sm-6">
-                        <h2>Concentração</h2>
-                    </div>
-                </div>
-                <ul class="header-dropdown m-r--5">
-                    <li class="dropdown">
-                        <div class="control-section col-lg-9" align='center'>
-                            <ejs-accumulationchart id="idConcentracaoRating" title="Concentração Rating" load="load" enableAnimation="false">
-                                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
-                                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                                <e-accumulationchart-legendsettings visible="false">
-                                </e-accumulationchart-legendsettings>
-                                <e-accumulation-series-collection>
-                                    <e-accumulation-series dataSource="@Model.ConcentracaoRating" xName="DataInfo" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
-                                        <e-accumulationseries-datalabel name="text" visible="true">
-                                            <e-font fontWeight="600" color="white"></e-font>
-                                        </e-accumulationseries-datalabel>
-                                    </e-accumulation-series>
-                                </e-accumulation-series-collection>
-                            </ejs-accumulationchart>
-                        </div>
-                    </li>
-                </ul>
-                <ul class="header-dropdown m-r--5">
-                    <li class="dropdown">
-                        <div class="control-section col-lg-9" align='center'>
-                            <ejs-accumulationchart id="idConcentracaoTomador" title="Concentração Tomador" load="load" enableAnimation="false">
-                                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
-                                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                                <e-accumulationchart-legendsettings visible="false">
-                                </e-accumulationchart-legendsettings>
-                                <e-accumulation-series-collection>
-                                    <e-accumulation-series dataSource="@Model.ConcentracaoTomador" xName="DataInfo" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
-                                        <e-accumulationseries-datalabel name="text" visible="true">
-                                            <e-font fontWeight="600" color="white"></e-font>
-                                        </e-accumulationseries-datalabel>
-                                    </e-accumulation-series>
-                                </e-accumulation-series-collection>
-                            </ejs-accumulationchart>
-                        </div>
-                    </li>
-                </ul>
-                <ul class="header-dropdown m-r--5">
-                    <li class="dropdown">
-                        <div class="control-section col-lg-9" align='center'>
-                            <ejs-accumulationchart id="idConcentracaoSegmento" title="Concentração Segmento" load="load" enableAnimation="false">
-                                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
-                                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                                <e-accumulationchart-legendsettings visible="false">
-                                </e-accumulationchart-legendsettings>
-                                <e-accumulation-series-collection>
-                                    <e-accumulation-series dataSource="@Model.ConcentracaoSegmento" xName="DataInfo" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
-                                        <e-accumulationseries-datalabel name="text" visible="true">
-                                            <e-font fontWeight="600" color="white"></e-font>
-                                        </e-accumulationseries-datalabel>
-                                    </e-accumulation-series>
-                                </e-accumulation-series-collection>
-                            </ejs-accumulationchart>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="body">
-                <div id="real_time_chart" class="dashboard-flot-chart"></div>
-            </div>
+        <div class="control-section col-lg-4" align='left'>
+            <ejs-accumulationchart id="idConcentracaoRating" title="Concentração Rating" enableAnimation="false">
+                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                <e-accumulationchart-legendsettings visible="false">
+                </e-accumulationchart-legendsettings>
+                <e-accumulation-series-collection>
+                    <e-accumulation-series dataSource="@Model.ConcentracaoRating" xName="DataInfo" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
+                        <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                            <e-font fontWeight="600" color="white"></e-font>
+                        </e-accumulationseries-datalabel>
+                    </e-accumulation-series>
+                </e-accumulation-series-collection>
+            </ejs-accumulationchart>
+        </div>
+        <div class="control-section col-lg-4" align='center'>
+            <ejs-accumulationchart id="idConcentracaoTomador" title="Concentração Tomador" enableAnimation="false">
+                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                <e-accumulationchart-legendsettings visible="false">
+                </e-accumulationchart-legendsettings>
+                <e-accumulation-series-collection>
+                    <e-accumulation-series dataSource="@Model.ConcentracaoTomador" xName="DataInfo" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
+                        <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                            <e-font fontWeight="600" color="white"></e-font>
+                        </e-accumulationseries-datalabel>
+                    </e-accumulation-series>
+                </e-accumulation-series-collection>
+            </ejs-accumulationchart>
+        </div>
+        <div class="control-section col-lg-4" align='right'>
+            <ejs-accumulationchart id="idConcentracaoSegmento" title="Concentração Segmento" enableAnimation="false">
+                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                <e-accumulationchart-legendsettings visible="false">
+                </e-accumulationchart-legendsettings>
+                <e-accumulation-series-collection>
+                    <e-accumulation-series dataSource="@Model.ConcentracaoSegmento" xName="DataInfo" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
+                        <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                            <e-font fontWeight="600" color="white"></e-font>
+                        </e-accumulationseries-datalabel>
+                    </e-accumulation-series>
+                </e-accumulation-series-collection>
+            </ejs-accumulationchart>
         </div>
     </div>
 </div>
 <!-- #END# Concentração -->
-
+<!-- #END# PL Ativo Total -->
 <!-- PL Breaches -->
 <div class="row clearfix">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
-            <div class="header">
-                <div class="row clearfix">
-                    <div class="col-xs-12 col-sm-6">
-                        <h2>Histórico de Falhas</h2>
-                    </div>
-                </div>
-                <ul class="header-dropdown m-r--5">
-                    <li class="dropdown">
-                        <ejs-chart id="idPLTotal" title="Breaches" width="60%">
-                            <e-chart-primaryxaxis valueType="DateTime"
-                                                  labelFormat="y"
-                                                  intervalType="Days"
-                                                  edgeLabelPlacement="Shift"></e-chart-primaryxaxis>
-                            <e-series-collection>
-                                <e-series dataSource="@Model.HistoricoFalhas" name="PL" xName="DataFalha" width="2" opacity="1" yName="NumeroFalhas" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Bar"></e-series>
-                            </e-series-collection>
-                        </ejs-chart>
-                    </li>
-                </ul>
-            </div>
-            <div class="body">
-                <div id="real_time_chart" class="dashboard-flot-chart"></div>
-            </div>
-        </div>
+        <ejs-chart id="idBreaches" title="Breaches" width="100%">
+            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+            <e-chart-primaryxaxis valueType="DateTime"
+                                  labelFormat="dd/MM/yyyy"
+                                  intervalType="Auto"
+                                  edgeLabelPlacement="Shift"></e-chart-primaryxaxis>
+            <e-series-collection>
+                <e-series dataSource="@Model.HistoricoFalhas" name="Breaches" xName="DataFalha" width="2" opacity="1" yName="NumeroFalhas" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                </e-series>
+            </e-series-collection>
+        </ejs-chart>
+
     </div>
+
 </div>
 <!-- #END# Breaches -->

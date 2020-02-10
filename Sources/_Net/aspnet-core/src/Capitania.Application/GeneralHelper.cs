@@ -24,10 +24,11 @@ namespace Capitania
                 obj = Activator.CreateInstance<T>();
                 foreach (PropertyInfo prop in obj.GetType().GetProperties())
                 {
-                    if (!object.Equals(dr[prop.Name], DBNull.Value))
-                    {
-                        prop.SetValue(obj, dr[prop.Name], null);
-                    }
+                    if (dr.GetSchemaTable().Select(String.Format("ColumnName='{0}'", prop.Name)).Length > 0)
+                        if (!object.Equals(dr[prop.Name], DBNull.Value))
+                        {
+                            prop.SetValue(obj, dr[prop.Name], null);
+                        }
                 }
                 list.Add(obj);
             }
@@ -55,7 +56,7 @@ namespace Capitania
 
         public static int GetCount(string sql)
         {
-            int vRetorno;
+            int vRetorno = 0;
             using (SqlConnection vConection = new SqlConnection(GeneralHelper.ConnectionString))
             {
                 vConection.Open();
@@ -63,7 +64,8 @@ namespace Capitania
                 {
                     using (SqlDataReader vReader = vComando.ExecuteReader())
                     {
-                        vRetorno = vReader.GetInt32(0);
+                        if (vReader.Read())
+                            vRetorno = vReader.GetInt32(0);
                     }
                 }
                 vConection.Close();

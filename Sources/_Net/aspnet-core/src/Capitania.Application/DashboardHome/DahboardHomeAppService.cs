@@ -15,10 +15,10 @@ namespace Capitania.DashboardHome
         {
             StringBuilder vSQL = new StringBuilder();
 
-            vSQL.AppendLine("SELECT distinct TOP 12 datainfo as DataInfo, pl as PL");
+            vSQL.AppendLine("SELECT distinct TOP 10 datainfo as DataInfo, pl as PL");
             vSQL.AppendLine("  FROM thistrisk");
             vSQL.AppendLine(" WHERE fundo = '_CONSOLIDADO'");
-            vSQL.AppendLine(" ORDER BY datainfo desc");
+            vSQL.AppendLine(" ORDER BY DataInfo Desc");
 
             List<HistoricoPLConsolidadoDto> vDados = GeneralHelper.GetData<HistoricoPLConsolidadoDto>(vSQL.ToString());
 
@@ -29,28 +29,27 @@ namespace Capitania.DashboardHome
         {
             StringBuilder vSQL = new StringBuilder();
 
-            vSQL.AppendLine("SELECT distinct TOP 12 datainfo as DataInfo, (caixa * pl) as Caixa ");
+            vSQL.AppendLine("SELECT distinct TOP 10 datainfo as DataInfo, (caixa * pl) as Caixa ");
             vSQL.AppendLine("  FROM thistrisk");
             vSQL.AppendLine(" WHERE fundo = '_CONSOLIDADO'");
-            vSQL.AppendLine(" ORDER BY datainfo desc");
+            vSQL.AppendLine(" ORDER BY DataInfo Desc");
 
             List<HistoricoCaixaConsolidadoDto> vDados = GeneralHelper.GetData<HistoricoCaixaConsolidadoDto>(vSQL.ToString());
 
-            return vDados;
+            return vDados.OrderByDescending(w => w.DataInfo).Take(12).ToList(); ;
         }
 
         public List<HistoricoPLAtivoTotalDto> ObterDadosPLAtivoTotal()
         {
             StringBuilder vSQL = new StringBuilder();
 
-            vSQL.AppendLine("SELECT distinct TOP 30 DataRun as DataInfo, pl as PL");
+            vSQL.AppendLine("SELECT DataRun as DataInfo, pl as PL");
             vSQL.AppendLine("  FROM thistrisk");
             vSQL.AppendLine(" WHERE fundo = '_CONS_ATIVO'");
-            vSQL.AppendLine(" ORDER BY DataRun desc");
 
             List<HistoricoPLAtivoTotalDto> vDados = GeneralHelper.GetData<HistoricoPLAtivoTotalDto>(vSQL.ToString());
 
-            return vDados;
+            return vDados.OrderByDescending(w => w.DataInfo).Take(30).ToList(); ;
         }
 
         public DashboardNumerosDto ObterDadosNumeros()
@@ -60,14 +59,14 @@ namespace Capitania.DashboardHome
 
             vSQL.AppendLine("SELECT COUNT(*) as Total");
             vSQL.AppendLine("  FROM TFundos");
-            vSQL.AppendLine(" WHERE (Deleted = 0 or DT_Deleted = GetDate()");
+            vSQL.AppendLine(" WHERE (Deleted = 0 or DT_Deleted = GetDate())");
 
             vRetorno.NumeroFundos = GeneralHelper.GetCount(vSQL.ToString());
 
             vSQL = new StringBuilder();
             vSQL.AppendLine("SELECT distinct ativo as Ativo");
             vSQL.AppendLine("  FROM Ttrades");
-            
+
             List<DadoAtivoDto> vDados = GeneralHelper.GetData<DadoAtivoDto>(vSQL.ToString());
 
             vRetorno.NumeroInstrumentos = vDados.Count;
@@ -75,15 +74,15 @@ namespace Capitania.DashboardHome
             vSQL = new StringBuilder();
             vSQL.AppendLine("SELECT count(*)");
             vSQL.AppendLine("  FROM TRegras");
-            vSQL.AppendLine(" WHERE NOT (Deleted = 1 AND DT_Deleted <= GetDate()");
+            vSQL.AppendLine(" WHERE NOT (Deleted = 1 AND DT_Deleted <= GetDate())");
             vSQL.AppendLine("   AND DT_CREATED <= GetDate()");
 
             vRetorno.NumeroRegras = GeneralHelper.GetCount(vSQL.ToString());
 
             vSQL = new StringBuilder();
             vSQL.AppendLine("SELECT count(*)");
-            vSQL.AppendLine("  FROM TPAPEIS");
-            vSQL.AppendLine(" WHERE NOT (Deleted = 1 AND DT_Deleted <= GetDate()");
+            vSQL.AppendLine("  FROM TPAPEL");
+            vSQL.AppendLine(" WHERE NOT (Deleted = 1 AND DT_Deleted <= GetDate())");
             vSQL.AppendLine("   AND DT_CREATED <= GetDate()");
 
             vRetorno.NumeroPapeis = GeneralHelper.GetCount(vSQL.ToString());
@@ -95,7 +94,7 @@ namespace Capitania.DashboardHome
         {
             DashboardNumerosDto vRetorno = new DashboardNumerosDto();
             StringBuilder vSQL = new StringBuilder();
-            
+
             string vFundoID = ParameterManager.GetParameterValue(DBParametersConstants.ConcentrationFundID);
             string vPropriedade1 = ParameterManager.GetParameterValue(DBParametersConstants.ConcentrationProperty1);
             string vPropriedade2 = ParameterManager.GetParameterValue(DBParametersConstants.ConcentrationProperty2);
@@ -110,7 +109,7 @@ namespace Capitania.DashboardHome
             vSQL.AppendLine("   AND TConcentra.[Data]  = (SELECT MAX([DATA]) FROM TConcentra)");
             vSQL.AppendLine(" ORDER BY TConcentra.Nome, TConcentra.Propriedade;");
 
-            List <DadosConcentracaoDto> vDados = GeneralHelper.GetData<DadosConcentracaoDto>(vSQL.ToString());
+            List<DadosConcentracaoDto> vDados = GeneralHelper.GetData<DadosConcentracaoDto>(vSQL.ToString());
 
             return vDados;
 
@@ -120,15 +119,14 @@ namespace Capitania.DashboardHome
         {
             StringBuilder vSQL = new StringBuilder();
 
-            vSQL.AppendLine("SELECT TOP 15 [data] as DataFalha, count(*) as NumeroFalhas");
+            vSQL.AppendLine("SELECT [data] as DataFalha, count(*) as NumeroFalhas");
             vSQL.AppendLine("  FROM THistCompBreaches");
             vSQL.AppendLine(" WHERE TIPO = 'BREACH'");
             vSQL.AppendLine(" GROUP BY [data]");
-            vSQL.AppendLine(" ORDER BY [data] desc");
 
             List<DadosHistoricoBreachesDto> vDados = GeneralHelper.GetData<DadosHistoricoBreachesDto>(vSQL.ToString());
 
-            return vDados;
+            return vDados.OrderByDescending(w => w.DataFalha).Take(12).ToList(); ;
         }
     }
 }

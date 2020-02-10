@@ -9,6 +9,10 @@
     <UserSecretsId>AbpCompanyName-Capitania-56C2EF2F-ABD6-4EFC-AAF2-2E81C34E8FB1</UserSecretsId>
     <RootNamespace>Capitania.Web</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Update="Dockerfile">

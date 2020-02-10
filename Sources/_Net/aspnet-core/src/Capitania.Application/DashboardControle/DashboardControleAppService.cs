@@ -60,7 +60,14 @@ namespace Capitania.DashboardControle
         public List<DashboardControleNecessidadeCaixaDto> ObterDadosNecessidadeCaixa(DateTime vDataBase)
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT Fundo, Liq_ok as Compliance, LIQ_1 as D1, LIQ_5 as D5, LIQ_21 as D21, LIQ_42 as D42, LIQ_63 as D63, LIQ_126 as D126, LIQ_252 as D252");
+            vSQL.AppendLine("SELECT Fundo, Liq_ok as Compliance, ");
+            vSQL.AppendLine("       REQ_CASH_1 / 1000000 as D1, ");
+            vSQL.AppendLine("       REQ_CASH_5 / 1000000 as D5, ");
+            vSQL.AppendLine("       REQ_CASH_21 / 1000000 as D21, ");
+            vSQL.AppendLine("       REQ_CASH_42 / 1000000 as D42, ");
+            vSQL.AppendLine("       REQ_CASH_63 / 1000000 as D63, ");
+            vSQL.AppendLine("       REQ_CASH_126 / 1000000 as D126, ");
+            vSQL.AppendLine("       REQ_CASH_252 / 1000000 as D252");
             vSQL.AppendLine("  FROM THISTRISK");
             vSQL.AppendLine(String.Format(" WHERE [DATARUN] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND NOT (FUNDTYPE IN ('CONS', 'CLOSED') OR AREA = 'EXTERNO')");

@@ -10,5 +10,12 @@ namespace Capitania.DashboardHome.Dto
     {
         public DateTime DataInfo { get; set; }
         public double PL { get; set; }
+        public double PLSintetico
+        {
+            get
+            {
+                return this.PL / 1000000;
+            }
+        }
     }
 }
