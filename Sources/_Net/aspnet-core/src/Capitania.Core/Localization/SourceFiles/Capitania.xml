@@ -122,6 +122,7 @@
     <text name="TabControleCaixa">Cash Requirement</text>
     <text name="TabControleBreach">Breaches</text>
     <text name="TabControleWarning">Warnings</text>
+    <text name="DashFundo">Fund Details</text>
     
   </texts>
 </localizationDictionary>

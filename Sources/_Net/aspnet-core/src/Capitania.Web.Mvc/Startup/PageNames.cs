@@ -12,5 +12,6 @@
         public const string DashboardFundo = "Fundos";
         public const string DashboardXml = "Importação XML";
         public const string DashboardControle = "Controle";
+        public const string DashFundo = "Detalhe Fundos";
     }
 }

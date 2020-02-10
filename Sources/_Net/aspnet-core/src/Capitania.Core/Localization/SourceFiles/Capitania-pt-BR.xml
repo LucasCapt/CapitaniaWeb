@@ -117,6 +117,8 @@
     <text name="TabControleCaixa">Requisitos de Caixa</text>
     <text name="TabControleBreach">Breaches</text>
     <text name="TabControleWarning">Warnings</text>
+
+    <text name="DashFundo">Detalhes Fundos</text>
     
   </texts>
 </localizationDictionary>

@@ -80,6 +80,14 @@ namespace Capitania.Web.Startup
                         icon: "local_offer",
                         requiredPermissionName: PermissionNames.Pages_Roles
                     )
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashFundo,
+                        L("DashFundo"),
+                        url: "DashFundo",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Roles
+                    )
                     )
                 );
         }
