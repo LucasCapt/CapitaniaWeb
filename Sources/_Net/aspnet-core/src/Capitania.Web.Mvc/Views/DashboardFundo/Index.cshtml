@@ -15,6 +15,12 @@
     }
 </script>
 
+<script>
+    function callChangefunc(val) {
+        window.location.href = "/DashboardFundo/Carregar?IDFundo=" + val;
+    }
+</script>
+
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
@@ -23,52 +29,59 @@
                     @L("DashboardFundos")
                 </h2>
             </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="label-required" for="ddl-profile">Fundo</label>
-                        @Html.DropDownListFor(model => model.Dados.Fundo.IDFundo, ViewBag.ListaFundos as SelectList, new { @class = "form-control" })
-                    </div>
-                </div>
-            </div>
             <div class="portlet-body">
-                <div class="tab-content">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
-                        <ejs-chart id="idHistoricoPLConsolidado" title="Quota/PL">
-                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
-                            <e-chart-primaryxaxis valueType="DateTime"
-                                                  labelFormat="dd/MM/yyyy"
-                                                  edgeLabelPlacement="Shift">
-                            </e-chart-primaryxaxis>
-                            <e-series-collection>
-                                <e-series dataSource="@Model.Dados.Quotas" name="Quotas" xName="Data" width="2" opacity="1" yName="Quota" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                                </e-series>
-                                <e-series dataSource="@Model.Dados.Patrimonio" name="PL" xName="DataInfo" width="2" opacity="1" yName="PL" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                                </e-series>
-                            </e-series-collection>
-                        </ejs-chart>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="label-required" for="ddl-profile">Fundo</label>
+                            @Html.DropDownListFor(model => model.IDFundo, Model.ListaFundos, new { @class = "form-control", @onchange = "callChangefunc(this.value)" })
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="portlet-body">
-                <div class="tab-content">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
-                        <ejs-chart id="idHistoricoPLConsolidado" title="Quota/PL">
-                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
-                            <e-chart-primaryxaxis valueType="DateTime"
-                                                  labelFormat="dd/MM/yyyy"
-                                                  edgeLabelPlacement="Shift">
-                            </e-chart-primaryxaxis>
-                            <e-series-collection>
-                                <e-series dataSource="@Model.Dados.Posicao" name="Posição" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                                </e-series>
-                            </e-series-collection>
-                        </ejs-chart>
+                @if (Model.ExibirDados)
+                {
+                    <div class="tab-content">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6">
+                                <h4>Quotas/Patrimônio Líquido</h4>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <ejs-chart id="idHistoricoPLConsolidado" title="Quota/PL">
+                                <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                                <e-chart-primaryxaxis valueType="DateTime"
+                                                      labelFormat="dd/MM/yyyy"
+                                                      edgeLabelPlacement="Shift">
+                                </e-chart-primaryxaxis>
+                                <e-series-collection>
+                                    <e-series dataSource="@Model.Dados.Quotas" name="Quotas" xName="Data" width="2" opacity="1" yName="Quota" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                    </e-series>
+                                    <e-series dataSource="@Model.Dados.Patrimonio" name="PL" xName="DataInfo" width="2" opacity="1" yName="PL" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                    </e-series>
+                                </e-series-collection>
+                            </ejs-chart>
+                        </div>
                     </div>
-                </div>
+                    <div class="tab-content">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6">
+                                <h4>Carteira Fechada</h4>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <ejs-grid id="gridPosicao" dataSource="@Model.Dados.Posicao" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                <e-grid-columns>
+                                    <e-grid-column field="Papel" headerText="Papel" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Valor" headerText="Valor" textAlign="Right" format="N3" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                </e-grid-columns>
+                            </ejs-grid>
+                        </div>
+                    </div>
+                }
+
             </div>
         </div>
     </div>

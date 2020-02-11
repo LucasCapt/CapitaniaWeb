@@ -51,6 +51,9 @@ namespace Capitania.Web.Startup
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            //Register Syncfusion license
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjA4NTU2QDMxMzcyZTM0MmUzMGVVMDM2NjJJOVhnSlFqaU9oMkIrMHY3MmZ2Ni9wNkVqdVhPdmJyUjFBVzg9;MjA4NTU3QDMxMzcyZTM0MmUzMFdoWi83Yjg5bXFiWWJ1c3dZcEZobGEya0lFQUlNdXFjais2b3dIdWw5bXc9;MjA4NTU4QDMxMzcyZTM0MmUzMFZQUlpMcjlBUGJSZ3lWSW91NUNmbjFiNFgrRlFBc0dkaGhqNE5Lam5YRFk9;MjA4NTU5QDMxMzcyZTM0MmUzME5adVBDc1dwclB4T3pVV2l3cjd1Um5IU0w5Q3J0WnorYWw1NnQ2WE5uTkk9;MjA4NTYwQDMxMzcyZTM0MmUzMFVTbVRiajR0QUh0NGVROGdZQlFlS3kya2R4RVoyUVJuMHByN3Y2U0djWHM9;MjA4NTYxQDMxMzcyZTM0MmUzMEV0V3ZDRnlaa25NaXhQeEZCbWRMWFowbyszQW9HTm1zc0hERHhxakRyZWc9;MjA4NTYyQDMxMzcyZTM0MmUzMEZtU2tUeFEzNzY3aEdyZHZtYXUvbE5ZWGNVclIrU2dwdlBMUVluS3FsSDQ9;MjA4NTYzQDMxMzcyZTM0MmUzMG92L0U4RXA4OGkxN21zN1dNYzZJeERPaG9RWTBWaWtSYTNLYVZlL0o1bXM9;MjA4NTY0QDMxMzcyZTM0MmUzMG1JTklnTGNNWGJTM2VPZ3MxS2JublVoTThLYVJtT05TRGhsTTVSQjA1MEE9;NT8mJyc2IWhiZH1nfWN9YGpoYmF8YGJ8ampqanNiYmlmamlmanMDHmg5PCA2IzImPzw/Oj4yEzQ+Mjo/fTA8Pg==;MjA4NTY1QDMxMzcyZTM0MmUzMG5Ec1pQQXFSSHNrcmJpYWtNYVVDaUEwUWJlZi9IRWFyUUpveFA0WGY5Qlk9");
+
             app.UseAbp(); // Initializes ABP framework.
 
             if (env.IsDevelopment())
