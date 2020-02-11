@@ -84,7 +84,7 @@ namespace Capitania.Web.Startup
                     new MenuItemDefinition(
                         PageNames.DashFundo,
                         L("DashFundo"),
-                        url: "DashFundo",
+                        url: "DashboardFundo",
                         icon: "local_offer",
                         requiredPermissionName: PermissionNames.Pages_Roles
                     )

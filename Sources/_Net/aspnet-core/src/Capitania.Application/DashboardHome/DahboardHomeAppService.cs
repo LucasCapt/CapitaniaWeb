@@ -59,7 +59,8 @@ namespace Capitania.DashboardHome
 
             vSQL.AppendLine("SELECT COUNT(*) as Total");
             vSQL.AppendLine("  FROM TFundos");
-            vSQL.AppendLine(" WHERE (Deleted = 0 or DT_Deleted = GetDate())");
+            vSQL.AppendLine(" WHERE NOT (Deleted = 1 AND DT_Deleted <= GetDate())");
+            vSQL.AppendLine("   AND DT_CREATED <= GetDate()");
 
             vRetorno.NumeroFundos = GeneralHelper.GetCount(vSQL.ToString());
 

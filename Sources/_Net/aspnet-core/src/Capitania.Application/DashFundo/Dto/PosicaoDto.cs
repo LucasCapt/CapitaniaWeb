@@ -9,8 +9,8 @@ namespace Capitania.DashFundo.Dto
     public class PosicaoDto
     {
         public int IDFundo { get; set; }
-        public DateTime Data { get;set }
+        public DateTime Data { get; set; }
         public double Valor { get; set; }
-
+        public string Papel { get; set; }
     }
 }

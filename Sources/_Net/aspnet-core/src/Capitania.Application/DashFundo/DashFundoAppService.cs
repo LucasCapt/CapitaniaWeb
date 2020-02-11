@@ -42,10 +42,9 @@ namespace Capitania.DashFundo
             vRetorno.Patrimonio = GeneralHelper.GetData<PatrimonioLiquidoDto>(vSQL.ToString());
 
             vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT TOP 10 Fundo as IDFundo, Data as Data, Sum(Valor) as Valor");
+            vSQL.AppendLine("SELECT TOP 100 Fundo as IDFundo, Data as Data, Papel as Papel, Valor as Valor");
             vSQL.AppendLine("  FROM TPOSIC");
             vSQL.AppendLine(String.Format(" WHERE Fundo = {0}", IDFundo));
-            vSQL.AppendLine(" GROUP BY Fundo, Data");
             vSQL.AppendLine(" ORDER BY Data Desc");
 
             vRetorno.Posicao = GeneralHelper.GetData<PosicaoDto>(vSQL.ToString());
