@@ -110,7 +110,8 @@
 
     <text name="Dashboards">Dashboards</text>
     
-    <text name="DashboardControl">Relatório de Risco e Compliance</text>
+    <text name="DashboardControl">Relatório de Risco e Compliance (Controle)</text>
+    <text name="DashboardManager">Relatório de Risco e Compliance (Gerencial)</text>
     <text name="TabControleAsset">ASSET</text>
     <text name="TabControleADV">ADV</text>
     <text name="TabControleLiquidez">Liquidez</text>
@@ -118,6 +119,19 @@
     <text name="TabControleBreach">Breaches</text>
     <text name="TabControleWarning">Warnings</text>
 
+    <text name="TabManagerAsset">ASSET</text>
+    <text name="TabManagerCash">Cash Report (Fundos Selecionados)</text>
+    <text name="TabManagerLiquidez">Estresse de Liquidez</text>
+    <text name="TabManagerBreach">Falhas</text>
+    <text name="TabManagerWarning">Alertas</text>
+    <text name="TabManagerCreditLimits">Limites de Crédito (Cons)</text>
+    <text name="TabManagerStressScenarios">Cenários de Estresse</text>
+    <text name="TabManagerCreditScore">Credit Score Actions</text>
+    <text name="TabManagerConcentrations">Concentrações</text>
+    <text name="TabManagerAllocations">Alocações</text>
+    <text name="TabManagerCashPatrimony">Evolução Caixa/Patrimônio</text>
+    <text name="TabManagerCounterparts">Contrapartes</text>
+    
     <text name="DashFundo">Detalhes Fundos</text>
     
   </texts>
