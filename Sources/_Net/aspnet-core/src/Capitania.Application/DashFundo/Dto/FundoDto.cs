@@ -10,5 +10,9 @@ namespace Capitania.DashFundo.Dto
     {
         public int IDFundo { get; set; }
         public string Nome { get; set; }
+        public string CNPJ { get; set; }
+        public string Tipo { get; set; }
+        public string Qualificacao { get; set; }
+
     }
 }

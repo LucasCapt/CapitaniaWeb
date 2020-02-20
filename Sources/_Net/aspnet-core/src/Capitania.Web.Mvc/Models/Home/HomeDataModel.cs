@@ -18,7 +18,7 @@ namespace Capitania.Web.Models.Home
         {
             get
             {
-                return this.Concentracao.FindAll(w => w.Propriedade.Equals("rating"));
+                return this.Concentracao.FindAll(w => w.Propriedade.Equals("rating")).OrderBy(k => k.ConcentracaoConvertida).ToList();
             }
         }
 
@@ -26,7 +26,7 @@ namespace Capitania.Web.Models.Home
         {
             get
             {
-                return this.Concentracao.FindAll(w => w.Propriedade.Equals("tomador"));
+                return this.Concentracao.FindAll(w => w.Propriedade.Equals("tomador")).OrderBy(k => k.ConcentracaoConvertida).ToList();
             }
         }
 
@@ -34,7 +34,7 @@ namespace Capitania.Web.Models.Home
         {
             get
             {
-                return this.Concentracao.FindAll(w => w.Propriedade.Equals("segmento"));
+                return this.Concentracao.FindAll(w => w.Propriedade.Equals("segmento")).OrderBy(k => k.ConcentracaoConvertida).ToList();
             }
         }
 

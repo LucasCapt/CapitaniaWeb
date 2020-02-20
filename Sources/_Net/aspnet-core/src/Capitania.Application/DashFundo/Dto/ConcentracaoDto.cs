@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Capitania.DashboardHome.Dto
+namespace Capitania.DashFundo.Dto
 {
-    public class DadosConcentracaoDto
+    public class ConcentracaoDto
     {
         public string Fundo { get; set; }
         public string Propriedade { get; set; }
@@ -17,7 +17,7 @@ namespace Capitania.DashboardHome.Dto
         {
             get
             {
-                return Math.Round(this.Concentracao * 100, 4);
+                return Math.Round(this.Concentracao * 100, 1);
             }
         }
     }

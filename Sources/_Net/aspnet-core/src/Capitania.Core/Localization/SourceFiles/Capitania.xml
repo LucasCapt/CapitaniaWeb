@@ -104,6 +104,7 @@
     <text name="EditConfiguration">Edit Config</text>
     <text name="CreateNewConfig">Create new config</text>
     <text name="DashboardFundos">Fundos</text>
+    <text name="DashboardDetalheFundo">Fund Details</text>
     <text name="Fundo">Fundo</text>
     <text name="XmlAnbimaFileLog">XML Anbima File Log</text>
     <text name="DataBase">Process date</text>
@@ -126,7 +127,7 @@
 
     <text name="TabManagerAsset">ASSET</text>
     <text name="TabManagerCash">Cash Report (Selected Funds)</text>
-    <text name="TabManagerLiquidez">Liquity Stress</text>
+    <text name="TabManagerLiquidez">Liquidity Stress</text>
     <text name="TabManagerBreach">Breaches</text>
     <text name="TabManagerWarning">Warnings</text>
     <text name="TabManagerCreditLimits">Credit Limits (Cons)</text>
@@ -134,7 +135,7 @@
     <text name="TabManagerCreditScore">Credit Score Actions</text>
     <text name="TabManagerConcentrations">Concentrations</text>
     <text name="TabManagerAllocations">Allocations</text>
-    <text name="TabManagerCashPatrimony">Evolution Cash/Patrimony</text>
+    <text name="TabManagerCashPatrimony">Evolution Cash/Net Equity</text>
     <text name="TabManagerCounterparts">Counterparts</text>
      
     <text name="DashFundo">Fund Details</text>

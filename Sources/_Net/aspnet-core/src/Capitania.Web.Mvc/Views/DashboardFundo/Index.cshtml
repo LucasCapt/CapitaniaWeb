@@ -26,7 +26,7 @@
         <div class="card">
             <div class="header">
                 <h2>
-                    @L("DashboardFundos")
+                    @L("DashboardDetalheFundo")
                 </h2>
             </div>
             <div class="portlet-body">
@@ -40,6 +40,51 @@
                 </div>
                 @if (Model.ExibirDados)
                 {
+                    <div class="tab-content">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6">
+                                <h4>Detalhes Fundo</h4>
+                            </div>
+                        </div>
+
+                        <div class="row clearfix">
+                            <div class="col-sm-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="txtFundoNome" type="text" name="txtFundoNome" value="@Model.Dados.Fundo.Nome" class="form-control" disabled>
+                                        <label for="username" class="form-label">Nome</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="col-sm-4">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="txtCNPJ" type="text" name="txtCNPJ" value="@Model.Dados.Fundo.CNPJ" class="form-control" disabled>
+                                        <label for="txtCNPJ" class="form-label">CNPJ</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="txtTipo" type="text" name="txtTipo" value="@Model.Dados.Fundo.Tipo" class="form-control" disabled>
+                                        <label for="txtTipo" class="form-label">Tipo</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="txtQualificacao" type="text" name="txtQualificacao" value="@Model.Dados.Fundo.Qualificacao" class="form-control" disabled>
+                                        <label for="txtQualificacao" class="form-label">Tipo</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="tab-content">
                         <div class="row clearfix">
                             <div class="col-xs-12 col-sm-6">
@@ -64,6 +109,163 @@
                             </ejs-chart>
                         </div>
                     </div>
+                    <!-- Concentração -->
+                    <div class="row clearfix">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="control-section col-lg-4" align='left'>
+                                <ejs-accumulationchart id="idConcentracaoRating" title="Concentração Rating" enableAnimation="false">
+                                    <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                                    <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                                    <e-accumulationchart-legendsettings visible="false">
+                                    </e-accumulationchart-legendsettings>
+                                    <e-accumulation-series-collection>
+                                        <e-accumulation-series dataSource="@Model.ConcentracaoRating" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Valor Propriedade" explodeIndex="0" explode="true" explodeOffset="10%">
+                                            <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                                                <e-font fontWeight="600" color="white"></e-font>
+                                            </e-accumulationseries-datalabel>
+                                        </e-accumulation-series>
+                                    </e-accumulation-series-collection>
+                                </ejs-accumulationchart>
+                            </div>
+                            <div class="control-section col-lg-4" align='center'>
+                                <ejs-accumulationchart id="idConcentracaoTomador" title="Concentração Tomador" enableAnimation="false">
+                                    <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                                    <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                                    <e-accumulationchart-legendsettings visible="false">
+                                    </e-accumulationchart-legendsettings>
+                                    <e-accumulation-series-collection>
+                                        <e-accumulation-series dataSource="@Model.ConcentracaoTomador" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Valor Propriedade" explodeIndex="0" explode="true" explodeOffset="10%">
+                                            <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                                                <e-font fontWeight="600" color="white"></e-font>
+                                            </e-accumulationseries-datalabel>
+                                        </e-accumulation-series>
+                                    </e-accumulation-series-collection>
+                                </ejs-accumulationchart>
+                            </div>
+                            <div class="control-section col-lg-4" align='right'>
+                                <ejs-accumulationchart id="idConcentracaoSegmento" title="Concentração Segmento" enableAnimation="false">
+                                    <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                                    <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                                    <e-accumulationchart-legendsettings visible="false">
+                                    </e-accumulationchart-legendsettings>
+                                    <e-accumulation-series-collection>
+                                        <e-accumulation-series dataSource="@Model.ConcentracaoSegmento" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Valor Propriedade" explodeIndex="0" explode="true" explodeOffset="10%">
+                                            <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                                                <e-font fontWeight="600" color="white"></e-font>
+                                            </e-accumulationseries-datalabel>
+                                        </e-accumulation-series>
+                                    </e-accumulation-series-collection>
+                                </ejs-accumulationchart>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- #END# Concentração -->
+                    <div class="tab-content">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6">
+                                <h4>Métricas de Risco (Últimos 30 dias)</h4>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <ul class="nav nav-tabs tab-nav-right" role="tablist">
+                                <li role="presentation" class="active"><a href="#tabAsset" data-toggle="tab">Histórico Risco</a></li>
+                                <li role="presentation"><a href="#tabCash" data-toggle="tab">Histórico  Cash</a></li>
+                                <li role="presentation"><a href="#tabStressCenarios" data-toggle="tab">Histórico Stress</a></li>
+                                <li role="presentation"><a href="#tabCompliance" data-toggle="tab">Compliance</a></li>
+                                <li role="presentation"><a href="#tabBreach" data-toggle="tab">Falhas</a></li>
+                                <li role="presentation"><a href="#tabWarning" data-toggle="tab">Alertas</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane animated fadeIn active" id="tabAsset">
+                                    <div>
+                                        <ejs-grid id="GridAsset" dataSource="@Model.Dados.FundoAsset" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                            <e-grid-columns>
+                                                <e-grid-column field="Size" headerText="SIZE" textAlign="Right" format="N3" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Caixa" headerText="CAIXA" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Var" headerText="VAR" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
+                                                <e-grid-column field="Stress" headerText="STRESS" textAlign="Right" autoFit="true" format="P1"></e-grid-column>
+                                                <e-grid-column field="CTMDR" headerText="C.tmdr" textAlign="Right" autoFit="true" format="P0"></e-grid-column>
+                                                <e-grid-column field="CSGMNT" headerText="C.sgmnt" textAlign="Right" autoFit="true" format="P0"></e-grid-column>
+                                                <e-grid-column field="ELInt" headerText="EL.int" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
+                                                <e-grid-column field="ULInt" headerText="UL.int" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
+                                                <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                            </e-grid-columns>
+                                        </ejs-grid>
+
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCash">
+                                    <div>
+                                        <ejs-grid id="GridCash" dataSource="@Model.Dados.CashReport" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                            <e-grid-columns>
+                                                <e-grid-column field="DataInfo" headerText="Data" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Disponivel" headerText="DISP MM" textAlign="Left" format="N1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Cash" headerText="CASH MM" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="PercentualCash" headerText="%CASH" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Free" headerText="Free MM" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="PercentualFree" headerText="%Free" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="LIQ3m" headerText="3mLiq" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="REG3m" headerText="3mReq" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="CashFree3m" headerText="3mCASHFree" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                            </e-grid-columns>
+                                        </ejs-grid>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane animated fadeIn" id="tabStressCenarios">
+                                    <div>
+                                        <ejs-grid id="GridStress" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                            <e-grid-columns>
+                                                <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Granviver" headerText="CHOQUE SHOP APGranviver -20%" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="MProp" headerText="MPROP -50%" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Urbplan" headerText="Urbplan -65%" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Esser" headerText="Esser -50%" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                            </e-grid-columns>
+                                        </ejs-grid>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCompliance">
+                                    <div>
+                                        <ejs-grid id="GridCompliance" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                            <e-grid-columns>
+                                                <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="SaqueStress" headerText="Saque Stress" textAlign="Left" format="N1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="LiqDisponivel" headerText="Liq Dispo." textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="LiqReq" headerText="Liq Req." textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Percentile" headerText="Percentile" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
+                                            </e-grid-columns>
+                                        </ejs-grid>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane animated fadeIn" id="tabBreach">
+                                    <div>
+                                        <ejs-grid id="GridBreach" dataSource="@Model.Dados.ViolacoesFalhas" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                            <e-grid-columns>
+                                                <e-grid-column field="DataInfo" headerText="Data" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" autoFit="true" format="P1"></e-grid-column>
+                                                <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" autoFit="true"></e-grid-column>
+                                            </e-grid-columns>
+                                        </ejs-grid>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane animated fadeIn" id="tabWarning">
+                                    <div>
+                                        <ejs-grid id="GridWarning" dataSource="@Model.Dados.ViolacoesAlertas" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                            <e-grid-columns>
+                                                <e-grid-column field="DataInfo" headerText="Data" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" autoFit="true"></e-grid-column>
+                                            </e-grid-columns>
+                                        </ejs-grid>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="tab-content">
                         <div class="row clearfix">
                             <div class="col-xs-12 col-sm-6">
@@ -80,8 +282,14 @@
                             </ejs-grid>
                         </div>
                     </div>
+                    <div class="tab-content">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6">
+                                <h4> </h4>
+                            </div>
+                        </div>
+                    </div>
                 }
-
             </div>
         </div>
     </div>

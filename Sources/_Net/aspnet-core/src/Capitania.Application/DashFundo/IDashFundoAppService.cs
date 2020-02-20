@@ -11,5 +11,6 @@ namespace Capitania.DashFundo
     {
         DashFundoDto ObterDadosFundo(int IDFundo);
         List<FundoDto> ObterFundos();
+        List<ConcentracaoDto> ObterDadosConcentracao(int vFundoID);
     }
 }

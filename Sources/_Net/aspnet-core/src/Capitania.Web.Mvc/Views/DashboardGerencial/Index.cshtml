@@ -64,203 +64,181 @@
                         public double ELInt { get; set; }
                         public double ULInt { get; set; }
                         public DateTime Data { get; set; }*@
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane animated fadeIn active" id="tabAsset">
-                        <div>
-                            <ejs-grid id="GridAsset" dataSource="@ViewBag.DadosAsset" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Size" headerText="SIZE" textAlign="Right" format="N3" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Caixa" headerText="CAIXA" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Var" headerText="VAR" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
-                                    <e-grid-column field="Stress" headerText="STRESS" textAlign="Right" autoFit="true" format="P1"></e-grid-column>
-                                    <e-grid-column field="CTMDR" headerText="C.tmdr" textAlign="Right" autoFit="true" format="P0"></e-grid-column>
-                                    <e-grid-column field="CSGMNT" headerText="C.sgmnt" textAlign="Right" autoFit="true" format="P0"></e-grid-column>
-                                    <e-grid-column field="ELInt" headerText="EL.int" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
-                                    <e-grid-column field="ULInt" headerText="UL.int" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
-                                    <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane animated fadeIn active" id="tabAsset">
+                            <div>
+                                <ejs-grid id="GridAsset" dataSource="@ViewBag.DadosAsset" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Size" headerText="SIZE" textAlign="Right" format="N3" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Caixa" headerText="CAIXA" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Var" headerText="VAR" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
+                                        <e-grid-column field="Stress" headerText="STRESS" textAlign="Right" autoFit="true" format="P1"></e-grid-column>
+                                        <e-grid-column field="CTMDR" headerText="C.tmdr" textAlign="Right" autoFit="true" format="P0"></e-grid-column>
+                                        <e-grid-column field="CSGMNT" headerText="C.sgmnt" textAlign="Right" autoFit="true" format="P0"></e-grid-column>
+                                        <e-grid-column field="ELInt" headerText="EL.int" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
+                                        <e-grid-column field="ULInt" headerText="UL.int" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
+                                        <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
 
+                            </div>
+                            <div>
+                                <label for="displayname" class="form-label">VAR diario a 99%; Credit-VaR (UL) anual a 90%</label>
+                            </div>
                         </div>
-                        <div>
-                            <label for="displayname" class="form-label">VAR diario a 99%; Credit-VaR (UL) anual a 90%</label>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCash">
+                            <div>
+                                <ejs-grid id="GridCash" dataSource="@ViewBag.DadosCash" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Disponivel" headerText="DISP MM" textAlign="Left" format="N1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Cash" headerText="CASH MM" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="PercentualCash" headerText="%CASH" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Free" headerText="Free MM" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="PercentualFree" headerText="%Free" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="LIQ3m" headerText="3mLiq" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="REG3m" headerText="3mReq" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="CashFree3m" headerText="3mCASHFree" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="TabManagerCash">
-                        <div>
-                            <ejs-grid id="GridCash" dataSource="@ViewBag.DadosCash" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Disponivel" headerText="DISP MM" textAlign="Left" format="N1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Cash" headerText="CASH MM" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="PercentualCash" headerText="%CASH" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Free" headerText="Free MM" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="PercentualFree" headerText="%Free" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="LIQ3m" headerText="3mLiq" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="REG3m" headerText="3mReq" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="CashFree3m" headerText="3mCASHFree" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabLiquidez">
+                            <div>
+                                <ejs-grid id="GridLiquidez" dataSource="@ViewBag.DadosLiquidez" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="SaqueStress" headerText="Saque Stress" textAlign="Left" format="N1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="LiqDisponivel" headerText="Liq Dispo." textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="LiqReq" headerText="Liq Req." textAlign="Right" format="N1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Percentile" headerText="Percentile" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabLiquidez">
-                        <div>
-                            <ejs-grid id="GridLiquidez" dataSource="@ViewBag.DadosLiquidez" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="SaqueStress" headerText="Saque Stress" textAlign="Left" format="N1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="LiqDisponivel" headerText="Liq Dispo." textAlign="Right" format="N1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="LiqReq" headerText="Liq Req." textAlign="Right" format="N1" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Percentile" headerText="Percentile" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabBreach">
+                            <div>
+                                <ejs-grid id="GridBreach" dataSource="@ViewBag.DadosBreach" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-textwrapsettings wrapMode="Content"></e-grid-textwrapsettings>
+                                    <e-grid-columns>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" autoFit="true" format="P1"></e-grid-column>
+                                        <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" width="150" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" width="150" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabBreach">
-                        <div>
-                            <ejs-grid id="GridBreach" dataSource="@ViewBag.DadosBreach" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" autoFit="true" format="P1"></e-grid-column>
-                                    <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabWarning">
+                            <div>
+                                <ejs-grid id="GridWarning" dataSource="@ViewBag.DadosWarning" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" format="P1" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabWarning">
-                        <div>
-                            <ejs-grid id="GridWarning" dataSource="@ViewBag.DadosWarning" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
-                        </div>
-                    </div>
 
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCreditLimits">
-                        <div>
-                            <ejs-grid id="GridCreditLimits" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Compliance" headerText="COMP?" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D1" headerText="D1" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D5" headerText="D5" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D21" headerText="D21" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D42" headerText="D42" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D63" headerText="D63" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D126" headerText="D126" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D252" headerText="D252" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCreditLimits">
+                            <div>
+                                <ejs-grid id="GridCreditLimits" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Regra" headerText="Regra" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Limite" headerText="Limite" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Posicao" headerText="Posição" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Delta" headerText="Delta" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Compliant" headerText="Compliant?" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabStressCenarios">
-                        <div>
-                            <ejs-grid id="GridStress" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Compliance" headerText="COMP?" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D1" headerText="D1" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D5" headerText="D5" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D21" headerText="D21" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D42" headerText="D42" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D63" headerText="D63" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D126" headerText="D126" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D252" headerText="D252" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabStressCenarios">
+                            <div>
+                                <ejs-grid id="GridStress" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Granviver" headerText="CHOQUE SHOP APGranviver -20%" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="MProp" headerText="MPROP -50%" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Urbplan" headerText="Urbplan -65%" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Esser" headerText="Esser -50%" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCreditScore">
-                        <div>
-                            <ejs-grid id="GridCreditScore" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Compliance" headerText="COMP?" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D1" headerText="D1" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D5" headerText="D5" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D21" headerText="D21" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D42" headerText="D42" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D63" headerText="D63" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D126" headerText="D126" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D252" headerText="D252" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCreditScore">
+                            <div>
+                                <ejs-grid id="GridCreditScore" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Nome" headerText="Nome" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Score" headerText="Score" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="ScoreW" headerText="ScoreW-1" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Action" headerText="Action" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabConcentrations">
-                        <div>
-                            <ejs-grid id="GridConcentrations" dataSource="@ViewBag.DadosConcentracao" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Propriedade" headerText="Propriedade" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Nome" headerText="Nome" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Percentual" headerText="Percentual" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabConcentrations">
+                            <div>
+                                <ejs-grid id="GridConcentrations" dataSource="@ViewBag.DadosConcentracao" allowGrouping="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-groupsettings columns="@(new string[] {"Propriedade"})"></e-grid-groupsettings>
+                                    <e-grid-columns>
+                                        <e-grid-column field="Propriedade" headerText="Propriedade" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Nome" headerText="Nome" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Percentual" headerText="Percentual" textAlign="Right" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
 
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabAllocations">
-                        <div>
-                            <ejs-grid id="GridAllocations" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Compliance" headerText="COMP?" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D1" headerText="D1" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D5" headerText="D5" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D21" headerText="D21" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D42" headerText="D42" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D63" headerText="D63" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D126" headerText="D126" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D252" headerText="D252" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabAllocations">
+                            <div>
+                                <ejs-grid id="GridAllocations" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Nome" headerText="Nome" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Codigo" headerText="Código" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Posicao" headerText="Posição" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="DiasLiq" headerText="Dias Liq" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="DiasGrp" headerText="Dias Grp" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="DiasCnd" headerText="Dias Cnd" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
 
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCashPatrimony">
-                        <div>
-                            <ejs-grid id="GridCashPatrimony" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Compliance" headerText="COMP?" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D1" headerText="D1" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D5" headerText="D5" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D21" headerText="D21" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D42" headerText="D42" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D63" headerText="D63" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D126" headerText="D126" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D252" headerText="D252" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCashPatrimony">
+                            <div>
+                                <ejs-grid id="GridCashPatrimony" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="UltimoPL" headerText="Último PL" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="W1PL" headerText="W-1 PL" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="M1PL" headerText="M-1 PL" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="UltimoCaixa" headerText="Último Caixa" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="W1Caixa" headerText="W-1 Caixa" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="M1Caixa" headerText="M-1 Caixa" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
-                    </div>
 
-                    <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCounterparts">
-                        <div>
-                            <ejs-grid id="GridCounterParts" dataSource="@ViewBag.DadosContrapartes" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                <e-grid-columns>
-                                    <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="Compliance" headerText="COMP?" textAlign="Left" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D1" headerText="D1" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D5" headerText="D5" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D21" headerText="D21" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D42" headerText="D42" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D63" headerText="D63" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D126" headerText="D126" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="D252" headerText="D252" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
-                                </e-grid-columns>
-                            </ejs-grid>
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="tabCounterparts">
+                            <div>
+                                <ejs-grid id="GridCounterParts" dataSource="@ViewBag.DadosContrapartes" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Contraparte" headerText="Contraparte" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="RazaoSocial" headerText="Razão Social" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Atualizacao" headerText="Atualização" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </form>
         </div>

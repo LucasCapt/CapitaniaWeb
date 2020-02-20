@@ -34,6 +34,7 @@ namespace Capitania.Web.Mvc.Controllers
             DashFundoModel vModel = new DashFundoModel();
             //Carregar dados 
             vModel.Dados = _dashboardAppService.ObterDadosFundo(IDFundo);
+            vModel.Concentracao = _dashboardAppService.ObterDadosConcentracao(IDFundo);
             vModel.ExibirDados = true;
             vModel.ListaFundos = GetFundos();
 

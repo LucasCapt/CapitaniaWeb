@@ -100,6 +100,7 @@
     <text name="EditConfiguration">Editar Configuração</text>
     <text name="CreateNewConfig">Criar Nova Configuração</text>
     <text name="DashboardFundos">Fundos</text>
+    <text name="DashboardDetalheFundo">Detalhe Fundo</text>
     <text name="Fundo">Fundo</text>
     <text name="XmlAnbimaFileLog">Log Xml Anbima</text>
     <text name="DataBase">Data Processamento</text>

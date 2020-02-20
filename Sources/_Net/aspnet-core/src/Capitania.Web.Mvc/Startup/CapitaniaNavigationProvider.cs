@@ -82,6 +82,14 @@ namespace Capitania.Web.Startup
                     )
                     ).AddItem(
                     new MenuItemDefinition(
+                        PageNames.DashboardGerencial,
+                        L("DashboardManager"),
+                        url: "DashboardGerencial",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Roles
+                    )
+                    ).AddItem(
+                    new MenuItemDefinition(
                         PageNames.DashFundo,
                         L("DashFundo"),
                         url: "DashboardFundo",

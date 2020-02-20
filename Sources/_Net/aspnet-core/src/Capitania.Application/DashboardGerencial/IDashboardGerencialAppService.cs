@@ -16,6 +16,6 @@ namespace Capitania.DashboardGerencial
         List<ViolacoesDto> ObterDadosViolacoesWarnings(DateTime vDataBase);
         List<CreditScoreActionDto> ObterCreditScore(DateTime vDataBase);
         List<ConcentracaoDto> ObterConcentracao(DateTime vDataBase);
-        List<ContrapartesDto> ObterContrapartes(DateTime vDataBase)
+        List<ContrapartesDto> ObterContrapartes(DateTime vDataBase);
     }
 }

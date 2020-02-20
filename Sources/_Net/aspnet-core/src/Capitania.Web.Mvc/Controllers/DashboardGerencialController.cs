@@ -32,7 +32,7 @@ namespace Capitania.Web.Mvc.Controllers
             ViewBag.DadosLiquidez = _dashboardAppService.ObterStressLiquidez(vDataBase);
             ViewBag.DadosBreach = _dashboardAppService.ObterDadosViolacoesBreachs(vDataBase);
             ViewBag.DadosWarning = _dashboardAppService.ObterDadosViolacoesWarnings(vDataBase);
-            ViewBag.DadosConcentracao = _dashboardAppService.ObterConcentracao(vDataBase);
+            ViewBag.DadosConcentracao = _dashboardAppService.ObterConcentracao(vDataBase).OrderByDescending(w => w.Percentual).ToList();
             ViewBag.DadosContrapartes = _dashboardAppService.ObterContrapartes(vDataBase);
 
             ViewBag.DataBase = vDataBase;
@@ -50,6 +50,7 @@ namespace Capitania.Web.Mvc.Controllers
             ViewBag.DadosLiquidez = _dashboardAppService.ObterStressLiquidez(vDataBase);
             ViewBag.DadosBreach = _dashboardAppService.ObterDadosViolacoesBreachs(vDataBase);
             ViewBag.DadosWarning = _dashboardAppService.ObterConcentracao(vDataBase);
+            ViewBag.DadosConcentracao = _dashboardAppService.ObterConcentracao(vDataBase).OrderByDescending(w=>w.Percentual).ToList();
             ViewBag.DadosContrapartes = _dashboardAppService.ObterContrapartes(vDataBase);
 
             ViewBag.DataBase = vDataBase;

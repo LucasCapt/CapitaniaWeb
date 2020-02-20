@@ -55,7 +55,7 @@ namespace Capitania.DashboardGerencial
             vSQL.AppendLine("       DISPO / 1000000 as Disponivel, CASH / 1000000 as Cash,");
             vSQL.AppendLine("       PCASH PercentualCash, CASHFREE / 1000000 as Free,");
             vSQL.AppendLine("       PCASHFREE PercentualFree, LIQ3M / 1000000 as LIQ3m,");
-            vSQL.AppendLine("       REQ3M / 1000000 REG3m, CashFree3m / 1000000 as LIQ3m");
+            vSQL.AppendLine("       REQ3M / 1000000 REG3m, CashFree3m / 1000000 as CashFree3m");
             vSQL.AppendLine("  FROM TCASHREPORTHIST");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             
@@ -68,10 +68,10 @@ namespace Capitania.DashboardGerencial
         {
             StringBuilder vSQL = new StringBuilder();
             vSQL.AppendLine("SELECT Fundo as Fundo,");
-            vSQL.AppendLine("       LIQSTRESSNEED / 1000000 as SaqueStress, LIQSTRESSavail / 1000000 as LiqDisponivel,");
-            vSQL.AppendLine("       LIQSTRESSREQ as LiqReq, LIQSTRESSPERCENTILE / 1000000 as Percentile");
+            vSQL.AppendLine("       (LIQSTRESSNEED / 1000000) as SaqueStress, (LIQSTRESSavail / 1000000) as LiqDisponivel,");
+            vSQL.AppendLine("       (LIQSTRESSREQ /1000000) as LiqReq, LIQSTRESSPERCENTILE as Percentile");
             vSQL.AppendLine("  FROM THISTRISK");
-            vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
+            vSQL.AppendLine(String.Format(" WHERE [DATARUN] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND NOT (FUNDTYPE IN ('CONS', 'CLOSED') OR AREA = 'EXTERNO')");
 
             List<StressLiquidezDto> vDados = GeneralHelper.GetData<StressLiquidezDto>(vSQL.ToString());
@@ -82,7 +82,7 @@ namespace Capitania.DashboardGerencial
         public List<ViolacoesDto> ObterDadosViolacoesBreachs(DateTime vDataBase)
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000000) as Alocacao, RegraTexto as TextoRegra, Papeis, Vermelho as Cor");
+            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000000) as Alocacao, RegraTexto as TextoRegra, Papeis, 'Vermelho' as Cor");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE = 'V'");
@@ -90,7 +90,7 @@ namespace Capitania.DashboardGerencial
             vSQL.AppendLine("   AND TIPO = 'BREACH'");
             vSQL.AppendLine("   AND ESCOPO = 'GER'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000) as Alocacao, RegraTexto as TextoRegra, Papeis, Vermelho as Cor");
+            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000) as Alocacao, RegraTexto as TextoRegra, Papeis, 'Vermelho' as Cor");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE = 'V'");
@@ -98,7 +98,7 @@ namespace Capitania.DashboardGerencial
             vSQL.AppendLine("   AND TIPO = 'BREACH'");
             vSQL.AppendLine("   AND ESCOPO = 'GER'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo, Regra, Alocacao, RegraTexto as TextoRegra, Papeis, Vermelho as Cor");
+            vSQL.AppendLine("SELECT Fundo, Regra, Alocacao, RegraTexto as TextoRegra, Papeis, 'Vermelho' as Cor");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE <> 'V'");
@@ -113,7 +113,7 @@ namespace Capitania.DashboardGerencial
         public List<ViolacoesDto> ObterDadosViolacoesWarnings(DateTime vDataBase)
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000000) as Alocacao, RegraTexto as TextoRegra, Papeis, Amarelo as Cor");
+            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000000) as Alocacao, RegraTexto as TextoRegra, Papeis, 'Amarelo' as Cor");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE = 'V'");
@@ -121,7 +121,7 @@ namespace Capitania.DashboardGerencial
             vSQL.AppendLine("   AND TIPO = 'WARN'");
             vSQL.AppendLine("   AND ESCOPO = 'GER'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000) as Alocacao, RegraTexto as TextoRegra, Papeis, Amarelo as Cor");
+            vSQL.AppendLine("SELECT Fundo, Regra, (Alocacao/1000) as Alocacao, RegraTexto as TextoRegra, Papeis, 'Amarelo' as Cor");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE = 'V'");
@@ -129,7 +129,7 @@ namespace Capitania.DashboardGerencial
             vSQL.AppendLine("   AND TIPO = 'WARN'");
             vSQL.AppendLine("   AND ESCOPO = 'GER'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT Fundo, Regra, Alocacao, RegraTexto as TextoRegra, Papeis, Amarelo as Cor");
+            vSQL.AppendLine("SELECT Fundo, Regra, Alocacao, RegraTexto as TextoRegra, Papeis, 'Amarelo' as Cor");
             vSQL.AppendLine("  FROM THISTCOMPBREACHES");
             vSQL.AppendLine(String.Format(" WHERE [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine("   AND TIPOLIMITE <> 'V'");
@@ -170,13 +170,13 @@ namespace Capitania.DashboardGerencial
             string vPropriedade2 = ParameterManager.GetParameterValue(DBParametersConstants.ConcentrationProperty2);
             string vPropriedade3 = ParameterManager.GetParameterValue(DBParametersConstants.ConcentrationProperty3);
 
-            vSQL.AppendLine("SELECT Propriedade as Propriedade, ValorProp as Nome, (Concentracao / 100) as Percentual");
+            vSQL.AppendLine("SELECT Propriedade as Propriedade, ValorProp as Nome, (TCONCENTRA.Concentracao / 100) as Percentual");
             vSQL.AppendLine("  FROM TCONCENTRA, TFUNDOS");
             vSQL.AppendLine(" WHERE TFUNDOS.NOME = TCONCENTRA.NOME");
             vSQL.AppendLine(String.Format("   AND TFUNDOS.ID = {0}", vFundoID));
             vSQL.AppendLine(String.Format("   AND [DATA] = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine(String.Format("   AND Propriedade in ( '{0}', '{1}', '{2}')", vPropriedade1, vPropriedade2, vPropriedade3));
-            vSQL.AppendLine(" ORDER BY CONCENTRACAO DESC");
+            vSQL.AppendLine(" ORDER BY TCONCENTRA.CONCENTRACAO DESC");
 
             List<ConcentracaoDto> vDados = GeneralHelper.GetData<ConcentracaoDto>(vSQL.ToString());
 
@@ -187,9 +187,9 @@ namespace Capitania.DashboardGerencial
         {
             StringBuilder vSQL = new StringBuilder();
 
-            vSQL.AppendLine("SELECT Nome as Nome, RazaoSocial as RazaoSocial, Atualizacao as Atualizacao");
+            vSQL.AppendLine("SELECT Nome as Contraparte, RazaoSocial as RazaoSocial, Atualizado as Atualizacao");
             vSQL.AppendLine("  FROM TCTPT");
-            vSQL.AppendLine(" WHERE WHERE PERFILRISCO='ALTO'");
+            vSQL.AppendLine(" WHERE PERFILRISCO='ALTO'");
 
             List<ContrapartesDto> vDados = GeneralHelper.GetData<ContrapartesDto>(vSQL.ToString());
 
