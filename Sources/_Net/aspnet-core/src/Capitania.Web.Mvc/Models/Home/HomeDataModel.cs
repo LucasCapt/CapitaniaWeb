@@ -39,5 +39,7 @@ namespace Capitania.Web.Models.Home
         }
 
         public List<DadosHistoricoBreachesDto> HistoricoFalhas { get; set; }
+
+        public List<DadosCashDozeMeses> CashDozeMeses { get; set; }
     }
 }

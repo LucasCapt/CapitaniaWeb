@@ -28,28 +28,44 @@ namespace Capitania.DashFundo
             vRetorno.Fundo = GeneralHelper.GetData<FundoDto>(vSQL.ToString()).FirstOrDefault();
 
             vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT TOP 10 Fundo as IDFundo, [Data] as Data, Quota as Quota");
-            vSQL.AppendLine("  FROM TQUOTAS");
-            vSQL.AppendLine(String.Format(" WHERE Fundo = {0}", IDFundo));
-            vSQL.AppendLine(" ORDER BY [Data] Desc");
+
+            vSQL.AppendLine("SELECT Fundo AS IDFundo, [Data] AS Data, Quota AS Quota");
+            vSQL.AppendLine("  FROM TQUOTAS,");
+            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), [Data], 126) AS anoMes, MAX([Data]) AS UltimaDataMes");
+            vSQL.AppendLine("          FROM TQUOTAS");
+            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), [Data], 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), [Data], 126) AS anoMes");
+            vSQL.AppendLine("                                                      FROM TQUOTAS");
+            vSQL.AppendLine(String.Format("                                                     WHERE fundo = {0}", IDFundo));
+            vSQL.AppendLine("                                                       AND [Data] > CAST(DATEADD(year, -1, GETDATE()) as DATE))");
+            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), [Data], 126)) AS Tabela1");
+            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = [Data]");
+            vSQL.AppendLine(String.Format("   AND fundo = {0}", IDFundo));
+            vSQL.AppendLine(" ORDER BY [Data]");
 
             vRetorno.Quotas = GeneralHelper.GetData<QuotaDto>(vSQL.ToString());
 
             vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT DISTINCT TOP 10 DataInfo as DataInfo, Fundo as NomeFundo, (PL / 1000000) as PL ");
-            vSQL.AppendLine("  FROM THISTRISK");
-            vSQL.AppendLine(String.Format(" WHERE Fundo = '{0}'", vRetorno.Fundo.Nome.Trim()));
-            vSQL.AppendLine(" ORDER BY DataInfo Desc");
+            vSQL.AppendLine("SELECT DataRun as DataInfo, Fundo AS NomeFundo, (PL / 1000000) AS PL ");
+            vSQL.AppendLine("  FROM THistRisk,");
+            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), datarun, 126) AS anoMes, MAX(datarun) AS UltimaDataMes");
+            vSQL.AppendLine("          FROM THistRisk");
+            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), datarun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), datarun, 126) AS anoMes");
+            vSQL.AppendLine("                                                       FROM THistRisk");
+            vSQL.AppendLine(String.Format("                                                     WHERE fundo = '{0}'", vRetorno.Fundo.Nome.Trim()));
+            vSQL.AppendLine("                                                        AND datarun > CAST(DATEADD(year, -1, GETDATE()) as DATE))");
+            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), datarun, 126)) AS Tabela1");
+            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = datarun");
+            vSQL.AppendLine(String.Format("   AND fundo = '{0}'", vRetorno.Fundo.Nome.Trim()));
+            vSQL.AppendLine(" ORDER BY DataRun");
 
             vRetorno.Patrimonio = GeneralHelper.GetData<PatrimonioLiquidoDto>(vSQL.ToString());
 
             vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT Fundo as IDFundo, Data as Data, Papel as Papel, Valor as Valor");
-            vSQL.AppendLine("  FROM TPOSIC");
+            vSQL.AppendLine("SELECT TPOSIC.Fundo as IDFundo, TPOSIC.Data as Data, TPOSIC.Papel as Papel, TPOSIC.Valor as Valor, TPapel.Nome AS PapelNome,");
+            vSQL.AppendLine("       TPapel.CodCetip AS CodigoCETIP, TPapel.ISIN as PapelISIN, (TPOSIC.Valor) as ValorPL");
+            vSQL.AppendLine("  FROM TPOSIC, TPAPEL");
             vSQL.AppendLine(String.Format(" WHERE Fundo = {0}", IDFundo));
-            vSQL.AppendLine("   AND [Data] = (SELECT MAX([DATA])");
-            vSQL.AppendLine("                   FROM TPOSIC D");
-            vSQL.AppendLine(String.Format("                  WHERE Fundo = {0})", IDFundo));
+            vSQL.AppendLine("   AND TPAPEL.Nome = TPOSIC.Papael");
             vSQL.AppendLine(" ORDER BY Data Desc");
 
             vRetorno.Posicao = GeneralHelper.GetData<PosicaoDto>(vSQL.ToString());

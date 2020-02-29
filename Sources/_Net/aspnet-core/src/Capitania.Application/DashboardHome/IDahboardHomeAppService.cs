@@ -15,5 +15,6 @@ namespace Capitania.DashboardHome
         DashboardNumerosDto ObterDadosNumeros();
         List<DadosConcentracaoDto> ObterDadosConcentracao();
         List<DadosHistoricoBreachesDto> ObterDadosHistoricoBreaches();
+        List<DadosCashDozeMeses> ObterDadosCashDozeMeses();
     }
 }

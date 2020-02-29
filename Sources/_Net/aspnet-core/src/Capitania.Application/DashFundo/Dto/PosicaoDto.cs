@@ -12,5 +12,9 @@ namespace Capitania.DashFundo.Dto
         public DateTime Data { get; set; }
         public double Valor { get; set; }
         public string Papel { get; set; }
+        public string PapelNome { get; set; }
+        public string CodigoCETIP { get; set; }
+        public string PapelISIN { get; set; }
+        public double ValorPL { get; set; }
     }
 }

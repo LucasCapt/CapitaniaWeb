@@ -83,25 +83,61 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row clearfix">
+                            <div class="col-sm-3">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="txtTipo409" type="text" name="txtTipo409" value="@Model.Dados.Fundo.Tipo409" class="form-control" disabled>
+                                        <label for="txtTipo409" class="form-label">Tipo 409</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="txtPrazoResgate" type="text" name="txtPrazoResgate" value="@Model.Dados.Fundo.PrazoResgate" class="form-control" disabled>
+                                        <label for="txtPrazoResgate" class="form-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="tab-content">
                         <div class="row clearfix">
                             <div class="col-xs-12 col-sm-6">
-                                <h4>Quotas/Patrimônio Líquido</h4>
+                                <h4>Quotas</h4>
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <ejs-chart id="idHistoricoPLConsolidado" title="Quota/PL">
+                            <ejs-chart id="idHistoricoQuotasConsolidado" title="Quotas">
                                 <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
                                 <e-chart-primaryxaxis valueType="DateTime"
-                                                      labelFormat="dd/MM/yyyy"
+                                                      labelFormat="MM/yyyy"
                                                       edgeLabelPlacement="Shift">
                                 </e-chart-primaryxaxis>
                                 <e-series-collection>
                                     <e-series dataSource="@Model.Dados.Quotas" name="Quotas" xName="Data" width="2" opacity="1" yName="Quota" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
                                         <e-series-marker visible="true" height="10" width="10"></e-series-marker>
                                     </e-series>
+                                </e-series-collection>
+                            </ejs-chart>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6">
+                                <h4>Patrimônio Líquido</h4>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <ejs-chart id="idHistoricoPLConsolidado" title="Quotas">
+                                <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                                <e-chart-primaryxaxis valueType="DateTime"
+                                                      labelFormat="MM/yyyy"
+                                                      edgeLabelPlacement="Shift">
+                                </e-chart-primaryxaxis>
+                                <e-series-collection>
                                     <e-series dataSource="@Model.Dados.Patrimonio" name="PL" xName="DataInfo" width="2" opacity="1" yName="PL" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
                                         <e-series-marker visible="true" height="10" width="10"></e-series-marker>
                                     </e-series>
@@ -276,7 +312,11 @@
                             <ejs-grid id="gridPosicao" dataSource="@Model.Dados.Posicao" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
                                 <e-grid-columns>
                                     <e-grid-column field="Papel" headerText="Papel" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="PapelNome" headerText="Nome" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="CodigoCETIP" headerText="Código CETIP" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="PapelISIN" headerText="ISIN" textAlign="Left" autoFit="true"></e-grid-column>
                                     <e-grid-column field="Valor" headerText="Valor" textAlign="Right" format="N3" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="ValorPL" headerText="Valor/PL" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
                                     <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
                                 </e-grid-columns>
                             </ejs-grid>

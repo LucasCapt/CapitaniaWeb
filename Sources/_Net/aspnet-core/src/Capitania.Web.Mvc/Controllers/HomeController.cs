@@ -28,6 +28,7 @@ namespace Capitania.Web.Controllers
             vModel.Numeros = _dashboardHome.ObterDadosNumeros();
             vModel.Concentracao = _dashboardHome.ObterDadosConcentracao();
             vModel.HistoricoFalhas = _dashboardHome.ObterDadosHistoricoBreaches();
+            vModel.CashDozeMeses = _dashboardHome.ObterDadosCashDozeMeses();
 
             return View(vModel);
         }
