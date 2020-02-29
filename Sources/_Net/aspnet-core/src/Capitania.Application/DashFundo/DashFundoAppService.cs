@@ -76,6 +76,7 @@ namespace Capitania.DashFundo
             vSQL.AppendLine("   AND tfundos.Nome = TConcentra.Nome");
             vSQL.AppendLine(String.Format("   AND TConcentra.Propriedade in ('{0}', '{1}', '{2}')", vPropriedade1, vPropriedade2, vPropriedade3));
             vSQL.AppendLine("   AND TConcentra.[Data]  = (SELECT MAX([DATA]) FROM TConcentra)");
+            vSQL.AppendLine("   AND TConcentra.ValorProp <> ''");
             vSQL.AppendLine(" ORDER BY TConcentra.Nome, TConcentra.Propriedade;");
 
             List<ConcentracaoDto> vDados = GeneralHelper.GetData<ConcentracaoDto>(vSQL.ToString());

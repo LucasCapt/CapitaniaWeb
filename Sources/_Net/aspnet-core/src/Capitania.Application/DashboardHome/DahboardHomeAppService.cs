@@ -15,10 +15,11 @@ namespace Capitania.DashboardHome
         {
             StringBuilder vSQL = new StringBuilder();
 
-            vSQL.AppendLine("SELECT distinct TOP 10 datainfo as DataInfo, pl as PL");
+            vSQL.AppendLine("SELECT datainfo as DataInfo, pl as PL");
             vSQL.AppendLine("  FROM thistrisk");
             vSQL.AppendLine(" WHERE fundo = '_CONSOLIDADO'");
-            vSQL.AppendLine(" ORDER BY DataInfo Desc");
+            vSQL.AppendLine("   and datainfo between cast(dateadd(year, -2, getdate()) as date) and cast(GETDATE() as date)");
+            vSQL.AppendLine(" ORDER BY DataInfo");
 
             List<HistoricoPLConsolidadoDto> vDados = GeneralHelper.GetData<HistoricoPLConsolidadoDto>(vSQL.ToString());
 
@@ -61,6 +62,7 @@ namespace Capitania.DashboardHome
             vSQL.AppendLine("  FROM TFundos");
             vSQL.AppendLine(" WHERE NOT (Deleted = 1 AND DT_Deleted <= GetDate())");
             vSQL.AppendLine("   AND DT_CREATED <= GetDate()");
+            vSQL.AppendLine("   AND ID NOT IN (73, 60)"); //_CONS_TOTAL, _CONS_ATIVO
 
             vRetorno.NumeroFundos = GeneralHelper.GetCount(vSQL.ToString());
 
@@ -108,6 +110,7 @@ namespace Capitania.DashboardHome
             vSQL.AppendLine("   AND tfundos.Nome = TConcentra.Nome");
             vSQL.AppendLine(String.Format("   AND TConcentra.Propriedade in ('{0}', '{1}', '{2}')", vPropriedade1, vPropriedade2, vPropriedade3));
             vSQL.AppendLine("   AND TConcentra.[Data]  = (SELECT MAX([DATA]) FROM TConcentra)");
+            vSQL.AppendLine("   AND TConcentra.ValorProp <> ''");
             vSQL.AppendLine(" ORDER BY TConcentra.Nome, TConcentra.Propriedade;");
 
             List<DadosConcentracaoDto> vDados = GeneralHelper.GetData<DadosConcentracaoDto>(vSQL.ToString());

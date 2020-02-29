@@ -27,7 +27,7 @@ namespace Capitania.DashboardControle
             vSQL.AppendLine(String.Format("   AND AREA = '{0}'", Area));
             vSQL.AppendLine("   AND FUNDSTATUS = 'INV'");
 
-            List <DashBoardControleFundoDto> vDados = GeneralHelper.GetData<DashBoardControleFundoDto>(vSQL.ToString());
+            List<DashBoardControleFundoDto> vDados = GeneralHelper.GetData<DashBoardControleFundoDto>(vSQL.ToString());
 
             return vDados;
         }
@@ -42,7 +42,7 @@ namespace Capitania.DashboardControle
             return ObterDadosFundo("ADV", vDataBase);
         }
 
-        public List <DashboardControleLiquidezDto> ObterDadosLiquidez(DateTime vDataBase)
+        public List<DashboardControleLiquidezDto> ObterDadosLiquidez(DateTime vDataBase)
         {
             StringBuilder vSQL = new StringBuilder();
             vSQL.AppendLine("SELECT Fundo, Liq_ok as Compliance, LIQ_1 as D1, LIQ_5 as D5, LIQ_21 as D21, LIQ_42 as D42, LIQ_63 as D63, LIQ_126 as D126, LIQ_252 as D252");
@@ -56,7 +56,7 @@ namespace Capitania.DashboardControle
 
             return vDados;
         }
-        
+
         public List<DashboardControleNecessidadeCaixaDto> ObterDadosNecessidadeCaixa(DateTime vDataBase)
         {
             StringBuilder vSQL = new StringBuilder();
@@ -76,6 +76,24 @@ namespace Capitania.DashboardControle
             vSQL.AppendLine(" ORDER BY VAR DESC");
 
             List<DashboardControleNecessidadeCaixaDto> vDados = GeneralHelper.GetData<DashboardControleNecessidadeCaixaDto>(vSQL.ToString());
+
+            foreach (var item in vDados)
+            {
+                if (item.D1 < 0)
+                    item.D1 = 0;
+                if (item.D5 < 0)
+                    item.D5 = 0;
+                if (item.D21 < 0)
+                    item.D21 = 0;
+                if (item.D42 < 0)
+                    item.D42 = 0;
+                if (item.D63 < 0)
+                    item.D63 = 0;
+                if (item.D126 < 0)
+                    item.D126 = 0;
+                if (item.D252 < 0)
+                    item.D252 = 0;
+            }
 
             return vDados;
         }
