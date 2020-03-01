@@ -66,140 +66,145 @@
         </div>
     </div>
 </div>
-<!-- #END# Widgets -->
-<!-- PL Consolidado e Caixa -->
-<div class="row clearfix" style="overflow-x:auto;white-space:nowrap">
-    <div class="body" style="overflow-x:auto">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
-            <ejs-chart id="idHistoricoPLConsolidado" title="Histórico PL/Caixa Consolidado">
-                <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
-                <e-chart-primaryxaxis valueType="DateTime"
-                                      labelFormat="dd/MM/yyyy"
-                                      edgeLabelPlacement="Shift">
-                </e-chart-primaryxaxis>
-                <e-series-collection>
-                    <e-series dataSource="@Model.HistoricoPLConsolidadado" name="PL" xName="DataInfo" width="2" opacity="1" yName="PLSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                    </e-series>
-                    <e-series dataSource="@Model.CaixaConsolidado" name="Caixa" xName="DataInfo" width="2" opacity="1" yName="CaixaSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                    </e-series>
-                </e-series-collection>
-            </ejs-chart>
-        </div>
-    </div>
-</div>
-
-<!-- #END# PL Consolidado e Caixa -->
-<!-- PL Ativo Total -->
 <div class="row clearfix">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <ejs-chart id="idPLTotal" title="PL Ativo Total">
-            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
-            <e-chart-primaryxaxis valueType="DateTime"
-                                  labelFormat="dd/MM/yyyy"
-                                  edgeLabelPlacement="Shift">
-            </e-chart-primaryxaxis>
-            <e-series-collection>
-                <e-series dataSource="@Model.AtivoTotal" name="PL" xName="DataInfo" width="2" opacity="1" yName="PLSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                </e-series>
-            </e-series-collection>
-        </ejs-chart>
-    </div>
-</div>
-<!-- Concentração -->
-<div class="row clearfix">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="control-section col-lg-4" align='left'>
-            <ejs-accumulationchart id="idConcentracaoRating" title="Concentração Rating" enableAnimation="false">
-                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
-                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                <e-accumulationchart-legendsettings visible="false">
-                </e-accumulationchart-legendsettings>
-                <e-accumulation-series-collection>
-                    <e-accumulation-series dataSource="@Model.ConcentracaoRating" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
-                        <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
-                            <e-font fontWeight="600" color="white"></e-font>
-                        </e-accumulationseries-datalabel>
-                    </e-accumulation-series>
-                </e-accumulation-series-collection>
-            </ejs-accumulationchart>
-        </div>
-        <div class="control-section col-lg-4" align='center'>
-            <ejs-accumulationchart id="idConcentracaoTomador" title="Concentração Tomador" enableAnimation="false">
-                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
-                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                <e-accumulationchart-legendsettings visible="false">
-                </e-accumulationchart-legendsettings>
-                <e-accumulation-series-collection>
-                    <e-accumulation-series dataSource="@Model.ConcentracaoTomador" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
-                        <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
-                            <e-font fontWeight="600" color="white"></e-font>
-                        </e-accumulationseries-datalabel>
-                    </e-accumulation-series>
-                </e-accumulation-series-collection>
-            </ejs-accumulationchart>
-        </div>
-        <div class="control-section col-lg-4" align='right'>
-            <ejs-accumulationchart id="idConcentracaoSegmento" title="Concentração Segmento" enableAnimation="false">
-                <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
-                <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
-                <e-accumulationchart-legendsettings visible="false">
-                </e-accumulationchart-legendsettings>
-                <e-accumulation-series-collection>
-                    <e-accumulation-series dataSource="@Model.ConcentracaoSegmento" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
-                        <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
-                            <e-font fontWeight="600" color="white"></e-font>
-                        </e-accumulationseries-datalabel>
-                    </e-accumulation-series>
-                </e-accumulation-series-collection>
-            </ejs-accumulationchart>
-        </div>
-    </div>
-</div>
-<!-- #END# Concentração -->
-<!-- #END# PL Ativo Total -->
-<!-- PL Breaches -->
-<div class="row clearfix">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <ejs-chart id="idBreaches" title="Breaches" width="100%">
-            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
-            <e-chart-primaryxaxis valueType="DateTime"
-                                  labelFormat="dd/MM/yyyy"
-                                  intervalType="Auto"
-                                  edgeLabelPlacement="Shift"></e-chart-primaryxaxis>
-            <e-series-collection>
-                <e-series dataSource="@Model.HistoricoFalhas" name="Breaches" xName="DataFalha" width="2" opacity="1" yName="NumeroFalhas" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                </e-series>
-            </e-series-collection>
-        </ejs-chart>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <!-- #END# Widgets -->
+            <!-- PL Consolidado e Caixa -->
+            <div class="row clearfix" style="overflow-x:auto;white-space:nowrap">
+                <div class="body" style="overflow-x:auto">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idHistoricoPLConsolidado" title="Histórico PL/Caixa Consolidado" height="100%" width="95%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.HistoricoPLConsolidadado" name="PL" xName="DataInfo" width="2" opacity="1" yName="PLSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                </e-series>
+                                <e-series dataSource="@Model.CaixaConsolidado" name="Caixa" xName="DataInfo" width="2" opacity="1" yName="CaixaSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                </div>
+            </div>
 
-    </div>
-</div>
-<!-- #END# Breaches -->
-<!-- Cash Doze Meses -->
-<div class="row clearfix" style="overflow-x:auto;white-space:nowrap">
-    <div class="body" style="overflow-x:auto">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
-            <ejs-chart id="idCashDozeMeses" title="Cash/Disponível">
-                <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
-                <e-chart-primaryxaxis valueType="DateTime"
-                                      labelFormat="MM/yyyy"
-                                      edgeLabelPlacement="Shift">
-                </e-chart-primaryxaxis>
-                <e-series-collection>
-                    <e-series dataSource="@Model.CashDozeMeses" name="CaixaLivre3m" xName="DataRun" width="2" opacity="1" yName="Caixa Livre 3M" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                    </e-series>
-                    <e-series dataSource="@Model.CashDozeMeses" name="Disponivel" xName="DataRun" width="2" opacity="1" yName="Disponível" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
-                    </e-series>
-                </e-series-collection>
-            </ejs-chart>
+            <!-- #END# PL Consolidado e Caixa -->
+            <!-- PL Ativo Total -->
+            <div class="row clearfix">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <ejs-chart id="idPLTotal" title="PL Ativo Total" height="100%" width="95%">
+                        <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                        <e-chart-primaryxaxis valueType="DateTime"
+                                              labelFormat="MM/y"
+                                              intervalType="Months">
+                        </e-chart-primaryxaxis>
+                        <e-series-collection>
+                            <e-series dataSource="@Model.AtivoTotal" name="PL" xName="DataInfo" width="2" opacity="1" yName="PLSintetico" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                            </e-series>
+                        </e-series-collection>
+                    </ejs-chart>
+                </div>
+            </div>
+            <!-- Concentração -->
+            <div class="row clearfix">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="control-section col-lg-4" align='left'>
+                        <ejs-accumulationchart id="idConcentracaoRating" title="Concentração Rating" enableAnimation="false">
+                            <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                            <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                            <e-accumulationchart-legendsettings visible="false">
+                            </e-accumulationchart-legendsettings>
+                            <e-accumulation-series-collection>
+                                <e-accumulation-series dataSource="@Model.ConcentracaoRating" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
+                                    <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                                        <e-font fontWeight="600" color="white"></e-font>
+                                    </e-accumulationseries-datalabel>
+                                </e-accumulation-series>
+                            </e-accumulation-series-collection>
+                        </ejs-accumulationchart>
+                    </div>
+                    <div class="control-section col-lg-4" align='center'>
+                        <ejs-accumulationchart id="idConcentracaoTomador" title="Concentração Tomador" enableAnimation="false">
+                            <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                            <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                            <e-accumulationchart-legendsettings visible="false">
+                            </e-accumulationchart-legendsettings>
+                            <e-accumulation-series-collection>
+                                <e-accumulation-series dataSource="@Model.ConcentracaoTomador" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
+                                    <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                                        <e-font fontWeight="600" color="white"></e-font>
+                                    </e-accumulationseries-datalabel>
+                                </e-accumulation-series>
+                            </e-accumulation-series-collection>
+                        </ejs-accumulationchart>
+                    </div>
+                    <div class="control-section col-lg-4" align='right'>
+                        <ejs-accumulationchart id="idConcentracaoSegmento" title="Concentração Segmento" enableAnimation="false">
+                            <e-accumulationchart-center x="50%" y="50%"></e-accumulationchart-center>
+                            <e-accumulationchart-tooltipsettings enable="true"></e-accumulationchart-tooltipsettings>
+                            <e-accumulationchart-legendsettings visible="false">
+                            </e-accumulationchart-legendsettings>
+                            <e-accumulation-series-collection>
+                                <e-accumulation-series dataSource="@Model.ConcentracaoSegmento" xName="ValorPropriedade" yName="ConcentracaoConvertida" name="Concentracao" explodeIndex="0" explode="true" explodeOffset="10%">
+                                    <e-accumulationseries-datalabel name="ValorPropriedade" visible="true">
+                                        <e-font fontWeight="600" color="white"></e-font>
+                                    </e-accumulationseries-datalabel>
+                                </e-accumulation-series>
+                            </e-accumulation-series-collection>
+                        </ejs-accumulationchart>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# Concentração -->
+            <!-- #END# PL Ativo Total -->
+            <!-- PL Breaches -->
+            <div class="row clearfix">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <ejs-chart id="idBreaches" title="Breaches" height="100%" width="95%">
+                        <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                        <e-chart-primaryxaxis valueType="DateTime"
+                                              labelFormat="MM/y"
+                                              intervalType="Months">
+                        </e-chart-primaryxaxis>
+                        <e-series-collection>
+                            <e-series dataSource="@Model.HistoricoFalhas" name="Breaches" xName="DataFalha" width="2" opacity="1" yName="NumeroFalhas" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                            </e-series>
+                        </e-series-collection>
+                    </ejs-chart>
+
+                </div>
+            </div>
+            <!-- #END# Breaches -->
+            <!-- Cash Doze Meses -->
+            <div class="row clearfix" style="overflow-x:auto;white-space:nowrap">
+                <div class="body" style="overflow-x:auto">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idCashDozeMeses" title="Cash/Disponível" height="100%" width="95%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.CashDozeMeses" name="Caixa Livre 3M" xName="DataRun" width="2" opacity="1" yName="CaixaLivre3m" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                </e-series>
+                                <e-series dataSource="@Model.CashDozeMeses" name="Disponível" xName="DataRun" width="2" opacity="1" yName="Disponivel" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                    <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# Cash Doze Meses -->
         </div>
     </div>
 </div>
-
-<!-- #END# Cash Doze Meses -->

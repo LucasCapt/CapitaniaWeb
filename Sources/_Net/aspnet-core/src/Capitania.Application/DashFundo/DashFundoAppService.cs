@@ -19,7 +19,7 @@ namespace Capitania.DashFundo
             StringBuilder vSQL = new StringBuilder();
 
             vSQL.AppendLine("SELECT ID as IDFundo, Nome as Nome,");
-            vSQL.AppendLine("       CNPJ as CNPJ, Tipo as Tipo, Qualif as Qualificacao");
+            vSQL.AppendLine("       CNPJ as CNPJ, Tipo as Tipo, Qualif as Qualificacao, Tipo409 AS Tipo409, PrazoResgate as PrazoResgate");
             vSQL.AppendLine("  FROM TFUNDOS");
             vSQL.AppendLine(" WHERE NOT (Deleted = 1 AND DT_Deleted <= GetDate())");
             vSQL.AppendLine("   AND DT_CREATED <= GetDate()");
@@ -64,16 +64,20 @@ namespace Capitania.DashFundo
             vSQL.AppendLine("SELECT TPOSIC.Fundo as IDFundo, TPOSIC.Data as Data, TPOSIC.Papel as Papel, TPOSIC.Valor as Valor, TPapel.Nome AS PapelNome,");
             vSQL.AppendLine("       TPapel.CodCetip AS CodigoCETIP, TPapel.ISIN as PapelISIN, (TPOSIC.Valor) as ValorPL");
             vSQL.AppendLine("  FROM TPOSIC, TPAPEL");
-            vSQL.AppendLine(String.Format(" WHERE Fundo = {0}", IDFundo));
-            vSQL.AppendLine("   AND TPAPEL.Nome = TPOSIC.Papael");
+            vSQL.AppendLine(String.Format(" WHERE TPOSIC.Fundo = {0}", IDFundo));
+            vSQL.AppendLine("   AND TPAPEL.Nome = TPOSIC.Papel");
+            vSQL.AppendLine("   AND Data > CAST(DATEADD(MONTH, -6, GETDATE()) as DATE)");
             vSQL.AppendLine(" ORDER BY Data Desc");
 
             vRetorno.Posicao = GeneralHelper.GetData<PosicaoDto>(vSQL.ToString());
 
-            vRetorno.FundoAsset = ObterFundosAsset(vRetorno.Fundo.Nome, DateTime.Now).OrderByDescending(w=>w.Data).ToList();
+            vRetorno.FundoAsset = ObterFundosAsset(vRetorno.Fundo.Nome, DateTime.Now).OrderByDescending(w => w.Data).ToList();
             vRetorno.CashReport = ObterCashReport(vRetorno.Fundo.Nome, DateTime.Now);
             vRetorno.ViolacoesFalhas = ObterDadosViolacoesBreachs(vRetorno.Fundo.Nome, DateTime.Now);
             vRetorno.ViolacoesAlertas = ObterDadosViolacoesWarnings(vRetorno.Fundo.Nome, DateTime.Now);
+            vRetorno.FundoEL = ObterDadosELFundo(vRetorno.Fundo.Nome);
+            vRetorno.FundoStress = ObterDadosStressLiquidezFundo(vRetorno.Fundo.Nome);
+
             return vRetorno;
         }
 
@@ -118,7 +122,7 @@ namespace Capitania.DashFundo
         {
             StringBuilder vSQL = new StringBuilder();
             vSQL.AppendLine("SELECT Fundo as Fundo, PL as Size, CAIXA as Caixa, VAR as Var, ");
-            vSQL.AppendLine("       STRESS as Stress, ");
+            vSQL.AppendLine("       STRESS as Stress, VarQuota as VarQuota,");
             vSQL.AppendLine("       (SELECT COALESCE(MAX(CONCENTRACAO), 0) AS MAXCONC");
             vSQL.AppendLine("          FROM TCONCENTRA");
             vSQL.AppendLine("         WHERE TCONCENTRA.NOME = THISTRISK.FUNDO");
@@ -131,13 +135,13 @@ namespace Capitania.DashFundo
             vSQL.AppendLine("           AND VALORPROP NOT IN ('Tesouro', 'BNY Mellon', 'BNYMellon', 'Caixa')");
             vSQL.AppendLine(String.Format("           AND TCONCENTRA.DATA = '{0}'", vDataBase.ToString("yyyy-MM-dd")));
             vSQL.AppendLine(String.Format("           AND TCONCENTRA.Propriedade = '{0}') as CSGMNT,", ParameterManager.GetParameterValue(DBParametersConstants.ConcentrationProperty2)));
-            vSQL.AppendLine("       crd_el1 as ElInt, crd_var1 as UlInt, DATAINFO as Data");
+            vSQL.AppendLine("       crd_el1 as ElInt, crd_var1 as UlInt, DataRun as Data");
             vSQL.AppendLine("  FROM THISTRISK");
             vSQL.AppendLine(String.Format(" WHERE [DATARUN] >= '{0}'", vDataBase.AddDays(-30).ToString("yyyy-MM-dd")));
             vSQL.AppendLine(String.Format("   AND Fundo = '{0}'", vNomeFundo));
             vSQL.AppendLine("   AND FUNDSTATUS <> 'INV'");
             vSQL.AppendLine(" UNION");
-            vSQL.AppendLine("SELECT 'Dados Inválidos' as Fundo, 0 as Size, 0 as Caixa, 0 as Var, 0 as Stress, 0 as CTMDR, 0 as CSGMNT, 0 as ElInt, 0 as UlInt, '' as Data");
+            vSQL.AppendLine("SELECT 'Dados Inválidos' as Fundo, 0 as Size, 0 as Caixa, 0 as Var, 0 as Stress, 0 as VarQuota, 0 as CTMDR, 0 as CSGMNT, 0 as ElInt, 0 as UlInt, '' as Data");
             vSQL.AppendLine("  FROM THISTRISK");
             vSQL.AppendLine(String.Format(" WHERE [DATARUN] >= '{0}'", vDataBase.AddDays(-30).ToString("yyyy-MM-dd")));
             vSQL.AppendLine(String.Format("   AND Fundo = '{0}'", vNomeFundo));
@@ -232,6 +236,48 @@ namespace Capitania.DashFundo
             List<ViolacoesDto> vDados = GeneralHelper.GetData<ViolacoesDto>(vSQL.ToString());
 
             return vDados;
+        }
+
+        public List<FundoELDto> ObterDadosELFundo(string vNomeFundo)
+        {
+            StringBuilder vSQL = new StringBuilder();
+
+            vSQL.AppendLine("SELECT Fundo as NomeFundo, DataRun as DataEL, crd_el1 as EL");
+            vSQL.AppendLine("  FROM THistRisk,");
+            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes, MAX(DataRun) AS UltimaDataMes");
+            vSQL.AppendLine("          FROM THistRisk");
+            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), DataRun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes");
+            vSQL.AppendLine("                                                       FROM THistRisk");
+            vSQL.AppendLine(String.Format("                                                      WHERE fundo = '{0}'", vNomeFundo.Trim()));
+            vSQL.AppendLine("                                                        AND DataRun > CAST(DATEADD(year, -1, GETDATE()) as DATE))");
+            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), DataRun, 126)) AS Tabela1");
+            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = DataRun");
+            vSQL.AppendLine(String.Format("   AND fundo = '{0}'", vNomeFundo.Trim()));
+            vSQL.AppendLine(" ORDER BY DataRun");
+
+            return GeneralHelper.GetData<FundoELDto>(vSQL.ToString());
+
+        }
+
+        public List<FundoStressLiquidezDto> ObterDadosStressLiquidezFundo(string vNomeFundo)
+        {
+            StringBuilder vSQL = new StringBuilder();
+
+            vSQL.AppendLine("SELECT Fundo as NomeFundo, DataRun as DataStress, Stress as StressLiquidez");
+            vSQL.AppendLine("  FROM THistRisk,");
+            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes, MAX(DataRun) AS UltimaDataMes");
+            vSQL.AppendLine("          FROM THistRisk");
+            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), DataRun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes");
+            vSQL.AppendLine("                                                       FROM THistRisk");
+            vSQL.AppendLine(String.Format("                                                      WHERE fundo = '{0}'", vNomeFundo.Trim()));
+            vSQL.AppendLine("                                                        AND DataRun > CAST(DATEADD(year, -1, GETDATE()) as DATE))");
+            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), DataRun, 126)) AS Tabela1");
+            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = DataRun");
+            vSQL.AppendLine(String.Format("   AND fundo = '{0}'", vNomeFundo.Trim()));
+            vSQL.AppendLine(" ORDER BY DataRun");
+
+            return GeneralHelper.GetData<FundoStressLiquidezDto>(vSQL.ToString());
+
         }
     }
 }

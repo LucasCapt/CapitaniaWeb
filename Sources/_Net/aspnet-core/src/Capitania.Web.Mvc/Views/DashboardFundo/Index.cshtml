@@ -78,7 +78,7 @@
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <input id="txtQualificacao" type="text" name="txtQualificacao" value="@Model.Dados.Fundo.Qualificacao" class="form-control" disabled>
-                                        <label for="txtQualificacao" class="form-label">Tipo</label>
+                                        <label for="txtQualificacao" class="form-label">Qualificação</label>
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <input id="txtPrazoResgate" type="text" name="txtPrazoResgate" value="@Model.Dados.Fundo.PrazoResgate" class="form-control" disabled>
-                                        <label for="txtPrazoResgate" class="form-label"></label>
+                                        <label for="txtPrazoResgate" class="form-label">Prazo Resgate</label>
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <ejs-chart id="idHistoricoPLConsolidado" title="Quotas">
+                            <ejs-chart id="idHistoricoPLConsolidado" title="Patrimônio Líquido">
                                 <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
                                 <e-chart-primaryxaxis valueType="DateTime"
                                                       labelFormat="MM/yyyy"
@@ -216,6 +216,7 @@
                                     <div>
                                         <ejs-grid id="GridAsset" dataSource="@Model.Dados.FundoAsset" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
                                             <e-grid-columns>
+                                                <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
                                                 <e-grid-column field="Size" headerText="SIZE" textAlign="Right" format="N3" autoFit="true"></e-grid-column>
                                                 <e-grid-column field="Caixa" headerText="CAIXA" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
                                                 <e-grid-column field="Var" headerText="VAR" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
@@ -224,7 +225,7 @@
                                                 <e-grid-column field="CSGMNT" headerText="C.sgmnt" textAlign="Right" autoFit="true" format="P0"></e-grid-column>
                                                 <e-grid-column field="ELInt" headerText="EL.int" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
                                                 <e-grid-column field="ULInt" headerText="UL.int" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
-                                                <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="VarQuota" headerText="Var Quota" textAlign="Right" autoFit="true" format="P3"></e-grid-column>
                                             </e-grid-columns>
                                         </ejs-grid>
 
@@ -320,6 +321,49 @@
                                     <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
                                 </e-grid-columns>
                             </ejs-grid>
+                        </div>
+                    </div>
+
+                    <div class="tab-content">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6">
+                                <h4>EL Fundo</h4>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <ejs-chart id="idELFundo" title="EL Fundo">
+                                <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                                <e-chart-primaryxaxis valueType="DateTime"
+                                                      labelFormat="MM/yyyy"
+                                                      edgeLabelPlacement="Shift">
+                                </e-chart-primaryxaxis>
+                                <e-series-collection>
+                                    <e-series dataSource="@Model.Dados.FundoEL" name="EL" xName="DataEL" width="2" opacity="1" yName="EL" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                    </e-series>
+                                </e-series-collection>
+                            </ejs-chart>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6">
+                                <h4>Stress Fundo</h4>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <ejs-chart id="idStressFundo" title="Stress Fundo">
+                                <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                                <e-chart-primaryxaxis valueType="DateTime"
+                                                      labelFormat="MM/yyyy"
+                                                      edgeLabelPlacement="Shift">
+                                </e-chart-primaryxaxis>
+                                <e-series-collection>
+                                    <e-series dataSource="@Model.Dados.FundoStress" name="Stress Liquidez" xName="DataStress" width="2" opacity="1" yName="StressLiquidez" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
+                                    </e-series>
+                                </e-series-collection>
+                            </ejs-chart>
                         </div>
                     </div>
                     <div class="tab-content">

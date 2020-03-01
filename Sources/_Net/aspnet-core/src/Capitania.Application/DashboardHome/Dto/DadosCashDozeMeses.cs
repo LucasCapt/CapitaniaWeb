@@ -9,7 +9,7 @@ namespace Capitania.DashboardHome.Dto
     public class DadosCashDozeMeses
     {
         public DateTime DataRun { get; set; }
-        public decimal CaixaLivre3m { get; set; }
-        public decimal Disponivel { get; set; }
+        public double CaixaLivre3m { get; set; }
+        public double Disponivel { get; set; }
     }
 }

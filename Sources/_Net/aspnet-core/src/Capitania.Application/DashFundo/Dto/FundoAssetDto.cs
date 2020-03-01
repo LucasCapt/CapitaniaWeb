@@ -18,5 +18,6 @@ namespace Capitania.DashFundo.Dto
         public double ELInt { get; set; }
         public double ULInt { get; set; }
         public DateTime Data { get; set; }
+        public double VarQuota { get; set; }
     }
 }

@@ -21,16 +21,16 @@ namespace Capitania.DashboardHome
             //vSQL.AppendLine("   and datainfo between cast(dateadd(year, -2, getdate()) as date) and cast(GETDATE() as date)");
             //vSQL.AppendLine(" ORDER BY DataInfo");
 
-            vSQL.AppendLine("SELECT DataRun, PL AS PL");
+            vSQL.AppendLine("SELECT DataRun as DataInfo, PL AS PL");
             vSQL.AppendLine("  FROM THistRisk,");
-            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), datarun, 126) AS anoMes, MAX(datarun) AS UltimaDataMes");
+            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes, MAX(DataRun) AS UltimaDataMes");
             vSQL.AppendLine("          FROM THistRisk");
-            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), datarun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), datarun, 126) AS anoMes");
+            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), DataRun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes");
             vSQL.AppendLine("                                                       FROM THistRisk");
             vSQL.AppendLine("                                                      WHERE fundo = '_CONSOLIDADO'");
-            vSQL.AppendLine("                                                        AND datarun > CAST(DATEADD(year, -1, GETDATE()) as DATE))");
-            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), datarun, 126)) AS Tabela1");
-            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = datarun");
+            vSQL.AppendLine("                                                        AND DataRun > CAST(DATEADD(year, -2, GETDATE()) as DATE))");
+            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), DataRun, 126)) AS Tabela1");
+            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = DataRun");
             vSQL.AppendLine("   AND fundo = '_CONSOLIDADO'");
             vSQL.AppendLine(" ORDER BY DataRun");
 
@@ -42,16 +42,16 @@ namespace Capitania.DashboardHome
         {
             StringBuilder vSQL = new StringBuilder();
 
-            vSQL.AppendLine("SELECT DataRun, (caixa * pl) AS Caixa");
+            vSQL.AppendLine("SELECT DataRun DataInfo, (caixa * pl) AS Caixa");
             vSQL.AppendLine("  FROM THistRisk,");
-            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), datarun, 126) AS anoMes, MAX(datarun) AS UltimaDataMes");
+            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes, MAX(DataRun) AS UltimaDataMes");
             vSQL.AppendLine("          FROM THistRisk");
-            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), datarun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), datarun, 126) AS anoMes");
+            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), DataRun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes");
             vSQL.AppendLine("                                                       FROM THistRisk");
             vSQL.AppendLine("                                                      WHERE fundo = '_CONSOLIDADO'");
-            vSQL.AppendLine("                                                        AND datarun > CAST(DATEADD(year, -1, GETDATE()) as DATE))");
-            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), datarun, 126)) AS Tabela1");
-            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = datarun");
+            vSQL.AppendLine("                                                        AND DataRun > CAST(DATEADD(year, -2, GETDATE()) as DATE))");
+            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), DataRun, 126)) AS Tabela1");
+            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = DataRun");
             vSQL.AppendLine("   AND fundo = '_CONSOLIDADO'");
             vSQL.AppendLine(" ORDER BY DataRun");
 
@@ -66,16 +66,16 @@ namespace Capitania.DashboardHome
             //Primeiro, busca os pultimos doze meses em format yyyy-MM. Veja o "SELECT DISTINCT"
             //Depois, usa o resultado da subquery acima para buscar as últimas datas registradas de cada um dos últimos dozes meses (Tabela1)
             //Por fim, buscam os registros de históricos para as últimas datas com a data no formato yyyy-MM
-            vSQL.AppendLine("SELECT DataRun, PL AS PL");
+            vSQL.AppendLine("SELECT DataRun as DataInfo, PL AS PL");
             vSQL.AppendLine("  FROM THistRisk,");
-            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), datarun, 126) AS anoMes, MAX(datarun) AS UltimaDataMes");
+            vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes, MAX(DataRun) AS UltimaDataMes");
             vSQL.AppendLine("          FROM THistRisk");
-            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), datarun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), datarun, 126) AS anoMes");
+            vSQL.AppendLine("         WHERE CONVERT(VARCHAR(7), DataRun, 126) IN (SELECT DISTINCT CONVERT(VARCHAR(7), DataRun, 126) AS anoMes");
             vSQL.AppendLine("                                                       FROM THistRisk");
             vSQL.AppendLine("                                                      WHERE fundo = '_CONS_ATIVO'");
-            vSQL.AppendLine("                                                        AND datarun > CAST(DATEADD(year, -1, GETDATE()) as DATE))");
-            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), datarun, 126)) AS Tabela1");
-            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = datarun");
+            vSQL.AppendLine("                                                        AND DataRun > CAST(DATEADD(year, -1, GETDATE()) as DATE))");
+            vSQL.AppendLine("         GROUP BY CONVERT(VARCHAR(7), DataRun, 126)) AS Tabela1");
+            vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = DataRun");
             vSQL.AppendLine("   AND fundo = '_CONS_ATIVO'");
             vSQL.AppendLine(" ORDER BY DataRun");
 
@@ -154,11 +154,12 @@ namespace Capitania.DashboardHome
         {
             StringBuilder vSQL = new StringBuilder();
 
-            vSQL.AppendLine("SELECT cast(dateadd(year, -1, getdate()) as date) as DataFalha, count(*) as NumeroFalhas");
+            vSQL.AppendLine("SELECT CAST(CONCAT(CONVERT(VARCHAR(7), [Data], 126), '-01') as Date) as DataFalha, count(*) as NumeroFalhas");
             vSQL.AppendLine("  FROM THistCompBreaches");
             vSQL.AppendLine(" WHERE TIPO = 'BREACH'");
             vSQL.AppendLine("   AND [Data] > cast(dateadd(year, -1, getdate()) as date)");
-            vSQL.AppendLine(" GROUP BY DataFalha");
+            vSQL.AppendLine(" GROUP BY CONCAT(CONVERT(VARCHAR(7), [Data], 126), '-01')");
+            vSQL.AppendLine(" ORDER BY DataFalha");
 
             return GeneralHelper.GetData<DadosHistoricoBreachesDto>(vSQL.ToString());
 
@@ -167,7 +168,7 @@ namespace Capitania.DashboardHome
         public List<DadosCashDozeMeses> ObterDadosCashDozeMeses()
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT DataRun, SUM(CASHFREE3M) AS CaixaLivre3m, SUM(DISPO) AS Disponivel");
+            vSQL.AppendLine("SELECT [Data] as DataRun, SUM(CASHFREE3M) AS CaixaLivre3m, SUM(DISPO) AS Disponivel");
             vSQL.AppendLine("  FROM TCashReportHist,");
             vSQL.AppendLine("       (SELECT CONVERT(VARCHAR(7), [Data], 126) as anoMes, MAX([Data]) AS UltimaDataMes");
             vSQL.AppendLine("          FROM TCashReportHist");
@@ -176,8 +177,8 @@ namespace Capitania.DashboardHome
             vSQL.AppendLine("                                                     WHERE [Data] > CAST(DATEADD(YEAR, -1, GETDATE()) AS DATE))");
             vSQL.AppendLine("                                                     GROUP BY CONVERT(VARCHAR(7), [Data], 126)) AS Tabela1");
             vSQL.AppendLine(" WHERE Tabela1.UltimaDataMes = [Data]");
-            vSQL.AppendLine(" GROUP BY DataRun");
-            vSQL.AppendLine(" ORDER BY DataRun");
+            vSQL.AppendLine(" GROUP BY [Data]");
+            vSQL.AppendLine(" ORDER BY [Data]");
 
             return GeneralHelper.GetData<DadosCashDozeMeses>(vSQL.ToString());
         }

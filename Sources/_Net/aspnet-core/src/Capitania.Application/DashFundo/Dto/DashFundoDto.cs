@@ -27,7 +27,7 @@ namespace Capitania.DashFundo.Dto
         public List<CashReportDto> CashReport { get; set; }
         public List<ViolacoesDto> ViolacoesFalhas { get; set; }
         public List<ViolacoesDto> ViolacoesAlertas { get; set; }
-
-
+        public List<FundoELDto> FundoEL { get; set; }
+        public List<FundoStressLiquidezDto> FundoStress { get; set; }
     }
 }
