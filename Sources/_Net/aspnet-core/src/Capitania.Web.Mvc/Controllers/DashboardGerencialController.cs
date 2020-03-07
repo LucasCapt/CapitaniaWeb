@@ -49,7 +49,7 @@ namespace Capitania.Web.Mvc.Controllers
             ViewBag.DadosCash = _dashboardAppService.ObterCashReport(vDataBase);
             ViewBag.DadosLiquidez = _dashboardAppService.ObterStressLiquidez(vDataBase);
             ViewBag.DadosBreach = _dashboardAppService.ObterDadosViolacoesBreachs(vDataBase);
-            ViewBag.DadosWarning = _dashboardAppService.ObterConcentracao(vDataBase);
+            ViewBag.DadosWarning = _dashboardAppService.ObterDadosViolacoesWarnings(vDataBase);
             ViewBag.DadosConcentracao = _dashboardAppService.ObterConcentracao(vDataBase).OrderByDescending(w=>w.Percentual).ToList();
             ViewBag.DadosContrapartes = _dashboardAppService.ObterContrapartes(vDataBase);
 

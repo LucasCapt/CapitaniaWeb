@@ -27,7 +27,14 @@ namespace Capitania
                     if (dr.GetSchemaTable().Select(String.Format("ColumnName='{0}'", prop.Name)).Length > 0)
                         if (!object.Equals(dr[prop.Name], DBNull.Value))
                         {
-                            prop.SetValue(obj, dr[prop.Name], null);
+                            try
+                            {
+                                prop.SetValue(obj, dr[prop.Name], null);
+                            }
+                            catch (Exception ex)
+                            {
+                                
+                            }
                         }
                 }
                 list.Add(obj);

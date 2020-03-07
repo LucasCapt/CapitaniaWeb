@@ -119,27 +119,26 @@
                         </div>
                         <div role="tabpanel" class="tab-pane animated fadeIn" id="tabBreach">
                             <div>
-                                <ejs-grid id="GridBreach" dataSource="@ViewBag.DadosBreach" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
-                                    <e-grid-textwrapsettings wrapMode="Content"></e-grid-textwrapsettings>
+                                <ejs-grid id="GridBreach" dataSource="@ViewBag.DadosBreach" allowExcelExport="true" allowTextWrap="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
                                     <e-grid-columns>
-                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                        <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                        <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" autoFit="true" format="P1"></e-grid-column>
-                                        <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" width="150" textAlign="Left" autoFit="true"></e-grid-column>
-                                        <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" width="150" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" ></e-grid-column>
+                                        <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" ></e-grid-column>
+                                        <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" format="P1"></e-grid-column>
+                                        <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left"></e-grid-column>
+                                        <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left"  ></e-grid-column>
                                     </e-grid-columns>
                                 </ejs-grid>
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane animated fadeIn" id="tabWarning">
                             <div>
-                                <ejs-grid id="GridWarning" dataSource="@ViewBag.DadosWarning" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                <ejs-grid id="GridWarning" dataSource="@ViewBag.DadosWarning" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
                                     <e-grid-columns>
-                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" autoFit="true"></e-grid-column>
-                                        <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                        <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" format="P1" autoFit="true"></e-grid-column>
-                                        <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                        <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" autoFit="true"></e-grid-column>
+                                        <e-grid-column field="Fundo" headerText="FUNDO" textAlign="Left" ></e-grid-column>
+                                        <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" ></e-grid-column>
+                                        <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" format="P1"></e-grid-column>
+                                        <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" ></e-grid-column>
+                                        <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left"   ></e-grid-column>
                                     </e-grid-columns>
                                 </ejs-grid>
                             </div>

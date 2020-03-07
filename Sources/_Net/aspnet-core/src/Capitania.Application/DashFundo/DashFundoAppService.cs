@@ -62,11 +62,23 @@ namespace Capitania.DashFundo
 
             vSQL = new StringBuilder();
             vSQL.AppendLine("SELECT TPOSIC.Fundo as IDFundo, TPOSIC.Data as Data, TPOSIC.Papel as Papel, TPOSIC.Valor as Valor, TPapel.Nome AS PapelNome,");
-            vSQL.AppendLine("       TPapel.CodCetip AS CodigoCETIP, TPapel.ISIN as PapelISIN, (TPOSIC.Valor) as ValorPL");
+            vSQL.AppendLine("       TPapel.CodCetip AS CodigoCETIP, TPapel.ISIN as PapelISIN,");
+
+            vSQL.AppendLine("(select risco.pl ");
+            vSQL.AppendLine("  from tfundos as Fundo, Thistrisk as risco");
+            vSQL.AppendLine(" where fundo.nome = risco.fundo");
+            vSQL.AppendLine("   and TPOSIC.FUNDO = Fundo.ID");
+            vSQL.AppendLine("   and datarun = (select max(risco1.DataRun)");
+            vSQL.AppendLine("                    from THistRisk as risco1");
+            vSQL.AppendLine("                   where Fundo.nome = risco1.Fundo)) as PL");
+
             vSQL.AppendLine("  FROM TPOSIC, TPAPEL");
             vSQL.AppendLine(String.Format(" WHERE TPOSIC.Fundo = {0}", IDFundo));
             vSQL.AppendLine("   AND TPAPEL.Nome = TPOSIC.Papel");
-            vSQL.AppendLine("   AND Data > CAST(DATEADD(MONTH, -6, GETDATE()) as DATE)");
+            vSQL.AppendLine("   AND Data = (SELECT MAX(Posic1.[Data]) as vData");
+            vSQL.AppendLine("                 FROM TPosic as Posic1");
+            vSQL.AppendLine(String.Format("                WHERE Posic1.Fundo = {0}", IDFundo));
+            vSQL.AppendLine("               )");
             vSQL.AppendLine(" ORDER BY Data Desc");
 
             vRetorno.Posicao = GeneralHelper.GetData<PosicaoDto>(vSQL.ToString());

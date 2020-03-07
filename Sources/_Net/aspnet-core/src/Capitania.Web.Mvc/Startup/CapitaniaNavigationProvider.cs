@@ -20,15 +20,51 @@ namespace Capitania.Web.Startup
                         icon: "home",
                         requiresAuthentication: true
                     )
-                ).AddItem(
+
+                ).AddItem( // Menu items below is just for demonstration!
                     new MenuItemDefinition(
-                        PageNames.Tenants,
-                        L("Tenants"),
-                        url: "Tenants",
-                        icon: "business",
-                        requiredPermissionName: PermissionNames.Pages_Tenants
-                    )
-                ).AddItem(
+                        "Dashboards",
+                        L("Dashboards"),
+                        icon: "menu"
+                    ).AddItem(new MenuItemDefinition(
+                        PageNames.DashboardFundo,
+                        L("DashboardFundos"),
+                        url: "DashboardFundos",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardFundos)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashboardXml,
+                        L("XmlAnbimaFileLog"),
+                        url: "DashboardXml",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardXml)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashboardControle,
+                        L("DashboardControl"),
+                        url: "DashboardControle",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardControle)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashboardGerencial,
+                        L("DashboardManager"),
+                        url: "DashboardGerencial",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardGerencial)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashFundo,
+                        L("DashFundo"),
+                        url: "DashboardFundo",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardFundo)
+                    ))
+                .AddItem(new MenuItemDefinition(
+                    "Settings",
+                    L("SystemSettings"),
+                    icon: "menu").AddItem(
                     new MenuItemDefinition(
                         PageNames.Users,
                         L("Users"),
@@ -50,54 +86,9 @@ namespace Capitania.Web.Startup
                         L("TConfigurations"),
                         url: "TConfiguracao",
                         icon: "local_offer",
-                        requiredPermissionName: PermissionNames.Pages_Roles
+                        requiredPermissionName: PermissionNames.Pages_TConfiguracao
                     )
-                ).AddItem( // Menu items below is just for demonstration!
-                    new MenuItemDefinition(
-                        "Dashboards",
-                        L("Dashboards"),
-                        icon: "menu"
-                    ).AddItem(new MenuItemDefinition(
-                        PageNames.DashboardFundo,
-                        L("DashboardFundos"),
-                        url: "DashboardFundos",
-                        icon: "local_offer",
-                        requiredPermissionName: PermissionNames.Pages_Roles
-                    )
-                        ).AddItem(
-                    new MenuItemDefinition(
-                        PageNames.DashboardXml,
-                        L("XmlAnbimaFileLog"),
-                        url: "DashboardXml",
-                        icon: "local_offer",
-                        requiredPermissionName: PermissionNames.Pages_Roles
-                    )
-                    ).AddItem(
-                    new MenuItemDefinition(
-                        PageNames.DashboardControle,
-                        L("DashboardControl"),
-                        url: "DashboardControle",
-                        icon: "local_offer",
-                        requiredPermissionName: PermissionNames.Pages_Roles
-                    )
-                    ).AddItem(
-                    new MenuItemDefinition(
-                        PageNames.DashboardGerencial,
-                        L("DashboardManager"),
-                        url: "DashboardGerencial",
-                        icon: "local_offer",
-                        requiredPermissionName: PermissionNames.Pages_Roles
-                    )
-                    ).AddItem(
-                    new MenuItemDefinition(
-                        PageNames.DashFundo,
-                        L("DashFundo"),
-                        url: "DashboardFundo",
-                        icon: "local_offer",
-                        requiredPermissionName: PermissionNames.Pages_Roles
-                    )
-                    )
-                );
+                ));
         }
 
         private static ILocalizableString L(string name)

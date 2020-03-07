@@ -97,7 +97,7 @@
     <text name="Filter">Filter</text>
     
     <!--Capitania-->    
-    <text name="TConfigurations">Configurations</text>
+    <text name="TConfigurations">Parameters</text>
     <text name="TConfigurations.Code">Code</text>
     <text name="TConfigurations.Description">Description</text>
     <text name="TConfigurations.Value">Value</text>
@@ -115,6 +115,7 @@
 
 
     <text name="Dashboards">Dashboards</text>
+    <text name="SystemSettings">Settings</text>
     
     <text name="DashboardControl">Risk and Compliance Report (Control)</text>
     <text name="DashboardManager">Risk and Compliance Report (Manager)</text>

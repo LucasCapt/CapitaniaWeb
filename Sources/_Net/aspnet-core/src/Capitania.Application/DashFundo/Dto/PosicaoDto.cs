@@ -15,6 +15,14 @@ namespace Capitania.DashFundo.Dto
         public string PapelNome { get; set; }
         public string CodigoCETIP { get; set; }
         public string PapelISIN { get; set; }
-        public double ValorPL { get; set; }
+        public double PL { get; set; }
+        public double ValorPL
+        {
+            get
+            {
+                return this.Valor / this.PL;
+            }
+        }
+
     }
 }

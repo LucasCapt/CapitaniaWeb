@@ -170,7 +170,7 @@ namespace Capitania.DashboardGerencial
             string vPropriedade2 = ParameterManager.GetParameterValue(DBParametersConstants.ConcentrationProperty2);
             string vPropriedade3 = ParameterManager.GetParameterValue(DBParametersConstants.ConcentrationProperty3);
 
-            vSQL.AppendLine("SELECT Propriedade as Propriedade, ValorProp as Nome, (TCONCENTRA.Concentracao / 100) as Percentual");
+            vSQL.AppendLine("SELECT Propriedade as Propriedade, ValorProp as Nome, (TCONCENTRA.Concentracao) as Percentual");
             vSQL.AppendLine("  FROM TCONCENTRA, TFUNDOS");
             vSQL.AppendLine(" WHERE TFUNDOS.NOME = TCONCENTRA.NOME");
             vSQL.AppendLine(String.Format("   AND TFUNDOS.ID = {0}", vFundoID));

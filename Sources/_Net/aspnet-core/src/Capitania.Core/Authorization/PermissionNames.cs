@@ -8,8 +8,6 @@
 
         public const string Pages_Roles = "Pages.Roles";
 
-
-
         public const string Pages_TConfiguracao = "Pages.TConfiguracao";
         public const string Pages_TConfiguracao_Index = "Pages.TConfiguracao.Index";
         public const string Pages_TConfiguracao_Create = "Pages.TConfiguracao.Create";
@@ -25,7 +23,7 @@
         public const string Pages_DashboardFundos = "Pages.DashboardFundos";
         public const string Pages_DashboardControle = "Pages.DashboardControle";
         public const string Pages_DashboardGerencial = "Pages.DashboardGerencial";
-
+        public const string Pages_DashboardFundo = "Pages.DashboardFundo";
         public const string Pages_DashboardXml = "Pages.DashboardXml";
     }
 }

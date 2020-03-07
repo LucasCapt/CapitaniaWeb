@@ -93,7 +93,7 @@
     <text name="Settings">Configurações</text>
 
     <!--Capitania-->
-    <text name="TConfigurations">Configurações</text>
+    <text name="TConfigurations">Parâmetros</text>
     <text name="TConfigurations.Code">Código</text>
     <text name="TConfigurations.Description">Descrição</text>
     <text name="TConfigurations.Value">Valor</text>
@@ -110,6 +110,8 @@
     <text name="TabTodos">TODOS</text>
 
     <text name="Dashboards">Dashboards</text>
+
+    <text name="SystemSettings">Configurações</text>
     
     <text name="DashboardControl">Relatório de Risco e Compliance (Controle)</text>
     <text name="DashboardManager">Relatório de Risco e Compliance (Gerencial)</text>

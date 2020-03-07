@@ -118,7 +118,6 @@
                                 </e-chart-primaryxaxis>
                                 <e-series-collection>
                                     <e-series dataSource="@Model.Dados.Quotas" name="Quotas" xName="Data" width="2" opacity="1" yName="Quota" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
                                     </e-series>
                                 </e-series-collection>
                             </ejs-chart>
@@ -139,7 +138,6 @@
                                 </e-chart-primaryxaxis>
                                 <e-series-collection>
                                     <e-series dataSource="@Model.Dados.Patrimonio" name="PL" xName="DataInfo" width="2" opacity="1" yName="PL" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
                                     </e-series>
                                 </e-series-collection>
                             </ejs-chart>
@@ -217,7 +215,7 @@
                                         <ejs-grid id="GridAsset" dataSource="@Model.Dados.FundoAsset" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
                                             <e-grid-columns>
                                                 <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
-                                                <e-grid-column field="Size" headerText="SIZE" textAlign="Right" format="N3" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="Size" headerText="SIZE" textAlign="Right" format="N0" autoFit="true"></e-grid-column>
                                                 <e-grid-column field="Caixa" headerText="CAIXA" textAlign="Right" format="P0" autoFit="true"></e-grid-column>
                                                 <e-grid-column field="Var" headerText="VAR" textAlign="Right" autoFit="true" format="P2"></e-grid-column>
                                                 <e-grid-column field="Stress" headerText="STRESS" textAlign="Right" autoFit="true" format="P1"></e-grid-column>
@@ -276,26 +274,26 @@
                                 </div>
                                 <div role="tabpanel" class="tab-pane animated fadeIn" id="tabBreach">
                                     <div>
-                                        <ejs-grid id="GridBreach" dataSource="@Model.Dados.ViolacoesFalhas" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                        <ejs-grid id="GridBreach" dataSource="@Model.Dados.ViolacoesFalhas" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
                                             <e-grid-columns>
-                                                <e-grid-column field="DataInfo" headerText="Data" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
-                                                <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                                <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" autoFit="true" format="P1"></e-grid-column>
-                                                <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                                <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="DataInfo" headerText="Data" textAlign="Left" format="dd/MM/yyyy"></e-grid-column>
+                                                <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" ></e-grid-column>
+                                                <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Right"  format="P1"></e-grid-column>
+                                                <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" ></e-grid-column>
+                                                <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" ></e-grid-column>
                                             </e-grid-columns>
                                         </ejs-grid>
                                     </div>
                                 </div>
                                 <div role="tabpanel" class="tab-pane animated fadeIn" id="tabWarning">
                                     <div>
-                                        <ejs-grid id="GridWarning" dataSource="@Model.Dados.ViolacoesAlertas" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true">
+                                        <ejs-grid id="GridWarning" dataSource="@Model.Dados.ViolacoesAlertas" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
                                             <e-grid-columns>
-                                                <e-grid-column field="DataInfo" headerText="Data" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
-                                                <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                                <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" autoFit="true"></e-grid-column>
-                                                <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left" autoFit="true"></e-grid-column>
-                                                <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left" autoFit="true"></e-grid-column>
+                                                <e-grid-column field="DataInfo" headerText="Data" textAlign="Left" format="dd/MM/yyyy"></e-grid-column>
+                                                <e-grid-column field="Regra" headerText="REGRA" textAlign="Left" ></e-grid-column>
+                                                <e-grid-column field="Alocacao" headerText="ALOCAÇÃO" textAlign="Left" ></e-grid-column>
+                                                <e-grid-column field="TextoRegra" headerText="TEXTO REGRA" textAlign="Left"></e-grid-column>
+                                                <e-grid-column field="Papeis" headerText="PAPÉIS" textAlign="Left"></e-grid-column>
                                             </e-grid-columns>
                                         </ejs-grid>
                                     </div>
@@ -317,7 +315,7 @@
                                     <e-grid-column field="CodigoCETIP" headerText="Código CETIP" textAlign="Left" autoFit="true"></e-grid-column>
                                     <e-grid-column field="PapelISIN" headerText="ISIN" textAlign="Left" autoFit="true"></e-grid-column>
                                     <e-grid-column field="Valor" headerText="Valor" textAlign="Right" format="N3" autoFit="true"></e-grid-column>
-                                    <e-grid-column field="ValorPL" headerText="Valor/PL" textAlign="Right" format="P1" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="ValorPL" headerText="Valor/PL" textAlign="Right" format="P2" autoFit="true"></e-grid-column>
                                     <e-grid-column field="Data" headerText="DATA" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
                                 </e-grid-columns>
                             </ejs-grid>
@@ -337,9 +335,10 @@
                                                       labelFormat="MM/yyyy"
                                                       edgeLabelPlacement="Shift">
                                 </e-chart-primaryxaxis>
+                                <e-chart-primaryyaxis labelFormat="P1">
+                                </e-chart-primaryyaxis>
                                 <e-series-collection>
                                     <e-series dataSource="@Model.Dados.FundoEL" name="EL" xName="DataEL" width="2" opacity="1" yName="EL" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
                                     </e-series>
                                 </e-series-collection>
                             </ejs-chart>
@@ -358,9 +357,10 @@
                                                       labelFormat="MM/yyyy"
                                                       edgeLabelPlacement="Shift">
                                 </e-chart-primaryxaxis>
+                                <e-chart-primaryyaxis labelFormat="P1">
+                                </e-chart-primaryyaxis>
                                 <e-series-collection>
                                     <e-series dataSource="@Model.Dados.FundoStress" name="Stress Liquidez" xName="DataStress" width="2" opacity="1" yName="StressLiquidez" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
-                                        <e-series-marker visible="true" height="10" width="10"></e-series-marker>
                                     </e-series>
                                 </e-series-collection>
                             </ejs-chart>
