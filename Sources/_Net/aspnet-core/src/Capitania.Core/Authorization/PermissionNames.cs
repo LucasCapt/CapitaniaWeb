@@ -25,5 +25,13 @@
         public const string Pages_DashboardGerencial = "Pages.DashboardGerencial";
         public const string Pages_DashboardFundo = "Pages.DashboardFundo";
         public const string Pages_DashboardXml = "Pages.DashboardXml";
+
+        public const string Pages_HistoricoAML = "Pages.HistoricoAML";
+        public const string Pages_FactorHist = "Pages.FactorHist";
+        public const string Pages_PreTradeCompliance = "Pages.PreTradeCompliance";
+        public const string Pages_Ratings = "Pages.Ratings";
+        public const string Pages_RatingNames = "Pages.RatingNames";
+        public const string Pages_Stress = "Pages.Stress";
+        public const string Pages_Papel = "Pages.Papel";
     }
 }

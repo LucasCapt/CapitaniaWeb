@@ -136,6 +136,13 @@
     <text name="TabManagerCounterparts">Contrapartes</text>
     
     <text name="DashFundo">Detalhes Fundos</text>
+    <text name="AMLHistoric">Histórico AML</text>
+    <text name="FactorHistoric">Histórico de Fatores</text>
+    <text name="PreTradeCompliance">Pré-Trade Compliance</text>
+    <text name="Ratings">Ratings</text>
+    <text name="RatingNames">Nomes Ratings</text>
+    <text name="Stress">Cenários de Stress</text>
+    <text name="Paper">Papeis</text>
     
   </texts>
 </localizationDictionary>

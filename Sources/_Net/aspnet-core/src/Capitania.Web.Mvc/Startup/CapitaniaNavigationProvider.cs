@@ -60,6 +60,55 @@ namespace Capitania.Web.Startup
                         url: "DashboardFundo",
                         icon: "local_offer",
                         requiredPermissionName: PermissionNames.Pages_DashboardFundo)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.HistoricoAML,
+                        L("AMLHistoric"),
+                        url: "HistoricoAML",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_HistoricoAML)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.FactorHistorico,
+                        L("FactorHistoric"),
+                        url: "FactorHistorico",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_FactorHist)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.PreTradeCompliance,
+                        L("PreTradeCompliance"),
+                        url: "PreTradeCompliance",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_PreTradeCompliance)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Ratings,
+                        L("Ratings"),
+                        url: "Ratings",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Ratings)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.RatingNames,
+                        L("RatingNames"),
+                        url: "RatingNames",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_RatingNames)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Stress,
+                        L("Stress"),
+                        url: "Stress",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Stress)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Paper,
+                        L("Paper"),
+                        url: "Papel",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Papel)
                     ))
                 .AddItem(new MenuItemDefinition(
                     "Settings",

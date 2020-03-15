@@ -140,6 +140,14 @@
     <text name="TabManagerCounterparts">Counterparts</text>
      
     <text name="DashFundo">Fund Details</text>
+
+    <text name="AMLHistoric">AML History</text>
+    <text name="FactorHistoric">Factor History</text>
+    <text name="PreTradeCompliance">Pre Trade Compliance</text>
+    <text name="Ratings">Ratings</text>
+    <text name="RatingNames">Rating Names</text>
+    <text name="Stress">Stress Scenarios</text>
+    <text name="Paper">Papers</text>
     
   </texts>
 </localizationDictionary>

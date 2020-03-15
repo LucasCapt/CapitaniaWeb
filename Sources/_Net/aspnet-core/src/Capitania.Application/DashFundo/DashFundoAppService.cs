@@ -61,25 +61,40 @@ namespace Capitania.DashFundo
             vRetorno.Patrimonio = GeneralHelper.GetData<PatrimonioLiquidoDto>(vSQL.ToString());
 
             vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT TPOSIC.Fundo as IDFundo, TPOSIC.Data as Data, TPOSIC.Papel as Papel, TPOSIC.Valor as Valor, TPapel.Nome AS PapelNome,");
-            vSQL.AppendLine("       TPapel.CodCetip AS CodigoCETIP, TPapel.ISIN as PapelISIN,");
-
-            vSQL.AppendLine("(select risco.pl ");
-            vSQL.AppendLine("  from tfundos as Fundo, Thistrisk as risco");
-            vSQL.AppendLine(" where fundo.nome = risco.fundo");
-            vSQL.AppendLine("   and TPOSIC.FUNDO = Fundo.ID");
-            vSQL.AppendLine("   and datarun = (select max(risco1.DataRun)");
-            vSQL.AppendLine("                    from THistRisk as risco1");
-            vSQL.AppendLine("                   where Fundo.nome = risco1.Fundo)) as PL");
-
-            vSQL.AppendLine("  FROM TPOSIC, TPAPEL");
-            vSQL.AppendLine(String.Format(" WHERE TPOSIC.Fundo = {0}", IDFundo));
-            vSQL.AppendLine("   AND TPAPEL.Nome = TPOSIC.Papel");
-            vSQL.AppendLine("   AND Data = (SELECT MAX(Posic1.[Data]) as vData");
-            vSQL.AppendLine("                 FROM TPosic as Posic1");
-            vSQL.AppendLine(String.Format("                WHERE Posic1.Fundo = {0}", IDFundo));
-            vSQL.AppendLine("               )");
+            vSQL.AppendLine("SELECT Tposic.fundo as IDFundo, tposic.data as Data, tpapel.nome as Papel, tpapel.codcetip as CodigoCETIP, ");
+            vSQL.AppendLine("       tpapel.isin as PapelISIN, tposic.valor as Valor, ");
+            vSQL.AppendLine("       (select SUM(Tposic.Valor) as PLTOTAL ");
+            vSQL.AppendLine("          from TPosic ");
+            vSQL.AppendLine(String.Format("         where tposic.fundo = {0} ", IDFundo));
+            vSQL.AppendLine("            and data = (select max(tposic.data) as DATAMAX ");
+            vSQL.AppendLine("                          from TPOSIC ");
+            vSQL.AppendLine(String.Format("                        where Tposic.fundo = {0})) as PL", IDFundo));
+            vSQL.AppendLine("  FROM TPosic INNER JOIN TPapel ON TPosic.PAPEL = TPapel.ID");
+            vSQL.AppendLine(String.Format(" WHERE tposic.Fundo = {0} ", IDFundo));
+            vSQL.AppendLine("   AND DATA = (select max(tposic.data) as DATAMAX ");
+            vSQL.AppendLine("                 from TPOSIC ");
+            vSQL.AppendLine(String.Format("                where Tposic.fundo = {0})", IDFundo));
             vSQL.AppendLine(" ORDER BY Data Desc");
+
+            //vSQL.AppendLine("SELECT TPOSIC.Fundo as IDFundo, TPOSIC.Data as Data, TPOSIC.Papel as Papel, TPOSIC.Valor as Valor, TPapel.Nome AS PapelNome,");
+            //vSQL.AppendLine("       TPapel.CodCetip AS CodigoCETIP, TPapel.ISIN as PapelISIN,");
+
+            //vSQL.AppendLine("(select risco.pl ");
+            //vSQL.AppendLine("  from tfundos as Fundo, Thistrisk as risco");
+            //vSQL.AppendLine(" where fundo.nome = risco.fundo");
+            //vSQL.AppendLine("   and TPOSIC.FUNDO = Fundo.ID");
+            //vSQL.AppendLine("   and datarun = (select max(risco1.DataRun)");
+            //vSQL.AppendLine("                    from THistRisk as risco1");
+            //vSQL.AppendLine("                   where Fundo.nome = risco1.Fundo)) as PL");
+
+            //vSQL.AppendLine("  FROM TPOSIC, TPAPEL");
+            //vSQL.AppendLine(String.Format(" WHERE TPOSIC.Fundo = {0}", IDFundo));
+            //vSQL.AppendLine("   AND TPAPEL.Nome = TPOSIC.Papel");
+            //vSQL.AppendLine("   AND Data = (SELECT MAX(Posic1.[Data]) as vData");
+            //vSQL.AppendLine("                 FROM TPosic as Posic1");
+            //vSQL.AppendLine(String.Format("                WHERE Posic1.Fundo = {0}", IDFundo));
+            //vSQL.AppendLine("               )");
+            
 
             vRetorno.Posicao = GeneralHelper.GetData<PosicaoDto>(vSQL.ToString());
 

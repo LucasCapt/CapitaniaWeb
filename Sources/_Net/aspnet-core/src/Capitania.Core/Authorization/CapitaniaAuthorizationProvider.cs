@@ -17,6 +17,14 @@ namespace Capitania.Authorization
             context.CreatePermission(PermissionNames.Pages_DashboardControle, L("DashboardControl"), multiTenancySides: MultiTenancySides.Host);
             context.CreatePermission(PermissionNames.Pages_DashboardGerencial, L("DashboardManager"), multiTenancySides: MultiTenancySides.Host);
             context.CreatePermission(PermissionNames.Pages_DashboardFundo, L("DashFundo"), multiTenancySides: MultiTenancySides.Host);
+            context.CreatePermission(PermissionNames.Pages_HistoricoAML, L("AMLHistoric"), multiTenancySides: MultiTenancySides.Host);
+            context.CreatePermission(PermissionNames.Pages_FactorHist, L("FactorHistoric"), multiTenancySides: MultiTenancySides.Host);
+            context.CreatePermission(PermissionNames.Pages_PreTradeCompliance, L("PreTradeCompliance"), multiTenancySides: MultiTenancySides.Host);
+            context.CreatePermission(PermissionNames.Pages_Ratings, L("Ratings"), multiTenancySides: MultiTenancySides.Host);
+            context.CreatePermission(PermissionNames.Pages_RatingNames, L("RatingNames"), multiTenancySides: MultiTenancySides.Host);
+            context.CreatePermission(PermissionNames.Pages_Stress, L("Stress"), multiTenancySides: MultiTenancySides.Host);
+            context.CreatePermission(PermissionNames.Pages_Papel, L("Paper"), multiTenancySides: MultiTenancySides.Host);
+
         }
 
         private static ILocalizableString L(string name)
