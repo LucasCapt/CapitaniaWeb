@@ -15,10 +15,18 @@ namespace Capitania.RatingNames
         public List<RatingNamesDto> ObterRatingNames()
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT [DATA] AS Data, SETOR AS Setor, NOME AS Nome, Rating as Rating");
-            vSQL.AppendLine("  FROM TRatingNames inner join TRatings on TRatingNames.ID = TRatings.id");
-            vSQL.AppendLine(" WHERE [data] >= DATEADD(month, -1, GETDATE()) ");
-            vSQL.AppendLine(" order by[data] desc");
+            vSQL.AppendLine("SELECT [DATA] AS Data, SETOR AS Setor, NOME AS Nome, Coalesce(RatingTo, 'CCC') as Rating");
+            vSQL.AppendLine("  FROM TRatingNames inner join TRatings on TRatingNames.ID = TRatings.id LEFT OUTER JOIN TRatingsFromTo on TRatings.RATING = TRatingsFromTo.RatingFrom");
+            vSQL.AppendLine(" WHERE [data] = (SELECT MAX([Data])");
+            vSQL.AppendLine("                   FROM TRatings as TR");
+            vSQL.AppendLine("                  WHERE TR.ID = TRatings.id)");
+            vSQL.AppendLine("UNION");
+            vSQL.AppendLine("SELECT [DATA] AS Data, SETOR AS Setor, NOME AS Nome, Coalesce(RatingTo, 'CCC') as Rating");
+            vSQL.AppendLine("  FROM TRatingNames inner join TRatings on TRatingNames.ID = TRatings.id LEFT OUTER JOIN TRatingsFromTo on TRatings.RATING = TRatingsFromTo.RatingFrom");
+            vSQL.AppendLine(" WHERE [data] = (SELECT Dateadd(d, -7, MAX([Data]))");
+            vSQL.AppendLine("                   FROM TRatings as TR");
+            vSQL.AppendLine("                  WHERE TR.ID = TRatings.id)");
+            vSQL.AppendLine("order by[data] desc");
 
             return GeneralHelper.GetData<RatingNamesDto>(vSQL.ToString());
         }

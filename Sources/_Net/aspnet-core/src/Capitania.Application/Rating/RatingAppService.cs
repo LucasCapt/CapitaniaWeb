@@ -15,12 +15,13 @@ namespace Capitania.Rating
         public List<RatingDto> GetRatings()
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT Papel AS PAPEL, Valor AS Valor, [Data] AS Data");
-            vSQL.AppendLine("  FROM TPapelProp");
-            vSQL.AppendLine(" WHERE Propriedade = 8");
+            vSQL.AppendLine("SELECT TPapelProp.Papel AS PAPEL, TPapelProp.Valor AS Valor, TPapelProp.[Data] AS Data, TPapel.Nome as Nome");
+            vSQL.AppendLine("  FROM TPapelProp, TPapel");
+            vSQL.AppendLine(" WHERE TPapelProp.Papel = tpapel.ID");
+            vSQL.AppendLine("   AND Propriedade = 8");
             vSQL.AppendLine(String.Format("   AND DATA >= '{0}'", DateTime.Now.AddMonths(-12).ToString("yyyy-MM-dd")));
-            vSQL.AppendLine(" GROUP BY papel, valor, [data]");
-            vSQL.AppendLine(" ORDER BY Papel");
+            vSQL.AppendLine(" GROUP BY papel, valor, [data], TPapel.Nome");
+            vSQL.AppendLine(" ORDER BY TPapel.Nome");
 
             return GeneralHelper.GetData<RatingDto>(vSQL.ToString());
         }

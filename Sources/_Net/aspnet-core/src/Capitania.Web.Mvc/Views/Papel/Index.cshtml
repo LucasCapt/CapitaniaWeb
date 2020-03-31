@@ -19,8 +19,8 @@
         Columns = new List<Syncfusion.EJ2.Grids.GridColumn> {
             new Syncfusion.EJ2.Grids.GridColumn(){ Field="IdentificadorPapel", HeaderText="ID", IsPrimaryKey=true, Visible=false},
             new Syncfusion.EJ2.Grids.GridColumn(){ Field="IDPropriedade", HeaderText="IDPropriedade", IsPrimaryKey=true, Visible=false},
-            new Syncfusion.EJ2.Grids.GridColumn(){ Field="NomePropriedade", HeaderText="Propriedade" },
-            new Syncfusion.EJ2.Grids.GridColumn(){ Field="ValorPropriedade", HeaderText="Valor"},
+            new Syncfusion.EJ2.Grids.GridColumn(){ Field="NomePropriedade", HeaderText="Propriedade", AutoFit=true },
+            new Syncfusion.EJ2.Grids.GridColumn(){ Field="ValorPropriedade", HeaderText="Valor", AutoFit=true},
 }
 
     };
@@ -46,25 +46,26 @@
                 <div class="row clearfix">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
                         <div>
-                            <ejs-grid id="gridPapel" dataSource="@Model.Papeis" childGrid="ChildGrid1" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
+                            <ejs-grid id="gridPapel" dataSource="@Model.Papeis" childGrid="ChildGrid1" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%" allowPaging="true">
+                                <e-grid-pagesettings pageCount="10" pageSize="25"></e-grid-pagesettings>
                                 <e-grid-columns>
-                                    <e-grid-column field="IdentificadorPapel" headerText="ID" isIdentity="true" isPrimaryKey="true" textAlign="Left" visible="true"></e-grid-column>
-                                    <e-grid-column field="Nome" headerText="Nome" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="CodigoCETIP" headerText="CETIP" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="ISIN" headerText="ISIN" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="CNPJ" headerText="CNPJ" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="Schedule" headerText="Schedule" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="Tipo" headerText="Tipo" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="Emissao" headerText="Dt. Emissao" textAlign="Left" format="dd/MM/yyyy"></e-grid-column>
-                                    <e-grid-column field="ClasseLiquidez" headerText="Classe Liquidez" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="DayCount" headerText="DayCount" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="Maturidade" headerText="Maturidade" textAlign="Left" format="dd/MM/yyyy"></e-grid-column>
-                                    <e-grid-column field="NomeCRD" headerText="NomeCRD" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="Coupon" headerText="Coupon" textAlign="Right" format="P3"></e-grid-column>
-                                    <e-grid-column field="Indexador" headerText="Indexador" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="Tranche" headerText="Tranche" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="Status" headerText="Status" textAlign="Left"></e-grid-column>
-                                    <e-grid-column field="ImobHoldings" headerText="Holdings" textAlign="Left"></e-grid-column>
+                                    <e-grid-column field="IdentificadorPapel" headerText="ID" isIdentity="true" isPrimaryKey="true" textAlign="Left" visible="true" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Nome" headerText="Nome" textAlign="Left" width="300"></e-grid-column>
+                                    <e-grid-column field="CodigoCETIP" headerText="CETIP" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="ISIN" headerText="ISIN" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="CNPJ" headerText="CNPJ" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Schedule" headerText="Schedule" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Tipo" headerText="Tipo" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Emissao" headerText="Dt. Emissao" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="ClasseLiquidez" headerText="Classe Liquidez" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="DayCount" headerText="DayCount" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Maturidade" headerText="Maturidade" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="NomeCRD" headerText="NomeCRD" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Coupon" headerText="Coupon" textAlign="Right" format="P3" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Indexador" headerText="Indexador" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Tranche" headerText="Tranche" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Status" headerText="Status" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="ImobHoldings" headerText="Holdings" textAlign="Left" autoFit="true"></e-grid-column>
                                 </e-grid-columns>
                             </ejs-grid>
                         </div>

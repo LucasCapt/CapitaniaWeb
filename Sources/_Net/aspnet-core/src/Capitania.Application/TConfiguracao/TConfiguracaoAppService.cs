@@ -53,7 +53,9 @@ namespace Capitania.TConfiguracao
         private async Task Update(CreateOrEditTConfiguracaoDto input)
         {
             var mensagem = await _TConfiguracaoRepository.FirstOrDefaultAsync(input.Id);
-            ObjectMapper.Map(input, mensagem);
+            mensagem.Descricao = input.Descricao;
+            mensagem.Valor = input.Valor;
+            await _TConfiguracaoRepository.UpdateAsync(mensagem);
         }
 
         [AbpAuthorize(PermissionNames.Pages_TConfiguracao_Delete)]

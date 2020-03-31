@@ -32,10 +32,16 @@ namespace Capitania.Papel
         public List<PropriedadePapelDto> ObterPropriedades()
         {
             StringBuilder vSQL = new StringBuilder();
-            vSQL.AppendLine("SELECT P.ID as IDPropriedade, P.Nome as NomePropriedade, V.Valor as ValorPropriedade, V.Papel as IdentificadorPapel");
+            vSQL.AppendLine("SELECT P.ID as IDPropriedade, P.Nome as NomePropriedade, ");
+            vSQL.AppendLine("       V.Valor as ValorPropriedade, V.Papel as IdentificadorPapel");
             vSQL.AppendLine("  FROM TPropriedades AS P LEFT OUTER JOIN TPapelProp AS V ON P.ID = V.Propriedade");
+            vSQL.AppendLine(" WHERE V.[Data] = (SELECT MAX(TP.[Data])");
+            vSQL.AppendLine("                              FROM TPapelProp AS TP");
+            vSQL.AppendLine("                             WHERE V.Papel = TP.Papel");
+            vSQL.AppendLine("                               AND V.Propriedade = TP.Propriedade)");
 
             return GeneralHelper.GetData<PropriedadePapelDto>(vSQL.ToString());
         }
     }
 }
+
