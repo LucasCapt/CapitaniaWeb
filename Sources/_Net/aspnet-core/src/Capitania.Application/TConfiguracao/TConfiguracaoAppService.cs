@@ -53,7 +53,9 @@ namespace Capitania.TConfiguracao
         private async Task Update(CreateOrEditTConfiguracaoDto input)
         {
             var mensagem = await _TConfiguracaoRepository.FirstOrDefaultAsync(input.Id);
-            ObjectMapper.Map(input, mensagem);
+            mensagem.Descricao = input.Descricao;
+            mensagem.Valor = input.Valor;
+            await _TConfiguracaoRepository.UpdateAsync(mensagem);
         }
 
         [AbpAuthorize(PermissionNames.Pages_TConfiguracao_Delete)]
@@ -141,9 +143,12 @@ namespace Capitania.TConfiguracao
         public async Task<TConfiguracaoDto> GetConfiguracaoDetails(EntityDto<string> input)
         {
             var mensagem = await _TConfiguracaoRepository.SingleAsync(e => e.Codigo == input.Id); //Não usar nunca Get ou GetAsync ou FirstOrDefault, pois esses métodos vão fazer query no banco perguntando pela chave primária "Id" a qual não existe
-            var currentTenant = await GetCurrentTenantAsync();
 
-            var output = ObjectMapper.Map(mensagem, new TConfiguracaoDto());
+            TConfiguracaoDto output = new TConfiguracaoDto();
+            output.Codigo = mensagem.Codigo;
+            output.Descricao = mensagem.Descricao;
+            output.Valor = mensagem.Valor;
+            output.Id = mensagem.Id;
 
             return output;
         }

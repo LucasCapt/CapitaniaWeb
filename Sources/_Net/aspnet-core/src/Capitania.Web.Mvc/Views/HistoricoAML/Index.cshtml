@@ -1,0 +1,85 @@
+﻿
+@using Capitania.Web.Startup
+@using Capitania.Web.Models.HistoricoAML
+@model HistoricoAMLModel
+@{
+    ViewBag.CurrentPageName = PageNames.HistoricoAML; // The menu item will be active for this page.
+}
+@section styles {
+    <link href="~/lib/morris.js/morris.css" rel="stylesheet" asp-append-version="true" />
+}
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/lib/jquery-countTo/jquery.countTo.js" asp-append-version="true"></script>
+        <script src="~/lib/raphael/raphael.js" asp-append-version="true"></script>
+        <script src="~/lib/chart.js/dist/Chart.bundle.js" asp-append-version="true"></script>
+        <script src="~/lib/Flot/jquery.flot.js" asp-append-version="true"></script>
+        <script src="~/lib/Flot/jquery.flot.resize.js" asp-append-version="true"></script>
+        <script src="~/lib/Flot/jquery.flot.pie.js" asp-append-version="true"></script>
+        <script src="~/lib/Flot/jquery.flot.categories.js" asp-append-version="true"></script>
+        <script src="~/lib/Flot/jquery.flot.time.js" asp-append-version="true"></script>
+        <script src="~/lib/jquery-sparkline/dist/jquery.sparkline.js" asp-append-version="true"></script>
+        <script src="~/lib/morris.js/morris.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Views/Home/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/_Bundles/home-index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    @L("AMLHistoric")
+                </h2>
+            </div>
+            <div class="portlet-body">
+                <div class="tab-content">
+                    <div class="row clearfix">
+                        <div class="col-xs-12 col-sm-6">
+                            <h4>Histórico (Últimos 30 dias)</h4>
+                        </div>
+                    </div>
+                    <div class="row clearfix" style="overflow-x:auto;white-space:nowrap">
+                        <div class="body" style="overflow-x:auto">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                                <ejs-grid id="GridHistoricoAML" dataSource="@Model.HistoricoAML" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
+                                    <e-grid-columns>
+                                        <e-grid-column field="DataAML" headerText="Data" textAlign="Left" format="dd/MM/yyyy"></e-grid-column>
+                                        <e-grid-column field="Trade" headerText="Trade" textAlign="Left"></e-grid-column>
+                                        <e-grid-column field="CTPT" headerText="CTPT" textAlign="Left"></e-grid-column>
+                                        <e-grid-column field="Compliant" headerText="Compliant" textAlign="Left"></e-grid-column>
+                                        <e-grid-column field="Coment" headerText="Comentário" textAlign="Left"></e-grid-column>
+                                        <e-grid-column field="Ativo" headerText="Ativo" textAlign="Left"></e-grid-column>
+                                        <e-grid-column field="Fundo" headerText="Fundo" textAlign="Left"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix" style="overflow-x:auto;white-space:nowrap">
+                        <div class="body" style="overflow-x:auto">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                                <ejs-chart id="idGraficoHistoricoAML" title="Histórico AML (12 meses)" height="100%" width="95%">
+                                    <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                                    <e-chart-primaryxaxis valueType="DateTime"
+                                                          labelFormat="MM/y"
+                                                          intervalType="Days">
+                                    </e-chart-primaryxaxis>
+                                    <e-series-collection>
+                                        <e-series dataSource="@Model.HistoricoAMLContador" name="Histórico" xName="Data" width="2" opacity="1" yName="Contador" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                        </e-series>
+                                    </e-series-collection>
+                                </ejs-chart>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

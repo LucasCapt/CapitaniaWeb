@@ -10,9 +10,9 @@ namespace Capitania.TProvFilter
 {
     public class TProvFilterManager : DomainService
     {
-        IRepository<TProvFilter, int> _TProvFilterRepository;
+        IRepository<TProvFilter, long> _TProvFilterRepository;
 
-        public TProvFilterManager(IRepository<TProvFilter, int> tConfiguracaoRepository)
+        public TProvFilterManager(IRepository<TProvFilter, long> tConfiguracaoRepository)
         {
             _TProvFilterRepository = tConfiguracaoRepository;
         }

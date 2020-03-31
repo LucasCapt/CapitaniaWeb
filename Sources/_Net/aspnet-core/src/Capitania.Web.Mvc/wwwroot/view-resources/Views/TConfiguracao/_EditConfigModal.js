@@ -1,8 +1,8 @@
 ﻿(function ($) {
 
-    var _roleService = abp.services.app.role;
-    var _$modal = $('#RoleEditModal');
-    var _$form = $('form[name=RoleEditForm]');
+    var _configService = abp.services.app.tConfiguracao;
+    var _$modal = $('#tConfigurationEditModal');
+    var _$form = $('form[name=ConfigurationEditForm]');
 
     function save() {
 
@@ -10,12 +10,12 @@
             return;
         }
 
-        var role = _$form.serializeFormToObject(); //serializeFormToObject is defined in main.js
+        var config = _$form.serializeFormToObject(); //serializeFormToObject is defined in main.js
         
         abp.ui.setBusy(_$form);
-        _roleService.update(role).done(function () {
+        _configService.createOrEdit(config).done(function () {
             _$modal.modal('hide');
-            location.reload(true); //reload page to see edited role!
+            location.reload(true); //reload page to see edited config!
         }).always(function () {
             abp.ui.clearBusy(_$modal);
         });

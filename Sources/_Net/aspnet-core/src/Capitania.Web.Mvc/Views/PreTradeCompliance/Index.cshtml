@@ -1,0 +1,61 @@
+﻿
+@using Abp.Authorization.Users
+@using Capitania.Web.Startup
+@model Capitania.Web.Models.PreTradeCompliance.PreTradeComplianceModel
+@{
+    ViewBag.CurrentPageName = PageNames.DashboardFundo; // The menu item will be active for this page.
+}
+
+<script>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+</script>
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    @L("PreTradeCompliance")
+                </h2>
+            </div>
+            <form id="frmConsulta" method="post">
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group form-float">
+                                <label class="label-required" for="DataBase">@L("DataBase")</label>
+                                <ejs-datepicker id="DataBase" cssClass="form-control" format="MM/dd/yyyy" value="@Model.DataBase"></ejs-datepicker>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group form-float">
+                                <button type="submit" class="btn-primary">Consultar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                            <div>
+                                <ejs-grid id="GridAsset" dataSource="@Model.PreTrades" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
+                                    <e-grid-columns>
+                                        <e-grid-column field="Data" headerText="Data" textAlign="Left" format="dd/MM/yyyy"></e-grid-column>
+                                        <e-grid-column field="Fundo" headerText="Fundo" textAlign="Right"></e-grid-column>
+                                        <e-grid-column field="Status" headerText="Status" textAlign="Right"></e-grid-column>
+                                        <e-grid-column field="TradeKey" headerText="TradeKey" textAlign="Left"></e-grid-column>
+                                    </e-grid-columns>
+                                </ejs-grid>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

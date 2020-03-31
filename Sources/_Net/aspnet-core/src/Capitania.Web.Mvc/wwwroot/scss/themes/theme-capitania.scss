@@ -1,0 +1,92 @@
+﻿@import '_theme-color-variables';
+
+.theme-cyan {
+
+    .navbar {
+        background-color: $theme-capitania;
+    }
+
+    .navbar-brand {
+        color: $theme-capitania-navbar-brand;
+
+        &:hover {
+            color: $theme-capitania-navbar-brand_hover;
+        }
+
+        &:active {
+            color: $theme-capitania-navbar-brand_active;
+        }
+
+        &:focus {
+            color: $theme-capitania-navbar-brand_focus;
+        }
+    }
+
+    .nav {
+        > li {
+            > a {
+                color: $theme-capitania-nav-anchor;
+
+                &:hover {
+                    background-color: $theme-capitania-nav-anchor_hover;
+                }
+
+                &:focus {
+                    background-color: $theme-capitania-nav-anchor_focus;
+                }
+            }
+        }
+
+        .open {
+            > a {
+                background-color: $theme-capitania-nav-anchor-opened;
+
+                &:hover {
+                    background-color: $theme-capitania-nav-anchor-opened_hover;
+                }
+
+                &:focus {
+                    background-color: $theme-capitania-nav-anchor-opened_focus;
+                }
+            }
+        }
+    }
+
+    .bars {
+        color: $theme-capitania-bar;
+    }
+
+    .sidebar {
+        .menu {
+            .list {
+                li.active {
+                    background-color: $theme-capitania-menu-list-active;
+
+                    > :first-child {
+                        i, span {
+                            color: $theme-capitania;
+                        }
+                    }
+                }
+
+                .toggled {
+                    background-color: $theme-capitania-menu-list-toggled;
+                }
+
+                .ml-menu {
+                    background-color: $theme-capitania-menu-list-submenu;
+                }
+            }
+        }
+
+        .legal {
+            background-color: $theme-capitania-legal-bg;
+
+            .copyright {
+                a {
+                    color: $theme-capitania !important;
+                }
+            }
+        }
+    }
+}

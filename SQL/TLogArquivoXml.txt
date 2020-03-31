@@ -1,0 +1,24 @@
+USE [db_capitania_prd]
+GO
+
+/****** Object:  Table [dbo].[TLogArquivoXml]    Script Date: 12/01/2020 19:33:42 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[TLogArquivoXml](
+	[ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[DataHora] [datetime] NOT NULL,
+	[Arquivo] [varchar](200) NOT NULL,
+	[Pasta] [varchar](20) NOT NULL,
+	[Situacao] [smallint] NOT NULL,
+	[Observacao] [varchar](350) NOT NULL,
+ CONSTRAINT [PK_TLogArquivoXml] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+

@@ -20,15 +20,100 @@ namespace Capitania.Web.Startup
                         icon: "home",
                         requiresAuthentication: true
                     )
-                ).AddItem(
+
+                ).AddItem( // Menu items below is just for demonstration!
                     new MenuItemDefinition(
-                        PageNames.Tenants,
-                        L("Tenants"),
-                        url: "Tenants",
-                        icon: "business",
-                        requiredPermissionName: PermissionNames.Pages_Tenants
-                    )
-                ).AddItem(
+                        "Dashboards",
+                        L("Dashboards"),
+                        icon: "menu"
+                    ).AddItem(new MenuItemDefinition(
+                        PageNames.DashboardFundo,
+                        L("DashboardFundos"),
+                        url: "DashboardFundos",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardFundos)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashboardXml,
+                        L("XmlAnbimaFileLog"),
+                        url: "DashboardXml",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardXml)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashboardControle,
+                        L("DashboardControl"),
+                        url: "DashboardControle",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardControle)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashboardGerencial,
+                        L("DashboardManager"),
+                        url: "DashboardGerencial",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardGerencial)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.DashFundo,
+                        L("DashFundo"),
+                        url: "DashboardFundo",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_DashboardFundo)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.HistoricoAML,
+                        L("AMLHistoric"),
+                        url: "HistoricoAML",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_HistoricoAML)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.FactorHistorico,
+                        L("FactorHistoric"),
+                        url: "FactorHistorico",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_FactorHist)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.PreTradeCompliance,
+                        L("PreTradeCompliance"),
+                        url: "PreTradeCompliance",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_PreTradeCompliance)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Ratings,
+                        L("Ratings"),
+                        url: "Ratings",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Ratings)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.RatingNames,
+                        L("RatingNames"),
+                        url: "RatingNames",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_RatingNames)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Stress,
+                        L("Stress"),
+                        url: "Stress",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Stress)
+                    ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.Paper,
+                        L("Paper"),
+                        url: "Papel",
+                        icon: "local_offer",
+                        requiredPermissionName: PermissionNames.Pages_Papel)
+                    ))
+                .AddItem(new MenuItemDefinition(
+                    "Settings",
+                    L("SystemSettings"),
+                    icon: "menu").AddItem(
                     new MenuItemDefinition(
                         PageNames.Users,
                         L("Users"),
@@ -50,92 +135,9 @@ namespace Capitania.Web.Startup
                         L("TConfigurations"),
                         url: "TConfiguracao",
                         icon: "local_offer",
-                        requiredPermissionName: PermissionNames.Pages_Roles
+                        requiredPermissionName: PermissionNames.Pages_TConfiguracao
                     )
-                ).AddItem(
-                    new MenuItemDefinition(
-                        PageNames.About,
-                        L("About"),
-                        url: "About",
-                        icon: "info"
-                    )
-                ).AddItem( // Menu items below is just for demonstration!
-                    new MenuItemDefinition(
-                        "MultiLevelMenu",
-                        L("MultiLevelMenu"),
-                        icon: "menu"
-                    ).AddItem(
-                        new MenuItemDefinition(
-                            "AspNetBoilerplate",
-                            new FixedLocalizableString("ASP.NET Boilerplate")
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetBoilerplateHome",
-                                new FixedLocalizableString("Home"),
-                                url: "https://aspnetboilerplate.com?ref=abptmpl"
-                            )
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetBoilerplateTemplates",
-                                new FixedLocalizableString("Templates"),
-                                url: "https://aspnetboilerplate.com/Templates?ref=abptmpl"
-                            )
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetBoilerplateSamples",
-                                new FixedLocalizableString("Samples"),
-                                url: "https://aspnetboilerplate.com/Samples?ref=abptmpl"
-                            )
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetBoilerplateDocuments",
-                                new FixedLocalizableString("Documents"),
-                                url: "https://aspnetboilerplate.com/Pages/Documents?ref=abptmpl"
-                            )
-                        )
-                    ).AddItem(
-                        new MenuItemDefinition(
-                            "AspNetZero",
-                            new FixedLocalizableString("ASP.NET Zero")
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetZeroHome",
-                                new FixedLocalizableString("Home"),
-                                url: "https://aspnetzero.com?ref=abptmpl"
-                            )
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetZeroDescription",
-                                new FixedLocalizableString("Description"),
-                                url: "https://aspnetzero.com/?ref=abptmpl#description"
-                            )
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetZeroFeatures",
-                                new FixedLocalizableString("Features"),
-                                url: "https://aspnetzero.com/?ref=abptmpl#features"
-                            )
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetZeroPricing",
-                                new FixedLocalizableString("Pricing"),
-                                url: "https://aspnetzero.com/?ref=abptmpl#pricing"
-                            )
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetZeroFaq",
-                                new FixedLocalizableString("Faq"),
-                                url: "https://aspnetzero.com/Faq?ref=abptmpl"
-                            )
-                        ).AddItem(
-                            new MenuItemDefinition(
-                                "AspNetZeroDocuments",
-                                new FixedLocalizableString("Documents"),
-                                url: "https://aspnetzero.com/Documents?ref=abptmpl"
-                            )
-                        )
-                    )
-                );
+                ));
         }
 
         private static ILocalizableString L(string name)

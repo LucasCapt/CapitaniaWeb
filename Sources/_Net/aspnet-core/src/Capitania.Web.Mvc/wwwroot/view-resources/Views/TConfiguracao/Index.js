@@ -1,34 +1,27 @@
 ﻿(function () {
 	$(function () {
 
-		var _roleService = abp.services.app.tConfiguracao;
-		var _$modal = $('#RoleCreateModal');
+		var _configService = abp.services.app.tConfiguracao;
+		var _$modal = $('#ConfigCreateModal');
 		var _$form = _$modal.find('form');
 
 		_$form.validate({
 		});
 
 		$('#RefreshButton').click(function () {
-			refreshRoleList();
+			refreshConfigList();
 		});
 
-		$('.delete-role').click(function () {
-			var roleId = $(this).attr("data-role-id");
-			var roleName = $(this).attr('data-role-name');
-
-			deleteRole(roleId, roleName);
-		});
-
-		$('.edit-role').click(function (e) {
-			var roleId = $(this).attr("data-role-id");
+		$('.edit-config').click(function (e) {
+			var configId = $(this).attr("data-config-id");
 
 			e.preventDefault();
 			$.ajax({
-				url: abp.appPath + 'TConfiguracao/EditRoleModal?roleId=' + roleId,
+                url: abp.appPath + 'TConfiguracao/TConfiguracaoDetalhesModal?codigo=' + configId,
 				type: 'POST',
 				contentType: 'application/html',
 				success: function (content) {
-					$('#RoleEditModal div.modal-content').html(content);
+					$('#ConfigEditModal div.modal-content').html(content);
 				},
 				error: function (e) { }
 			});
@@ -41,12 +34,12 @@
 				return;
 			}
 
-			var role = _$form.serializeFormToObject(); //serializeFormToObject is defined in main.js
+			var config = _$form.serializeFormToObject(); //serializeFormToObject is defined in main.js
             
 			abp.ui.setBusy(_$modal);
-			_roleService.createOrEdit(role).done(function () {
+			_configService.createOrEdit(config).done(function () {
 				_$modal.modal('hide');
-				location.reload(true); //reload page to see new role!
+				location.reload(true); //reload page to see new config!
 			}).always(function () {
 				abp.ui.clearBusy(_$modal);
 			});
@@ -56,23 +49,8 @@
 			_$modal.find('input:not([type=hidden]):first').focus();
 		});
 
-		function refreshRoleList() {
-			location.reload(true); //reload page to see new role!
-		}
-
-		function deleteRole(roleId, roleName) {
-			abp.message.confirm(
-                abp.utils.formatString(abp.localization.localize('AreYouSureWantToDelete', 'Capitania'), roleName),
-				function (isConfirmed) {
-					if (isConfirmed) {
-						_roleService.delete({
-							id: roleId
-						}).done(function () {
-							refreshRoleList();
-						});
-					}
-				}
-			);
+		function refreshConfigList() {
+			location.reload(true); //reload page to see new config!
 		}
 	});
 })();

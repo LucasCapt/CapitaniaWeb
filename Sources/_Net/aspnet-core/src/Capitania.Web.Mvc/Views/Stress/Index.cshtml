@@ -1,0 +1,47 @@
+﻿
+@using Abp.Authorization.Users
+@using Capitania.Web.Startup
+@using Capitania.EntityFrameworkCore
+@model Capitania.Web.Models.StressModel
+@{
+    ViewBag.CurrentPageName = PageNames.Stress; // The menu item will be active for this page.
+}
+
+<script>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+</script>
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    @L("Stress")
+                </h2>
+            </div>
+            <div class="portlet-body">
+                <div class="row clearfix">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                        <div>
+                            <ejs-grid id="gridStress" dataSource="@Model.DadosStress" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
+                                <e-grid-columns>
+                                    <e-grid-column field="Fundo" headerText="Fundo" textAlign="Left"></e-grid-column>
+                                    <e-grid-column field="Stress1" headerText="@ParameterManager.GetParameterValue(DBParametersConstants.RStress1)" textAlign="Left"></e-grid-column>
+                                    <e-grid-column field="Stress2" headerText="@ParameterManager.GetParameterValue(DBParametersConstants.RStress2)" textAlign="Right" format="P4"></e-grid-column>
+                                    <e-grid-column field="Stress3" headerText="@ParameterManager.GetParameterValue(DBParametersConstants.RStress3)" textAlign="Right" format="P4"></e-grid-column>
+                                    <e-grid-column field="Stress4" headerText="@ParameterManager.GetParameterValue(DBParametersConstants.RStress4)" textAlign="Right" format="P4"></e-grid-column>
+                                    <e-grid-column field="Stress5" headerText="@ParameterManager.GetParameterValue(DBParametersConstants.RStress5)" textAlign="Right" format="P4"></e-grid-column>
+                                </e-grid-columns>
+                            </ejs-grid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

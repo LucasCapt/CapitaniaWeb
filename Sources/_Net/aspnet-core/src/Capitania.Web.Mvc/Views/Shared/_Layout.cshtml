@@ -63,6 +63,10 @@
         abp.appPath = '@ApplicationPath';
     </script>
 
+    @* Syncfusion Essential JS 2 Styles *@
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/material.css" />
+    @* Syncfusion Essential JS 2 Scripts *@
+    <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
 </head>
 <body class="@("theme-" + uiTheme)">
 
@@ -103,7 +107,7 @@
             <div class="navbar-header">
                 <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
                 <a href="javascript:void(0);" class="bars"></a>
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index"><i class="fa fa-cubes"></i> Capitania</a>
+                <a class="navbar-default" asp-controller="Home" asp-action="Index"></i><img id="logo" src="~/images/logoCapitania.jpg" width="195" height="60"/></a>
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
@@ -217,5 +221,6 @@
 
     <!-- View specific scripts -->
     @RenderSection("scripts", required: false)
+    <ejs-scripts></ejs-scripts>
 </body>
 </html>

@@ -1,0 +1,45 @@
+﻿
+@using Abp.Authorization.Users
+@using Capitania.Web.Startup
+@model Capitania.Web.Models.Ratings.RatingsModel
+@{
+    ViewBag.CurrentPageName = PageNames.Ratings; // The menu item will be active for this page.
+}
+
+<script>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+</script>
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    @L("Ratings")
+                </h2>
+            </div>
+            <div class="portlet-body">
+                <div class="row clearfix">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                        <div>
+                            <ejs-grid id="GridConcentrations" dataSource="@Model.Ratings" allowTextWrap="true" allowGrouping="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%">
+                                <e-grid-groupsettings columns="@(new string[] {"Data"})"></e-grid-groupsettings>
+                                <e-grid-columns>
+                                    <e-grid-column field="Papel" headerText="Papel" textAlign="Left"></e-grid-column>
+                                    <e-grid-column field="Nome" headerText="Nome" textAlign="Left"></e-grid-column>
+                                    <e-grid-column field="Valor" headerText="Valor" textAlign="Left"></e-grid-column>
+                                    <e-grid-column field="Data" headerText="Data" format="dd/MM/yyyy" textAlign="Left"></e-grid-column>
+                                </e-grid-columns>
+                            </ejs-grid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -13,7 +13,7 @@ namespace Capitania.Importer.Library
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlRootAttribute("arquivoposicao_4_01", Namespace = "", IsNullable = false)]
-    public partial class ArquivoPosicao_4_01_type
+    internal partial class ArquivoPosicao_4_01_type
     {
 
         private Fundo_type[] fundoField;
@@ -54,7 +54,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class Fundo_type
+    internal partial class Fundo_type
     {
 
         private header_fundo_type headerField;
@@ -445,7 +445,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class header_fundo_type
+    internal partial class header_fundo_type
     {
 
         private string isinField;
@@ -458,21 +458,21 @@ namespace Capitania.Importer.Library
 
         private string nomeadmField;
 
-        private long cnpjadmField;
+        private string cnpjadmField;
 
         private string nomegestorField;
 
-        private long cnpjgestorField;
+        private string cnpjgestorField;
 
         private string nomecustodianteField;
 
-        private long cnpjcustodianteField;
+        private string cnpjcustodianteField;
 
         private decimal valorcotaField;
 
         private decimal quantidadeField;
 
-        private decimal patliqField;
+        private double patliqField;
 
         private decimal valorativosField;
 
@@ -482,7 +482,7 @@ namespace Capitania.Importer.Library
 
         private decimal vlcotasemitirField;
 
-        private decimal vlcotasresgatarField;
+        private double vlcotasresgatarField;
 
         private string codanbidField;
 
@@ -558,7 +558,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjadm
+        public string cnpjadm
         {
             get
             {
@@ -584,7 +584,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjgestor
+        public string cnpjgestor
         {
             get
             {
@@ -610,7 +610,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjcustodiante
+        public string cnpjcustodiante
         {
             get
             {
@@ -649,7 +649,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal patliq
+        public double patliq
         {
             get
             {
@@ -714,7 +714,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal vlcotasresgatar
+        public double vlcotasresgatar
         {
             get
             {
@@ -783,7 +783,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum nivelrsc_type
+    internal enum nivelrsc_type
     {
 
         /// <remarks/>
@@ -808,7 +808,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class header_carteira_type
+    internal partial class header_carteira_type
     {
 
         private string cnpjcpfField;
@@ -825,11 +825,11 @@ namespace Capitania.Importer.Library
 
         private string nomegestorField;
 
-        private long cnpjgestorField;
+        private string cnpjgestorField;
 
         private string nomecustodianteField;
 
-        private long cnpjcustodianteField;
+        private string cnpjcustodianteField;
 
         private decimal patliqField;
 
@@ -933,7 +933,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjgestor
+        public string cnpjgestor
         {
             get
             {
@@ -959,7 +959,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjcustodiante
+        public string cnpjcustodiante
         {
             get
             {
@@ -1040,7 +1040,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tpcli_type
+    internal enum tpcli_type
     {
 
         /// <remarks/>
@@ -1055,7 +1055,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class Carteira_type
+    internal partial class Carteira_type
     {
 
         private header_carteira_type headerField;
@@ -1446,7 +1446,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class partplanprev_type
+    internal partial class partplanprev_type
     {
 
         private long cnpbField;
@@ -1485,7 +1485,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class titpublico_type
+    internal partial class titpublico_type
     {
 
         private string isinField;
@@ -1528,7 +1528,7 @@ namespace Capitania.Importer.Library
 
         private decimal valorfinemgarField;
 
-        private decimal coupomField;
+        private double coupomField;
 
         private string indexadorField;
 
@@ -1816,7 +1816,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal coupom
+        public double coupom
         {
             get
             {
@@ -1977,7 +1977,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum caracteristica_type
+    internal enum caracteristica_type
     {
 
         /// <remarks/>
@@ -1992,7 +1992,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class compromisso_type
+    internal partial class compromisso_type
     {
 
         private string dtretornoField;
@@ -2089,7 +2089,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum classeCV_type
+    internal enum classeCV_type
     {
 
         /// <remarks/>
@@ -2102,7 +2102,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum classeCDTV_type
+    internal enum classeCDTV_type
     {
 
         /// <remarks/>
@@ -2123,7 +2123,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class aluguel_type
+    internal partial class aluguel_type
     {
 
         private string dtvencalugField;
@@ -2224,7 +2224,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class titprivado_type
+    internal partial class titprivado_type
     {
 
         private string isinField;
@@ -2239,7 +2239,7 @@ namespace Capitania.Importer.Library
 
         private string dtvencimentoField;
 
-        private long cnpjemissorField;
+        private string cnpjemissorField;
 
         private decimal qtdisponivelField;
 
@@ -2265,7 +2265,7 @@ namespace Capitania.Importer.Library
 
         private decimal valorfinemgarField;
 
-        private decimal coupomField;
+        private double coupomField;
 
         private string indexadorField;
 
@@ -2368,7 +2368,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjemissor
+        public string cnpjemissor
         {
             get
             {
@@ -2538,7 +2538,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal coupom
+        public double coupom
         {
             get
             {
@@ -2701,7 +2701,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class debenture_type
+    internal partial class debenture_type
     {
 
         private string isinField;
@@ -2722,7 +2722,7 @@ namespace Capitania.Importer.Library
 
         private string dtvencimentoField;
 
-        private long cnpjemissorField;
+        private string cnpjemissorField;
 
         private decimal qtdisponivelField;
 
@@ -2748,7 +2748,7 @@ namespace Capitania.Importer.Library
 
         private decimal valorfinemgarField;
 
-        private decimal coupomField;
+        private double coupomField;
 
         private string indexadorField;
 
@@ -2890,7 +2890,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjemissor
+        public string cnpjemissor
         {
             get
             {
@@ -3060,7 +3060,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal coupom
+        public double coupom
         {
             get
             {
@@ -3221,7 +3221,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum sn_type
+    internal enum sn_type
     {
 
         /// <remarks/>
@@ -3236,7 +3236,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class acoes_type
+    internal partial class acoes_type
     {
 
         private string isinField;
@@ -3245,15 +3245,15 @@ namespace Capitania.Importer.Library
 
         private string codativoField;
 
-        private decimal qtdisponivelField;
+        private double qtdisponivelField;
 
         private int loteField;
 
-        private decimal qtgarantiaField;
+        private double qtgarantiaField;
 
-        private decimal valorfindispField;
+        private double valorfindispField;
 
-        private decimal valorfinemgarField;
+        private double valorfinemgarField;
 
         private decimal tributosField;
 
@@ -3313,7 +3313,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal qtdisponivel
+        public double qtdisponivel
         {
             get
             {
@@ -3339,7 +3339,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal qtgarantia
+        public double qtgarantia
         {
             get
             {
@@ -3352,7 +3352,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal valorfindisp
+        public double valorfindisp
         {
             get
             {
@@ -3365,7 +3365,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal valorfinemgar
+        public double valorfinemgar
         {
             get
             {
@@ -3501,7 +3501,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class opcoesacoes_type
+    internal partial class opcoesacoes_type
     {
 
         private string isinField;
@@ -3766,7 +3766,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class opcoesderiv_type
+    internal partial class opcoesderiv_type
     {
 
         private string isinField;
@@ -3998,7 +3998,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum callput_type
+    internal enum callput_type
     {
 
         /// <remarks/>
@@ -4013,7 +4013,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class opcoesflx_type
+    internal partial class opcoesflx_type
     {
 
         private string isinField;
@@ -4260,7 +4260,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tipoopcao_type
+    internal enum tipoopcao_type
     {
 
         /// <remarks/>
@@ -4275,7 +4275,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class termorv_type
+    internal partial class termorv_type
     {
 
         private string isinField;
@@ -4509,7 +4509,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class termorf_type
+    internal partial class termorf_type
     {
 
         private string isinField;
@@ -4536,7 +4536,7 @@ namespace Capitania.Importer.Library
 
         private decimal tributosField;
 
-        private decimal coupomField;
+        private double coupomField;
 
         private string indexadorField;
 
@@ -4713,7 +4713,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal coupom
+        public double coupom
         {
             get
             {
@@ -4847,7 +4847,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum classeCVA_type
+    internal enum classeCVA_type
     {
 
         /// <remarks/>
@@ -4865,14 +4865,14 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class futuros_type
+    internal partial class futuros_type
     {
 
         private string isinField;
 
         private string ativoField;
 
-        private long cnpjcorretoraField;
+        private string cnpjcorretoraField;
 
         private string serieField;
 
@@ -4919,7 +4919,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjcorretora
+        public string cnpjcorretora
         {
             get
             {
@@ -5054,7 +5054,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class swap_type
+    internal partial class swap_type
     {
 
         private cetipbmf_type cetipbmfField;
@@ -5067,7 +5067,7 @@ namespace Capitania.Importer.Library
 
         private string dtvencimentoField;
 
-        private long cnpjcontraparteField;
+        private string cnpjcontraparteField;
 
         private int garantiaField;
 
@@ -5163,7 +5163,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjcontraparte
+        public string cnpjcontraparte
         {
             get
             {
@@ -5361,7 +5361,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum cetipbmf_type
+    internal enum cetipbmf_type
     {
 
         /// <remarks/>
@@ -5379,7 +5379,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class caixa_type
+    internal partial class caixa_type
     {
 
         private string isininstituicaoField;
@@ -5462,7 +5462,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tpcontacc_type
+    internal enum tpcontacc_type
     {
 
         /// <remarks/>
@@ -5486,18 +5486,18 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class cotas_type
+    internal partial class cotas_type
     {
 
         private string isinField;
 
-        private long cnpjfundoField;
+        private string cnpjfundoField;
 
-        private decimal qtdisponivelField;
+        private double qtdisponivelField;
 
-        private decimal qtgarantiaField;
+        private double qtgarantiaField;
 
-        private decimal puposicaoField;
+        private double puposicaoField;
 
         private decimal tributosField;
 
@@ -5519,7 +5519,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public long cnpjfundo
+        public string cnpjfundo
         {
             get
             {
@@ -5532,7 +5532,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal qtdisponivel
+        public double qtdisponivel
         {
             get
             {
@@ -5545,7 +5545,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal qtgarantia
+        public double qtgarantia
         {
             get
             {
@@ -5558,7 +5558,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal puposicao
+        public double puposicao
         {
             get
             {
@@ -5616,10 +5616,10 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class despesas_type
+    internal partial class despesas_type
     {
 
-        private decimal txadmField;
+        private double txadmField;
 
         private decimal tributosField;
 
@@ -5646,7 +5646,7 @@ namespace Capitania.Importer.Library
         private string indexadorField;
 
         /// <remarks/>
-        public decimal txadm
+        public double txadm
         {
             get
             {
@@ -5824,12 +5824,12 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class outrasdespesas_type
+    internal partial class outrasdespesas_type
     {
 
         private int coddespField;
 
-        private decimal valorField;
+        private double valorField;
 
         /// <remarks/>
         public int coddesp
@@ -5845,7 +5845,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal valor
+        public double valor
         {
             get
             {
@@ -5863,7 +5863,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class provisao_type
+    internal partial class provisao_type
     {
 
         private int codprovField;
@@ -5872,7 +5872,7 @@ namespace Capitania.Importer.Library
 
         private string dtField;
 
-        private decimal valorField;
+        private double valorField;
 
         /// <remarks/>
         public int codprov
@@ -5914,7 +5914,7 @@ namespace Capitania.Importer.Library
         }
 
         /// <remarks/>
-        public decimal valor
+        public double valor
         {
             get
             {
@@ -5930,7 +5930,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum credeb_type
+    internal enum credeb_type
     {
 
         /// <remarks/>
@@ -5945,10 +5945,10 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class corretagem_type
+    internal partial class corretagem_type
     {
 
-        private long cnpjcorretoraField;
+        private string cnpjcorretoraField;
 
         private bool cnpjcorretoraFieldSpecified;
 
@@ -5973,7 +5973,7 @@ namespace Capitania.Importer.Library
         private decimal vlrepasseoutbolField;
 
         /// <remarks/>
-        public long cnpjcorretora
+        public string cnpjcorretora
         {
             get
             {
@@ -6137,7 +6137,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class imovel_type
+    internal partial class imovel_type
     {
 
         private string logradouroField;
@@ -6600,7 +6600,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tipoimovel_type
+    internal enum tipoimovel_type
     {
 
         /// <remarks/>
@@ -6651,7 +6651,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tipouso_type
+    internal enum tipouso_type
     {
 
         /// <remarks/>
@@ -6680,7 +6680,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class opcoesmoedasotcl_type
+    internal partial class opcoesmoedasotcl_type
     {
 
         private string codoperField;
@@ -6959,7 +6959,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class forwardsmoedas_type
+    internal partial class forwardsmoedas_type
     {
 
         private tipooperacao_type tipooperacaoField;
@@ -7131,7 +7131,7 @@ namespace Capitania.Importer.Library
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    public enum tipooperacao_type
+    internal enum tipooperacao_type
     {
 
         /// <remarks/>
@@ -7146,15 +7146,15 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class participacoes_type
+    internal partial class participacoes_type
     {
 
-        private long cnpjpartField;
+        private string cnpjpartField;
 
         private decimal valorfinanceiroField;
 
         /// <remarks/>
-        public long cnpjpart
+        public string cnpjpart
         {
             get
             {
@@ -7185,7 +7185,7 @@ namespace Capitania.Importer.Library
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class fidc_type
+    internal partial class fidc_type
     {
 
         private decimal valorfinanceiroField;

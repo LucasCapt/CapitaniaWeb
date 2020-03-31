@@ -47,7 +47,9 @@ namespace Capitania.Web.Controllers
                 Configuracao = message
             };
 
-            return View("_TConfiguracaoDetalhesModal", model);
+            var vRet = View("_EditConfigurationModal", model);
+
+            return vRet;
         }
     }
 }

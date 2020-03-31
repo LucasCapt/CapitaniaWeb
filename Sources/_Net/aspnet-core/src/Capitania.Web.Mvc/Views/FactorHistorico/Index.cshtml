@@ -1,0 +1,157 @@
+﻿
+@using Abp.Authorization.Users
+@using Capitania.Web.Startup
+@model Capitania.Web.Models.FactorHistorico.FactorHistoricoModel
+@{
+    ViewBag.CurrentPageName = PageNames.FactorHistorico; // The menu item will be active for this page.
+}
+
+<script>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+</script>
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    @L("FactorHistoric")
+                </h2>
+            </div>
+            <div class="row clearfix">
+                <div class="tab-content">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idGraficoDOLAR" title="DOLAR (12 meses)" height="100%" width="100%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.ListagemHistoricoDolar" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idGraficoIDA" title="IDA (12 meses)" height="100%" width="100%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.ListagemHistoricoIDA" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="overflow-x:auto; white-space:nowrap">
+                    <ejs-chart id="idGraficoIFIX" title="IFIX (12 meses)" height="100%" width="100%">
+                        <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                        <e-chart-primaryxaxis valueType="DateTime"
+                                              labelFormat="MM/y"
+                                              intervalType="Months">
+                        </e-chart-primaryxaxis>
+                        <e-series-collection>
+                            <e-series dataSource="@Model.ListagemHistoricoIFIX" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                            </e-series>
+                        </e-series-collection>
+                    </ejs-chart>
+                </div>
+                <div class="tab-content">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idGraficoIMAB5" title="IMAB 5 (12 meses)" height="100%" width="100%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.ListagemHistoricoIMAB5" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idGraficoIPCA2Y" title="IPCA 2y (12 meses)" height="100%" width="100%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.ListagemHistoricoIPCA2Y" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idGraficoIPCA5Y" title="IPCA 5y (12 meses)" height="100%" width="100%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.ListagemHistoricoIPCA5Y" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idGraficoIPCA10Y" title="IPCA 10y (12 meses)" height="100%" width="100%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="d/MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.ListagemHistoricoIPCA10Y" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idGraficoPRE2Y" title="PRE 2y (12 meses)" height="100%" width="100%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="d/MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.ListagemHistoricoPRE2Y" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="overflow-x:auto; white-space:nowrap">
+                        <ejs-chart id="idGraficoPRE5Y" title="PRE 5y (12 meses)" height="100%" width="100%">
+                            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+                            <e-chart-primaryxaxis valueType="DateTime"
+                                                  labelFormat="MM/y"
+                                                  intervalType="Months">
+                            </e-chart-primaryxaxis>
+                            <e-series-collection>
+                                <e-series dataSource="@Model.ListagemHistoricoPRE5Y" name="Histórico" xName="Data" width="2" opacity="1" yName="Valor" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Line">
+                                </e-series>
+                            </e-series-collection>
+                        </ejs-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
