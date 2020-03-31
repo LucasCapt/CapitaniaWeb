@@ -3,7 +3,7 @@ Public Const LongTimeAgo As Date = 36526
 
 Private vConexao As ADODB.Connection
 Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
-'Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
+'Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania_prd;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
 
 Public DBFileName As String
 Public ConfigFileName As String
