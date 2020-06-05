@@ -84,7 +84,9 @@ Public NumErrors As Double             'Número de erros desde a última revisão
 'Public Const Ver = "2.133"               '28-Nov-2019 'Consertado o contador de erros no statusbar e a rotina
 'Public Const Ver = "2.134"               '06-Dec-2019 'Incluido Cdate() para converter certas datas que vem da Base
 'Public Const Ver = "2.135"               '30-Apr-2020 'Incluido mais um teste contra ISIN=ID0000 no Importador e risco imobiliário ortogonal
-Public Const Ver = "2.136"                '02-Jun-2020 'Aumentou a importação de quotas de fundos para até 1000 colunas
+'Public Const Ver = "2.136"                '02-Jun-2020 'Aumentou a importação de quotas de fundos para até 1000 colunas
+'Public Const Ver = "2.137"                '05-Jun-2020 'Nova conexão com a base de dados
+Public Const Ver = "2.138"                '05-Jun-2020 'Alteração do ícone da aplicação. Tentativa de correção do erro de overflow
 
 
 Sub Init()

@@ -5,8 +5,9 @@ Begin VB.MDIForm FMain
    Caption         =   "CAPITÂNIA ENQUADRAMENTO"
    ClientHeight    =   9675
    ClientLeft      =   225
-   ClientTop       =   855
+   ClientTop       =   1455
    ClientWidth     =   12960
+   Icon            =   "FMain.frx":0000
    LinkTopic       =   "MDIForm1"
    StartUpPosition =   3  'Windows Default
    Begin MSComctlLib.StatusBar StatusBar1 
@@ -61,43 +62,43 @@ Begin VB.MDIForm FMain
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
          NumListImages   =   10
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":0000
+            Picture         =   "FMain.frx":048A
             Key             =   ""
          EndProperty
          BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":02F4
+            Picture         =   "FMain.frx":077E
             Key             =   ""
          EndProperty
          BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":05D0
+            Picture         =   "FMain.frx":0A5A
             Key             =   ""
          EndProperty
          BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":08D7
+            Picture         =   "FMain.frx":0D61
             Key             =   ""
          EndProperty
          BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":0C29
+            Picture         =   "FMain.frx":10B3
             Key             =   ""
          EndProperty
          BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":0FB2
+            Picture         =   "FMain.frx":143C
             Key             =   ""
          EndProperty
          BeginProperty ListImage7 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":133D
+            Picture         =   "FMain.frx":17C7
             Key             =   ""
          EndProperty
          BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":1698
+            Picture         =   "FMain.frx":1B22
             Key             =   ""
          EndProperty
          BeginProperty ListImage9 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":1A36
+            Picture         =   "FMain.frx":1EC0
             Key             =   ""
          EndProperty
          BeginProperty ListImage10 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "FMain.frx":1D64
+            Picture         =   "FMain.frx":21EE
             Key             =   ""
          EndProperty
       EndProperty
