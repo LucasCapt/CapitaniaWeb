@@ -14,10 +14,15 @@ Attribute VB_Exposed = False
 'V. 2.128 - Alterado o ImportaPricing
 '           para não repetir ativo nem pegar ativos tipo CRIPR e CRIVT
 'V. 2.133 - Alterado Layt22MainParaData --> desconsiderar ISIN que começa com BR0000 (default do Bradesco)
+'
+'V. 2.135 - Alterado Layt22MainParaData --> desconsiderar ISIN que começa com BR0000 (default do Bradesco) também para ID
+'
+'V. 2.136 - Alterado ImportRiskSeries --> aumentar para 1000 o número de colunas de importação de quotas de fundos
 
 Public LastDate
 
 Private Excel As Object
+
 
 
 Public Sub ImportaTudo(Level As Integer, EhBatch As Boolean, ehPreTrade As Boolean, Optional f As Form)
@@ -67,7 +72,6 @@ Sub importaADTV(Level As Integer, Optional f As Form)
                         DoEvents
                         If ws.cells(i, j) > LastDate Then
                             d = ws.cells(i, j)
-                            
                             If IsNumeric(ws.cells(1, j + 1)) And ws.cells(i, j) <> "" Then
                                 adtv = ws.cells(1, j + 1)
                                 Call FStart.Say("Importando ADTV Ativo " & Ativo & " Data " & d)
@@ -743,7 +747,7 @@ Public Sub ImportRiskSeries(Level As Integer, Optional f As Form)
             Set w = OpenAndSetExcel(Excel, Config.HistFilePath + Config.HistFileName, Config.HistFileQuotaTab)
             If Not w Is Nothing Then
                 i = 1
-                While w.cells(1, i) <> "" And i < 256
+                While w.cells(1, i) <> "" And i < 1000 'número máximo de colunas
                     DoEvents
                     If IsNumeric(w.cells(1, i)) Then
                         fundoid = w.cells(1, i) 'numero do fundo
@@ -1283,7 +1287,8 @@ Public Sub Layt22MainParaData(d As Date)
             PapelAchado = Not rs1.EOF
         End If
         
-        If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then
+        'If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then <-- Antes da V. 2.135
+        If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 And Left(CritS(rs("PAPEL_ISIN")), 6) <> "BR0000" Then
             'Procura o papel na TPAPEL por ID = ISIN
             Set rs1 = New ADODB.Recordset
             Call rs1.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)

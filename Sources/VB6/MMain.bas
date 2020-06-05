@@ -2,7 +2,7 @@ Attribute VB_Name = "MMain"
 Public Const LongTimeAgo As Date = 36526
 
 Private vConexao As ADODB.Connection
-Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
+Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=S14\SQLSTD2019;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
 'Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
 
 Public DBFileName As String
@@ -82,7 +82,9 @@ Public NumErrors As Double             'Número de erros desde a última revisão
 'Public Const Ver = "2.131"               '18-Nov-2019 'Insert no método 'cria' de regras estava incorreto, desconsiderando campos da tabela.
 'Public Const Ver = "2.132"               '25-Nov-2019 'Consertado o contador de erros no statusbar e a rotina
 'Public Const Ver = "2.133"               '28-Nov-2019 'Consertado o contador de erros no statusbar e a rotina
-Public Const Ver = "2.134"               '06-Dec-2019 'Incluido Cdate() para converter certas datas que vem da Base
+'Public Const Ver = "2.134"               '06-Dec-2019 'Incluido Cdate() para converter certas datas que vem da Base
+'Public Const Ver = "2.135"               '30-Apr-2020 'Incluido mais um teste contra ISIN=ID0000 no Importador e risco imobiliário ortogonal
+Public Const Ver = "2.136"                '02-Jun-2020 'Aumentou a importação de quotas de fundos para até 1000 colunas
 
 
 Sub Init()
