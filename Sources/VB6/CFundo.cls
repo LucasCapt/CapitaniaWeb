@@ -11,6 +11,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'V 2.132 - Alterada ComputeRule
+'         erro nas regras com mais de uma violação
+'V 2.135 - Alterada ComputeRisk
+'         VaR e Stress agora fazem a composição ortogonal dos 2 riscos imobiliários
+
 Public ID As Long
 Public nome As String
 Public nomeLiq As String
@@ -1260,19 +1265,18 @@ Private Sub ComputeRisk()
             
         Next x
         
-        VaR1 = (Abs(t1) * RiskMgr.VolIFIX + _
-                Abs(t2) * VolIPCA0 / 100 + _
+        VaR1 = Config.VaRConf * _
+               (Abs(t2) * VolIPCA0 / 100 + _
                 Abs(t3) * VolPre0 / 100 + _
                 Abs(t4) * RiskMgr.VolDolar + _
                 Abs(t8) * RiskMgr.VolIDA + _
-                Sqr(t7) * RiskMgr.VolIdio) * Config.VaRConf
-                           
-        Stress1 = (Abs(t1) * RiskMgr.StressIFIX + _
-                    Abs(t5) * StressIPCA0 / 100 + _
-                    Abs(t6) * StressPre0 / 100 + _
-                    Abs(t4) * RiskMgr.StressDolar + _
-                    Abs(t8) * RiskMgr.StressIDA + _
-                    Sqr(t7) * RiskMgr.StressIdio)
+                Sqr(t1 ^ 2 * RiskMgr.VolIFIX ^ 2 + t7 * RiskMgr.VolIdio ^ 2))
+                
+        Stress1 = (Abs(t5) * StressIPCA0 / 100 + _
+                   Abs(t6) * StressPre0 / 100 + _
+                   Abs(t4) * RiskMgr.StressDolar + _
+                   Abs(t8) * RiskMgr.StressIDA + _
+                   Sqr(t1 ^ 2 * RiskMgr.StressIFIX ^ 2 + t7 * RiskMgr.StressIdio ^ 2))
         
         If pltot > 0 Then
             StaticVar = -VaR1 / pltot
