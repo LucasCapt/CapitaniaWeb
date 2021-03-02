@@ -95,5 +95,59 @@
     <text name="Skins">Skins</text>
     <text name="Settings">Settings</text>
     <text name="Filter">Filter</text>
+    
+    <!--Capitania-->    
+    <text name="TConfigurations">Parameters</text>
+    <text name="TConfigurations.Code">Code</text>
+    <text name="TConfigurations.Description">Description</text>
+    <text name="TConfigurations.Value">Value</text>
+    <text name="EditConfiguration">Edit Config</text>
+    <text name="CreateNewConfig">Create new config</text>
+    <text name="DashboardFundos">Fundos</text>
+    <text name="DashboardDetalheFundo">Fund Details</text>
+    <text name="Fundo">Fundo</text>
+    <text name="XmlAnbimaFileLog">XML Anbima File Log</text>
+    <text name="DataBase">Process date</text>
+    <text name="TabAsset">ASSET</text>
+    <text name="TabAdv">ADV</text>
+    <text name="TabExternos">EXTERNALS</text>
+    <text name="TabTodos">ALL</text>
+
+
+    <text name="Dashboards">Dashboards</text>
+    <text name="SystemSettings">Settings</text>
+    
+    <text name="DashboardControl">Risk and Compliance Report (Control)</text>
+    <text name="DashboardManager">Risk and Compliance Report (Manager)</text>
+    <text name="TabControleAsset">ASSET</text>
+    <text name="TabControleADV">ADV</text>
+    <text name="TabControleLiquidez">Liquity</text>
+    <text name="TabControleCaixa">Cash Requirement</text>
+    <text name="TabControleBreach">Breaches</text>
+    <text name="TabControleWarning">Warnings</text>
+
+    <text name="TabManagerAsset">ASSET</text>
+    <text name="TabManagerCash">Cash Report (Selected Funds)</text>
+    <text name="TabManagerLiquidez">Liquidity Stress</text>
+    <text name="TabManagerBreach">Breaches</text>
+    <text name="TabManagerWarning">Warnings</text>
+    <text name="TabManagerCreditLimits">Credit Limits (Cons)</text>
+    <text name="TabManagerStressScenarios">Stress Scenarios</text>
+    <text name="TabManagerCreditScore">Credit Score Actions</text>
+    <text name="TabManagerConcentrations">Concentrations</text>
+    <text name="TabManagerAllocations">Allocations</text>
+    <text name="TabManagerCashPatrimony">Evolution Cash/Net Equity</text>
+    <text name="TabManagerCounterparts">Counterparts</text>
+     
+    <text name="DashFundo">Fund Details</text>
+
+    <text name="AMLHistoric">AML History</text>
+    <text name="FactorHistoric">Factor History</text>
+    <text name="PreTradeCompliance">Pre Trade Compliance</text>
+    <text name="Ratings">Ratings</text>
+    <text name="RatingNames">Rating Names</text>
+    <text name="Stress">Stress Scenarios</text>
+    <text name="Paper">Papers</text>
+    
   </texts>
 </localizationDictionary>

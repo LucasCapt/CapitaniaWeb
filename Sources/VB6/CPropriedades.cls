@@ -41,38 +41,43 @@ Private Sub FazPropIndex()
 End Sub
 
 Public Sub ReadDB()
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPropriedade
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPropriedade
     Set c = New Collection
     
-    Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TPROPRIEDADES ORDER BY NOME")
+    Set db = OpenTheDatabase(True)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TPROPRIEDADES ORDER BY NOME", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
+        DoEvents
         Set x = New CPropriedade
-        x.nome = rs("Nome")
+        x.Nome = rs("Nome")
         x.ID = rs("ID")
         x.ValorLivre = rs("ValorLivre")
-        Set rs1 = db.OpenRecordset("SELECT * FROM TPROPVALUES WHERE PROPRIEDADE=" + Str(rs("ID")) + " ORDER BY VALOR")
+        Set db = OpenTheDatabase
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT * FROM TPROPVALUES WHERE PROPRIEDADE=" + Str(rs("ID")) + " ORDER BY VALOR", db, adOpenForwardOnly, adLockReadOnly)
         If Not rs1.EOF Then rs1.MoveFirst
         While Not rs1.EOF
+            DoEvents
             x.AddNew (rs1("Valor"))
             rs1.MoveNext
         Wend
         c.Add x
         rs.MoveNext
     Wend
-    db.Close
+    
     
     
     '---Cria os dummys das extras (mas não inclui na coleção)
-    Set PropK1 = New CPropriedade: PropK1.ID = -1: PropK1.nome = K_PropName1
-    Set PropK2 = New CPropriedade: PropK2.ID = -2: PropK2.nome = K_PropName2
-    Set PropK3 = New CPropriedade: PropK3.ID = -3: PropK3.nome = K_PropName3
-    Set PropK4 = New CPropriedade: PropK4.ID = -4: PropK4.nome = K_PropName4
-    Set PropK5 = New CPropriedade: PropK5.ID = -5: PropK5.nome = K_PropName5
-    Set PropK6 = New CPropriedade: PropK6.ID = -6: PropK6.nome = K_PropName6
-    Set PropK10 = New CPropriedade: PropK10.ID = -10: PropK10.nome = K_PropName10
-    Set PropK11 = New CPropriedade: PropK11.ID = -11: PropK11.nome = K_PropName11
+    Set PropK1 = New CPropriedade: PropK1.ID = -1: PropK1.Nome = K_PropName1
+    Set PropK2 = New CPropriedade: PropK2.ID = -2: PropK2.Nome = K_PropName2
+    Set PropK3 = New CPropriedade: PropK3.ID = -3: PropK3.Nome = K_PropName3
+    Set PropK4 = New CPropriedade: PropK4.ID = -4: PropK4.Nome = K_PropName4
+    Set PropK5 = New CPropriedade: PropK5.ID = -5: PropK5.Nome = K_PropName5
+    Set PropK6 = New CPropriedade: PropK6.ID = -6: PropK6.Nome = K_PropName6
+    Set PropK10 = New CPropriedade: PropK10.ID = -10: PropK10.Nome = K_PropName10
+    Set PropK11 = New CPropriedade: PropK11.ID = -11: PropK11.Nome = K_PropName11
     
     '---Monta PropertyIdx
     FazPropIndex
@@ -83,9 +88,9 @@ Public Sub ReadDB()
     IRBPropertyIdx = 0
     LastRatingProperty = 0
     For i = 1 To c.Count
-        If UCase(c(i).nome) = UCase(Config.CreditRatingProperty) Then CreditPropertyIdx = i
-        If UCase(c(i).nome) = UCase(Config.IRBRatingProperty) Then IRBPropertyIdx = i
-        If UCase(c(i).nome) = UCase(Config.LastRatingProperty) Then LastRatingPropertyIdx = i
+        If UCase(c(i).Nome) = UCase(Config.CreditRatingProperty) Then CreditPropertyIdx = i
+        If UCase(c(i).Nome) = UCase(Config.IRBRatingProperty) Then IRBPropertyIdx = i
+        If UCase(c(i).Nome) = UCase(Config.LastRatingProperty) Then LastRatingPropertyIdx = i
     Next i
 End Sub
 
@@ -138,7 +143,7 @@ Public Function searchName(x As String) As CPropriedade
         Set searchName = PropK11
     Case Else
         For Each y In c
-            If UCase(y.nome) = UCase(x) Then Set searchName = y
+            If UCase(y.Nome) = UCase(x) Then Set searchName = y
         Next y
     End Select
 End Function
@@ -164,7 +169,7 @@ Public Function SearchIndexByName(x As String) As Integer
         SearchIndexByName = -11
     Case Else
         For i = 1 To c.Count
-            If c(i).nome = x Then SearchIndexByName = i
+            If c(i).Nome = x Then SearchIndexByName = i
         Next i
     End Select
 End Function
@@ -190,7 +195,7 @@ Public Sub FillComboWithProps(ByRef x As ComboBox, Optional WithExtras As Boolea
         x.AddItem K_PropName6
     End If
     For Each y In c
-        x.AddItem y.nome
+        x.AddItem y.Nome
     Next y
     x.AddItem K_PropName10
     x.AddItem K_PropName11
@@ -256,26 +261,27 @@ End Sub
 
 
 Public Function Cria(x As String) As CPropriedade
-    Dim db As Database, rs As Recordset, y As CPropriedade, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CPropriedade, LastNumber As Integer
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT MAX (ID) AS MAXID FROM TPROPRIEDADES")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT MAX (ID) AS MAXID FROM TPROPRIEDADES", db, adOpenForwardOnly, adLockReadOnly)
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
             
         db.Execute ("INSERT INTO TPROPRIEDADES (ID, NOME) VALUES (" + Str(LastNumber + 1) + ",'" + x + "')")
-        db.Close
+        
     
         Set y = New CPropriedade
         y.ID = LastNumber + 1
-        y.nome = x
+        y.Nome = x
         c.Add y
     Else
         Set y = New CPropriedade
         y.ID = 9999
-        y.nome = x
+        y.Nome = x
         c.Add y
     End If
     FazPropIndex
@@ -299,7 +305,7 @@ End Sub
 
 Public Sub Delete(ID As String)
     Dim i As Integer, f As CPapel
-    Dim db As Database, rs As Recordset, y As CPropriedade, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CPropriedade, LastNumber As Integer
     
     If MainStatus = "LIVE" Then
         
@@ -307,7 +313,7 @@ Public Sub Delete(ID As String)
         db.Execute ("DELETE FROM TPROPRIEDADES WHERE ID=" + Str(ID))
         db.Execute ("DELETE FROM TPROPVALUES WHERE PROPRIEDADE = " + Str(ID))
         db.Execute ("DELETE FROM TPAPELPROP WHERE PROPRIEDADE = " + Str(ID))
-        db.Close
+        
     End If
     
     'Deleta da lista e dos papéis

@@ -11,6 +11,11 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'V 2.132 - Alterada ComputeRule
+'         erro nas regras com mais de uma violação
+'V 2.135 - Alterada ComputeRisk
+'         VaR e Stress agora fazem a composição ortogonal dos 2 riscos imobiliários
+
 Public ID As Long
 Public nome As String
 Public nomeLiq As String
@@ -273,29 +278,31 @@ Public Sub Consolida()
     End Select
     
     Set b2 = New Collection
-    For Each y In b
-        achou = False
-        For Each z In b2
-            If z.Papel.ID = y.Papel.ID And z.LiqConstraint = y.LiqConstraint Then
-                z.Valor0 = z.Valor0 + y.Valor0
-                z.Quant0 = z.Quant0 + y.Quant0
-                z.ValorD = z.ValorD + y.ValorD
-                z.QuantD = z.QuantD + y.QuantD
-                achou = True
+    If Not b Is Nothing Then
+        For Each y In b
+            achou = False
+            For Each z In b2
+                If z.Papel.ID = y.Papel.ID And z.LiqConstraint = y.LiqConstraint Then
+                    z.Valor0 = z.Valor0 + y.Valor0
+                    z.Quant0 = z.Quant0 + y.Quant0
+                    z.ValorD = z.ValorD + y.ValorD
+                    z.QuantD = z.QuantD + y.QuantD
+                    achou = True
+                End If
+            Next z
+            If Not achou Then
+                Set z = New CPosic
+                z.Fundo = Me.ID
+                Set z.Papel = y.Papel
+                z.Valor0 = y.Valor0
+                z.Quant0 = y.Quant0
+                z.ValorD = y.ValorD
+                z.QuantD = y.QuantD
+                z.LiqConstraint = y.LiqConstraint
+                b2.Add z
             End If
-        Next z
-        If Not achou Then
-            Set z = New CPosic
-            z.Fundo = Me.ID
-            Set z.Papel = y.Papel
-            z.Valor0 = y.Valor0
-            z.Quant0 = y.Quant0
-            z.ValorD = y.ValorD
-            z.QuantD = y.QuantD
-            z.LiqConstraint = y.LiqConstraint
-            b2.Add z
-        End If
-    Next y
+        Next y
+    End If
   
     Set MyPosicConsol = b2
 End Sub
@@ -550,13 +557,11 @@ Public Function ComputeRule(x As CRegra, Optional ForceCart As Collection = Noth
                 ClassPp(idx) = ClassPp(idx) + "[" + p.Papel.nome + "] "
 
                 'Soma quantidade ou valor, conforme for a regra
-                If x.Lim_Ref = "ISSUEV" Then
-                    ClassPL(idx) = ClassPL(idx) + p.Valor
-                    ClassPU(idx) = 1
-                ElseIf x.Lim_Ref = "ISSUEQ" Then
+                If x.Lim_Ref = "ISSUEQ" Then
                     ClassPL(idx) = ClassPL(idx) + p.Quant
                     If p.Quant <> 0 Then ClassPU(idx) = p.Valor / p.Quant
                 Else
+                    ClassPL(idx) = ClassPL(idx) + p.Valor
                     ClassPU(idx) = 1
                 End If
                 
@@ -722,23 +727,24 @@ End Property
 
 
 Public Sub WriteDB()
-    Dim db As Database, rs As Recordset, sb As String, x As CFundo, b As CBook
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, sb As String, x As CFundo, b As CBook
     
     If MainStatus = "LIVE" Then
         
-        Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE ID=" + Str(Me.ID))
+        Set db = OpenTheDatabase(True)
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TFUNDOS WHERE ID=" + Str(Me.ID), db, adOpenForwardOnly, adLockReadOnly)
         
         'If Me.OverrideLimit Then u = "TRUE" Else u = "FALSE"
         'If Me.LimCredReg Then u2 = "TRUE" Else u2 = "FALSE"
         
-        u = Bol2String(Me.OverrideLimit)
-        u2 = Bol2String(Me.LimCredReg)
-        U3 = Bol2String(Me.Favorit_Cash)
-        u4 = Bol2String(Me.Favorit_Credit)
-        u5 = Bol2String(Me.Favorit_Mkt)
-        u6 = Bol2String(Me.Rule_NoDayTrd)
-        u7 = Bol2String(Me.Rule_NoCrssTrd)
+        u = IIf(Me.OverrideLimit, "1", "0")
+        u2 = IIf(Me.LimCredReg, "1", "0")
+        U3 = IIf(Me.Favorit_Cash, "1", "0")
+        u4 = IIf(Me.Favorit_Credit, "1", "0")
+        u5 = IIf(Me.Favorit_Mkt, "1", "0")
+        u6 = IIf(Me.Rule_NoDayTrd, "1", "0")
+        u7 = IIf(Me.Rule_NoCrssTrd, "1", "0")
         
         order = "INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, CONSOLIDATION, " + _
                 "TIPO, PRAZORESGATE, LIQNOME, LIQMETHOD, CAIXAMANDATO, " + _
@@ -751,7 +757,7 @@ Public Sub WriteDB()
                 "','" + Me.Tipo + "'," + Str(Me.PrazoResgate) + ", '" + Me.nomeLiq + "', '" + Me.LiqMethod + _
                 "'," + Str(Me.CaixaMandato) + ", " + u + ", " + Str(Me.LIM_VaR) + ", " + Str(Me.LIM_Stress) + _
                 ", " + Str(Me.LIM_EL) + ", " + Str(Me.LIM_UL) + ", " + "'" + Me.Concentracao + "','" + Me.tipo409 + _
-                "'," + u2 + "," + SQLD(Me.Dt_Created) + "," + SQLBaseDate + ",FALSE,'" + Me.area + "'," + U3 + _
+                "'," + u2 + "," + SQLD(Me.Dt_Created) + "," + SQLBaseDate + ",0,'" + Me.area + "'," + U3 + _
                 "," + u4 + "," + u5 + "," + Str(Me.Tolerancia1) + "," + Str(Me.Tolerancia2) + "," + _
                 Str(Me.LIM_Dur) + ",'" + Me.nomeBlotter + "'," + u6 + "," + u7 + ")"
         
@@ -768,7 +774,7 @@ Public Sub WriteDB()
         For Each b In MyBooks
             db.Execute ("INSERT INTO TFUNDOBOOK (FUNDO, BOOK) VALUES (" + Str(Me.ID) + ", " + Str(b.ID) + ")")
         Next b
-        db.Close
+        
         
     End If
 End Sub
@@ -1157,10 +1163,11 @@ End Function
 '\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 Public Function GetAllQuotasFrom(d As Date) As Collection
-    Dim db As Database, rs As Recordset, a As New Collection, u As CNomeValor
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, a As New Collection, u As CNomeValor
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TQUOTAS WHERE FUNDO = " + Str(Me.ID) + "AND DATA>=" + SQLD(d) + " AND DATA<=" + SQLBaseDate + " ORDER BY DATA")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TQUOTAS WHERE FUNDO = " + Str(Me.ID) + "AND DATA>=" + SQLD(d) + " AND DATA<=" + SQLBaseDate + " ORDER BY DATA", db, adOpenForwardOnly, adLockReadOnly)
     While Not rs.EOF
         Set u = New CNomeValor
         u.Data = rs("DATA")
@@ -1169,7 +1176,7 @@ Public Function GetAllQuotasFrom(d As Date) As Collection
         rs.MoveNext
     Wend
     Set GetAllQuotasFrom = a
-    db.Close
+    
 End Function
 
 
@@ -1258,19 +1265,18 @@ Private Sub ComputeRisk()
             
         Next x
         
-        VaR1 = (Abs(t1) * RiskMgr.VolIFIX + _
-                Abs(t2) * VolIPCA0 / 100 + _
+        VaR1 = Config.VaRConf * _
+               (Abs(t2) * VolIPCA0 / 100 + _
                 Abs(t3) * VolPre0 / 100 + _
                 Abs(t4) * RiskMgr.VolDolar + _
                 Abs(t8) * RiskMgr.VolIDA + _
-                Sqr(t7) * RiskMgr.VolIdio) * Config.VaRConf
-                           
-        Stress1 = (Abs(t1) * RiskMgr.StressIFIX + _
-                    Abs(t5) * StressIPCA0 / 100 + _
-                    Abs(t6) * StressPre0 / 100 + _
-                    Abs(t4) * RiskMgr.StressDolar + _
-                    Abs(t8) * RiskMgr.StressIDA + _
-                    Sqr(t7) * RiskMgr.StressIdio)
+                Sqr(t1 ^ 2 * RiskMgr.VolIFIX ^ 2 + t7 * RiskMgr.VolIdio ^ 2))
+                
+        Stress1 = (Abs(t5) * StressIPCA0 / 100 + _
+                   Abs(t6) * StressPre0 / 100 + _
+                   Abs(t4) * RiskMgr.StressDolar + _
+                   Abs(t8) * RiskMgr.StressIDA + _
+                   Sqr(t1 ^ 2 * RiskMgr.StressIFIX ^ 2 + t7 * RiskMgr.StressIdio ^ 2))
         
         If pltot > 0 Then
             StaticVar = -VaR1 / pltot

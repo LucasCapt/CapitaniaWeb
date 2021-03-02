@@ -145,118 +145,274 @@ Public MailerN As Integer
 '------------------------------------------------------------------------------------------------------
 Public FFundoColumnNames As New Collection
 
+Private Const vHistFileName As String = "001"
+Private Const vHistFileTab  As String = "002"
+Private Const vHistFileIFIX As String = "003"
+Private Const vHistFileIPCA2Y As String = "004"
+Private Const vHistFileIPCA5Y As String = "005"
+Private Const vHistFileIPCA10Y As String = "006"
+Private Const vHistFilePath As String = "007"
+Private Const vHistFileIMAB5 As String = "008"
+Private Const vHistFilePRE2Y As String = "009"
+Private Const vHistFilePRE5Y As String = "010"
+Private Const vHistFileDolar As String = "011"
+Private Const vHistFileIDA As String = "012"
+Private Const vHistFileRatingsTab As String = "013"
+Private Const vHistFileQuotaTab As String = "014"
+Private Const vPosicFilePrefix As String = "015"
+Private Const vRedemptionFilePath As String = "016"
+Private Const vRedemptionFileName As String = "017"
+Private Const vRedemptionFileTab As String = "018"
+Private Const vConcentrationFundID As String = "019"
+Private Const vConcentrationProperty1 As String = "020"
+Private Const vConcentrationProperty2 As String = "021"
+Private Const vConcentrationProperty3 As String = "022"
+Private Const vRedemptionFileTransferTab As String = "023"
+Private Const vShareFilePath As String = "024"
+Private Const vShareFileName As String = "025"
+Private Const vEWMA As String = "026"
+Private Const vEDFAAA As String = "027"
+Private Const vEDFAA As String = "028"
+Private Const vEDFA As String = "029"
+Private Const vEDFBBB As String = "030"
+Private Const vEDFBB As String = "031"
+Private Const vEDFB As String = "032"
+Private Const vEDFCCC As String = "033"
+Private Const vEDFAAA_ASK As String = "034"
+Private Const vEDFAA_ASK As String = "035"
+Private Const vEDFA_ASK As String = "036"
+Private Const vEDFBBB_ASK As String = "037"
+Private Const vEDFBB_ASK As String = "038"
+Private Const vEDFB_ASK As String = "039"
+Private Const vEDFCCC_ASK As String = "040"
+Private Const vCreditRatingProperty As String = "041"
+Private Const vIRBProperty As String = "042"
+Private Const vLastRatingProperty As String = "043"
+Private Const vLVV As String = "044"
+Private Const vLVQ As String = "045"
+Private Const vLVP As String = "046"
+Private Const vLSV As String = "047"
+Private Const vLSQ As String = "048"
+Private Const vLSP As String = "049"
+Private Const vLEV As String = "050"
+Private Const vLEQ As String = "051"
+Private Const vLEP As String = "052"
+Private Const vLUV As String = "053"
+Private Const vLUQ As String = "054"
+Private Const vLUP As String = "055"
+Private Const vWarnAt20 As String = "056"
+Private Const vNegsFilePrefix As String = "057"
+Private Const vCRMDatabase As String = "058"
+Private Const vRFETradeSheet As String = "059"
+Private Const vRFETradeTab As String = "060"
+Private Const vPricingFilePrefix As String = "061"
+Private Const vGenLvlDI As String = "062"
+Private Const vGenLvlInflation As String = "063"
+Private Const vCredLGD As String = "064"
+Private Const vCredLGDSec As String = "065"
+Private Const vCredCorrel As String = "066"
+Private Const vCredCorrelIntra As String = "067"
+Private Const vCredGroupProperty As String = "068"
+Private Const vFIIFileName As String = "069"
+Private Const vFIIFileTab As String = "070"
+Private Const vXMLANBIMAPath As String = "071"
+Private Const vXMLANBIMAPrefix As String = "072"
+Private Const vISINDATABASE As String = "073"
+Private Const vFIIADTVTab As String = "074"
+Private Const vBlotterFileName As String = "075"
+Private Const vRStress1 As String = "076"
+Private Const vRStress2 As String = "077"
+Private Const vRStress3 As String = "078"
+Private Const vRStress4 As String = "079"
+Private Const vRStress5 As String = "080"
+Private Const vemail As String = "081"
+Private Const vsenha As String = "082"
+Private Const vPathXmlAnbimaRaiz As String = "083"
+Private Const vIntervaloTempoProcessamentoImportacaoPlanilhas As String = "084"
 
 Public Sub ReadConfig()
-    Dim db As Database, rs As Recordset
-    
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
+    Dim vSQL As String
     
     Set db = OpenTheDatabase
     
     'Lê registro de configuração
-        Set rs = db.OpenRecordset("SELECT * FROM TCONFIG")
-        HistFilePath = rs("HistFilePath")
-        HistFileName = rs("HistFileName")
-        HistFileTab = rs("HistFileTab")
-        HistfileIFIX = rs("HistFileIFIX")
-        HistFileIPCA2Y = rs("HistfileIPCA2Y")
-        HistFileIPCA5Y = rs("HistFileIPCA5Y")
-        HistFileIPCA10Y = rs("HistFileIPCA10Y")
-        HistFileIMAB5 = rs("HistFileIMAB5")
-        HistFilePre2Y = rs("HistFilePre2Y")
-        HistFilePre5Y = rs("HistFilePre5Y")
-        HistFileDolar = rs("HistFileDolar")
-        HistFileIDA = rs("HistFileIDA")
-        HistFileRatingsTab = rs("HistFileRatingsTab")
-        HistFileQuotaTab = rs("HistFileQuotaTab")
+        Set rs = New ADODB.Recordset
+        vSQL = "SELECT * " & vbCr & _
+               "  FROM TConfiguracao" & vbCr
+        Call rs.open(vSQL, db, adOpenForwardOnly, adLockReadOnly)
+        While Not rs.EOF
+            Select Case rs("cfg_param")
+                Case vHistFilePath
+                    HistFilePath = rs("cfg_valor")
+                Case vHistFileName
+                    HistFileName = rs("cfg_valor")
+                Case vHistFileTab
+                    HistFileTab = rs("cfg_valor")
+                Case vHistFileIFIX
+                    HistfileIFIX = rs("cfg_valor")
+                Case vHistFileIPCA2Y
+                    HistFileIPCA2Y = rs("cfg_valor")
+                Case vHistFileIPCA5Y
+                    HistFileIPCA5Y = rs("cfg_valor")
+                Case vHistFileIPCA10Y
+                    HistFileIPCA10Y = rs("cfg_valor")
+                Case vHistFileIMAB5
+                    HistFileIMAB5 = rs("cfg_valor")
+                Case vHistFilePRE2Y
+                    HistFilePre2Y = rs("cfg_valor")
+                Case vHistFilePRE5Y
+                    HistFilePre5Y = rs("cfg_valor")
+                Case vHistFileDolar
+                    HistFileDolar = rs("cfg_valor")
+                Case vHistFileIDA
+                    HistFileIDA = rs("cfg_valor")
+                Case vHistFileRatingsTab
+                    HistFileRatingsTab = rs("cfg_valor")
+                Case vHistFileQuotaTab
+                    HistFileQuotaTab = rs("cfg_valor")
+                Case vEWMA
+                    EWMA = rs("cfg_valor")
+                Case vPosicFilePrefix
+                    PosicFilePrefix = rs("cfg_valor")
+                Case vPricingFilePrefix
+                    PricingFilePrefix = rs("cfg_valor")
+                Case vXMLANBIMAPath
+                    XMLANBIMAPath = rs("cfg_valor")
+                Case vXMLANBIMAPrefix
+                    XMLANBIMAPrefix = rs("cfg_valor")
+                Case vISINDATABASE
+                    ISINDataBase = rs("cfg_valor")
+                Case vRedemptionFilePath
+                    RedemptionFilePath = rs("cfg_valor")
+                Case vRedemptionFileName
+                    RedemptionFileName = rs("cfg_valor")
+                Case vRedemptionFileTab
+                    RedemptionFileTab = rs("cfg_valor")
+                Case vConcentrationFundID
+                    ConcentrationFundID = rs("cfg_valor")
+                Case vConcentrationProperty1
+                    ConcentrationProp1 = rs("cfg_valor")
+                Case vConcentrationProperty2
+                    ConcentrationProp2 = rs("cfg_valor")
+                Case vConcentrationProperty3
+                    ConcentrationProp3 = rs("cfg_valor")
+                Case vRedemptionFileTransferTab
+                    RedemptionFileTransferTab = rs("cfg_valor")
+                Case vShareFilePath
+                    ShareFilePath = rs("cfg_valor")
+                Case vShareFileName
+                    ShareFileName = rs("cfg_valor")
+                Case vNegsFilePrefix
+                    NEGSFilePrefix = rs("cfg_valor")
+                Case vEDFAAA
+                    EDFAAA = rs("cfg_valor")
+                Case vEDFAA
+                    EDFAA = rs("cfg_valor")
+                Case vEDFA
+                    EDFA = rs("cfg_valor")
+                Case vEDFBBB
+                    EDFBBB = rs("cfg_valor")
+                Case vEDFBB
+                    EDFBB = rs("cfg_valor")
+                Case vEDFB
+                    EDFB = rs("cfg_valor")
+                Case vEDFCCC
+                    EDFCCC = rs("cfg_valor")
+                Case vEDFAAA_ASK
+                    EDFAAAask = rs("cfg_valor")
+                Case vEDFAA_ASK
+                    EDFAAask = rs("cfg_valor")
+                Case vEDFA_ASK
+                    EDFAask = rs("cfg_valor")
+                Case vEDFBBB_ASK
+                    EDFBBBask = rs("cfg_valor")
+                Case vEDFBB_ASK
+                    EDFBBask = rs("cfg_valor")
+                Case vEDFB_ASK
+                    EDFBask = rs("cfg_valor")
+                Case vEDFCCC_ASK
+                    EDFCCCask = rs("cfg_valor")
+                Case vCreditRatingProperty
+                    CreditRatingProperty = rs("cfg_valor")
+                Case vIRBProperty
+                    IRBRatingProperty = rs("cfg_valor")
+                Case vLastRatingProperty
+                    LastRatingProperty = rs("cfg_valor")
+                Case vCredLGD
+                    CredLGD = rs("cfg_valor")
+                Case vCredLGDSec
+                    CredLGDSec = rs("cfg_valor")
+                Case vCredCorrel
+                    CredCorrel = rs("cfg_valor")
+                Case vCredCorrelIntra
+                    CredCorrelIntra = rs("cfg_valor")
+                Case vCredGroupProperty
+                    CredGroupProperty = CritS(rs("cfg_valor"))
+                Case vLVV
+                    LVV = rs("cfg_valor")
+                Case vLVQ
+                    LVQ = rs("cfg_valor")
+                Case vLVP
+                    LVP = rs("cfg_valor")
+                Case vLSV
+                    LSV = rs("cfg_valor")
+                Case vLSQ
+                    LSQ = rs("cfg_valor")
+                Case vLSP
+                    LSP = rs("cfg_valor")
+                Case vLEV
+                    LEV = rs("cfg_valor")
+                Case vLEQ
+                    LEQ = rs("cfg_valor")
+                Case vLEP
+                    LEP = rs("cfg_valor")
+                Case vLUV
+                    LUV = rs("cfg_valor")
+                Case vLUQ
+                    LUQ = rs("cfg_valor")
+                Case vLUP
+                    LUP = rs("cfg_valor")
+                Case vWarnAt20
+                    WarnAt20 = rs("cfg_valor")
+                Case vCRMDatabase
+                    CRMDataBase = rs("cfg_valor")
+                Case vRFETradeSheet
+                    RFETradeSheet = rs("cfg_valor")
+                Case vRFETradeTab
+                    RFETradeTab = rs("cfg_valor")
+                Case vFIIFileName
+                    FIIFileName = rs("cfg_valor")
+                Case vFIIFileTab
+                    FIIFileTab = rs("cfg_valor")
+                Case vFIIADTVTab
+                    FIIADTVTab = rs("cfg_valor")
+                Case vBlotterFileName
+                    BlotterFileName = rs("cfg_valor")
+                Case vRStress1
+                    RStress1 = CritS(rs("cfg_valor"))
+                Case vRStress2
+                    RStress2 = CritS(rs("cfg_valor"))
+                Case vRStress3
+                    RStress3 = CritS(rs("cfg_valor"))
+                Case vRStress4
+                    RStress4 = CritS(rs("cfg_valor"))
+                Case vRStress5
+                    RStress5 = CritS(rs("cfg_valor"))
+                Case vemail
+                    email = CritS(rs("cfg_valor"))
+                Case vsenha
+                    Senha = CritS(rs("cfg_valor"))
+            End Select
+
+            rs.MoveNext
+        Wend
         
-        EWMA = rs("EWMA")
         VaRConf = 2.33
         
-        PosicFilePrefix = rs("PosicFilePrefix")
-        PricingFilePrefix = rs("PricingFilePrefix")
-        
-        XMLANBIMAPath = rs("XMLANBIMAPath")
-        XMLANBIMAPrefix = rs("XMLANBIMAPrefix")
-        ISINDataBase = rs("ISINDATABASE")
-        
-        RedemptionFilePath = rs("RedemptionFilePath")
-        RedemptionFileName = rs("RedemptionFileName")
-        RedemptionFileTab = rs("RedemptionFileTab")
-        
-        ConcentrationFundID = rs("ConcentrationFundID")
-        ConcentrationProp1 = rs("ConcentrationProperty1")
-        ConcentrationProp2 = rs("ConcentrationProperty2")
-        ConcentrationProp3 = rs("ConcentrationProperty3")
-
-        RedemptionFileTransferTab = rs("RedemptionFileTransferTab")
-        ShareFilePath = rs("ShareFilePath")
-        ShareFileName = rs("ShareFileName")
-        NEGSFilePrefix = rs("NegsFilePrefix")
-        
-        EDFAAA = rs("EDFAAA")
-        EDFAA = rs("EDFAA")
-        EDFA = rs("EDFA")
-        EDFBBB = rs("EDFBBB")
-        EDFBB = rs("EDFBB")
-        EDFB = rs("EDFB")
-        EDFCCC = rs("EDFCCC")
-        
-        EDFAAAask = rs("EDFAAA_ask")
-        EDFAAask = rs("EDFAA_ask")
-        EDFAask = rs("EDFA_ask")
-        EDFBBBask = rs("EDFBBB_ask")
-        EDFBBask = rs("EDFBB_ask")
-        EDFBask = rs("EDFB_ask")
-        EDFCCCask = rs("EDFCCC_ask")
-        
-        CreditRatingProperty = rs("CreditRatingProperty")
-        IRBRatingProperty = rs("IRBProperty")
-        LastRatingProperty = rs("LastRatingProperty")
-        CredLGD = rs("CredLGD")
-        CredLGDSec = rs("CredLGDSec")
-        CredCorrel = rs("CredCorrel")
-        CredCorrelIntra = rs("CredCorrelIntra")
-        CredGroupProperty = CritS(rs("CredGroupProperty"))
-                
-        
-        LVV = rs("LVV")
-        LVQ = rs("LVQ")
-        LVP = rs("LVP")
-        LSV = rs("LSV")
-        LSQ = rs("LSQ")
-        LSP = rs("LSP")
-        LEV = rs("LEV")
-        LEQ = rs("LEQ")
-        LEP = rs("LEP")
-        LUV = rs("LUV")
-        LUQ = rs("LUQ")
-        LUP = rs("LUP")
-        WarnAt20 = rs("WarnAt20")
-        
-        CRMDataBase = rs("CRMDatabase")
-        RFETradeSheet = rs("RFETradeSheet")
-        RFETradeTab = rs("RFETradeTab")
-        
-        'GenLvlDI = rs("GenLvlDI")
-        'GenLvlInflation = rs("GenLvlInflation")
-        
-        FIIFileName = rs("FIIFileName")
-        FIIFileTab = rs("FIIFileTab")
-        FIIADTVTab = rs("FIIADTVTab")
-        
-        BlotterFileName = rs("BlotterFileName")
-        
-        RStress1 = CritS(rs("RStress1"))
-        RStress2 = CritS(rs("RStress2"))
-        RStress3 = CritS(rs("RStress3"))
-        RStress4 = CritS(rs("RStress4"))
-        RStress5 = CritS(rs("RStress5"))
-        
-        email = CritS(rs("Email"))
-        Senha = CritS(rs("Senha"))
-    
     'Lê a mailing list
-        Set rs = db.OpenRecordset("SELECT * FROM TMAILINGLIST")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TMAILINGLIST", db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
             MailerN = MailerN + 1
             MailerNome(MailerN) = rs("nome")
@@ -268,7 +424,8 @@ Public Sub ReadConfig()
         
     'Lê constantes de liquidez
         Set CLiqStress = New Collection
-        Set rs = db.OpenRecordset("SELECT * FROM TLIQSTRESS")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TLIQSTRESS", db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
             Set u = New CNomeValor
             u.nome = rs("TIPO409")
@@ -280,7 +437,8 @@ Public Sub ReadConfig()
         
     'Lê configurações das colunas do FFundo
         Set FFundoColumnNames = New Collection
-        Set rs = db.OpenRecordset("SELECT * FROM TConfigFFundoCols WHERE USERNAME='" + User.username + "'")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TConfigFFundoCols WHERE USERNAME='" + User.username + "'", db, adOpenForwardOnly, adLockReadOnly)
         While Not rs.EOF
             Set u = New CNomeValor
             u.nome = rs("ColumnName")
@@ -288,7 +446,6 @@ Public Sub ReadConfig()
             rs.MoveNext
         Wend
         
-    db.Close
 End Sub
 
 Property Get MailerContactEmail(i As Integer) As String
@@ -353,7 +510,7 @@ End Function
 
 
 Private Sub WriteFFundoColDB()
-    Dim db As Database, rs As Recordset, u As CNomeValor
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, u As CNomeValor
     
     Set db = OpenTheDatabase
     
@@ -361,6 +518,5 @@ Private Sub WriteFFundoColDB()
     For Each u In FFundoColumnNames
         db.Execute ("INSERT INTO TCONFIGFFUNDOCOLS (USERNAME, COLUMNNAME) VALUES ('" + User.username + "','" + u.nome + "')")
     Next u
-    db.Close
 End Sub
 

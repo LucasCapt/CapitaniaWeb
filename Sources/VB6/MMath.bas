@@ -1,4 +1,7 @@
 Attribute VB_Name = "MMath"
+'V. 2.127 - Alterada a sub AtualizaErros(). Trocado CritN() por CritNN().
+
+
 Public Function CritString(x As String) As String
     Dim a As String, i As Integer
     For i = 1 To Len(x)
@@ -36,7 +39,7 @@ Public Function CNPJComPonto(x As String) As String
 End Function
 
 Public Function SQLD(x As Date) As String
-    SQLD = "#" + Format(x, "MM/DD/YYYY") + "#"
+    SQLD = "'" + Format(x, "yyyy-MM-dd") + "'"
 End Function
 
 Public Function SQLBaseDate() As String
@@ -52,7 +55,7 @@ Public Function SQLTimeStamp() As String
 End Function
 
 Public Function SQLLongTime(x As Date) As String
-    SQLLongTime = "#" + Format(x, "MM/DD/YYYY HH:MM:SS") + "#"
+    SQLLongTime = "'" + Format(x, "yyyy-MM-dd HH:mm:ss") + "'"
 End Function
 
 Public Function FormatLimit(x As Double, r As CRegra)
@@ -271,43 +274,41 @@ End Function
 '  log
 '-------------------------------------------------------------------------------------------------------------
 Public Sub WriteLog(acao As String)
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    db.Execute ("INSERT INTO TLOG (DATAHORA, ACAO, USER, COMPUTER) VALUES (#" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "#,'" + acao + "','" + User.username + "','" + Environ("ComputerName") + "')")
-    db.Close
+    db.Execute ("INSERT INTO TLOG (DATAHORA, ACAO, [USER], COMPUTER) VALUES ('" + Format(Now(), "YYYY-MM-DD HH:MM:SS") + "','" + acao + "','" + User.username + "','" + Environ("ComputerName") + "')")
 End Sub
 
 
 Public Sub WriteLogPerf(acao As String, items As Integer, segundos As Double)
-    Dim db As Database, rs As Recordset, i_s As Double, s_i As Double
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, i_s As Double, s_i As Double
     If segundos > 0 Then i_s = items / segundos
     If items > 0 Then s_i = segundos / items
     
     Set db = OpenTheDatabase
-    db.Execute ("INSERT INTO TLOGPERF (DATAHORA, OPER, USER, ITENS, SECS, ITEMPERSEC, SECPERITEM) VALUES " + _
-                "(#" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "#,'" + acao + "','" + User.username + "'," + _
+    db.Execute ("INSERT INTO TLOGPERF (DATAHORA, OPER, [USER], ITENS, SECS, ITEMPERSEC, SECPERITEM) VALUES " + _
+                "('" + Format(Now(), "YYYY-MM-DD HH:MM:SS AM/PM") + "','" + acao + "','" + User.username + "'," + _
                 Str(items) + "," + Str(segundos) + "," + Str(i_s) + "," + Str(s_i) + ")")
-    db.Close
 End Sub
 
 Public Sub WriteLogError(ErrMsg As String, ErrItem As String)
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    db.Execute ("INSERT INTO TLOGERRO (DATAHORA, MSGERRO, ITEM, USER) VALUES (#" + Format(Now(), "MM/DD/YYYY HH:MM:SS AM/PM") + "#,'" + ErrMsg + "','" + ErrItem + "','" + User.username + "')")
-    db.Close
+    db.Execute ("INSERT INTO TLOGERRO (DATAHORA, MSGERRO, ITEM, [USER]) VALUES ('" + Format(Now(), "YYYY-MM-DD HH:MM:SS") + "','" + ErrMsg + "','" + ErrItem + "','" + User.username + "')")
 End Sub
 
 Public Sub AtualizaErros()
-    Dim db As Database, rs As Recordset, d As Date
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, d As Date
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT MAX (DATAHORA) AS LASTREVISION FROM TLOG WHERE ACAO = 'REVIU ERROS'")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT MAX (DATAHORA) AS LASTREVISION FROM TLOG WHERE ACAO = 'REVIU ERROS'", db, adOpenForwardOnly, adLockReadOnly)
     If rs.EOF Then d = LongTimeAgo Else d = CritD(rs("LASTREVISION"))
-    Set rs = db.OpenRecordset("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>#" + Format(d, "MM/DD/YYYY HH:MM:SS") + "#")
-    If rs.EOF Then NumErrors = 0 Else NumErrors = CritN(rs("NERROS"))
-    db.Close
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT COUNT(1) AS NERROS FROM TLOGERRO WHERE DATAHORA>'" + Format(d, "MM/DD/YYYY HH:MM:SS") + "'", db, adOpenForwardOnly, adLockReadOnly)
+    If rs.EOF Then NumErrors = 0 Else NumErrors = CritNN(rs("NERROS"))
 End Sub
 
 '-------------------------------------------------------------------------------------------------------------
@@ -315,37 +316,38 @@ End Sub
 '-------------------------------------------------------------------------------------------------------------
 
 Public Function JahImportouNoDia(qual As String) As Boolean
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='" + qual + "' AND DATARUN=" + SQLNow)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='" + qual + "' AND DATARUN=" + SQLNow, db, adOpenForwardOnly, adLockReadOnly)
     JahImportouNoDia = Not rs.EOF
-    db.Close
+
 End Function
 
 Public Function JahReportouNoDia() As Boolean
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='REPORT' AND DATARUN=" + SQLNow)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM THISTIMPORTREPORT WHERE QUAL='REPORT' AND DATARUN=" + SQLNow, db, adOpenForwardOnly, adLockReadOnly)
     JahReportouNoDia = Not rs.EOF
-    db.Close
+
 End Function
 
 Public Sub FlagImportouNoDia(qual As String)
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
     db.Execute ("INSERT INTO THISTIMPORTREPORT (DATARUN, QUAL, QUEM) VALUES (" + SQLNow + ",'" + qual + "','" + User.username + "')")
-    db.Close
+
 End Sub
 
 Public Sub FlagReportouNoDia()
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     Set db = OpenTheDatabase
     db.Execute ("INSERT INTO THISTIMPORTREPORT (DATARUN, QUAL, QUEM) VALUES (" + SQLNow + ",'REPORT','" + User.username + "')")
-    db.Close
 End Sub
 
 

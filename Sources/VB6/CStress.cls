@@ -17,20 +17,21 @@ Private Percent(1000) As Double
 Private N As Integer
 
 Public Sub ReadDB()
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPapel
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPapel
     
-    Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TSTRESS ORDER BY NOME")
+    Set db = OpenTheDatabase(True)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TSTRESS ORDER BY NOME", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     N = 0
     While Not rs.EOF
+        DoEvents
         N = N + 1
         Nomes(N) = rs("nome")
         Titulos(N) = rs("titulo")
         Percent(N) = rs("Percentual")
         rs.MoveNext
     Wend
-    db.Close
     Ordena
 End Sub
 
@@ -41,13 +42,13 @@ Property Get ListaDeCenarios() As Collection
     Set a = New Collection
     If N > 0 Then
         Set u = New CNomeValor
-        u.nome = Nomes(1)
+        u.Nome = Nomes(1)
         a.Add u
     End If
     For i = 2 To N
         If Nomes(i) <> Nomes(i - 1) Then
             Set u = New CNomeValor
-            u.nome = Nomes(i)
+            u.Nome = Nomes(i)
             a.Add u
         End If
     Next i
@@ -56,16 +57,15 @@ Property Get ListaDeCenarios() As Collection
 End Property
 
 Public Sub WriteDB()
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPapel
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPapel
     If MainStatus = "LIVE" Then
         
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
         Ordena
         db.Execute ("DELETE FROM TSTRESS")
         For i = 1 To N
             db.Execute ("INSERT INTO TSTRESS (NOME, TITULO, PERCENTUAL) VALUES ('" + Nomes(i) + "','" + Titulos(i) + "'," + Str(Percent(i)) + ")")
         Next i
-        db.Close
     End If
 End Sub
 
@@ -109,12 +109,12 @@ Public Sub FillGridColsWithNome(x As MSFlexGrid)
     Next i
 End Sub
 
-Public Sub FillGrid(nome As String, x As MSFlexGrid)
+Public Sub FillGrid(Nome As String, x As MSFlexGrid)
     Dim i As Integer, L As Integer
     L = 0
     x.Rows = 1
     For i = 1 To N
-        If Nomes(i) = nome Then
+        If Nomes(i) = Nome Then
             L = L + 1
             x.AddItem Format(Percent(i), "##0.00%")
             x.TextMatrix(L, 1) = Titulos(i)

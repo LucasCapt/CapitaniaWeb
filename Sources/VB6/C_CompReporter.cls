@@ -14,20 +14,19 @@ Attribute VB_Exposed = False
 
 
 Public Sub report_Blotter()
-    Dim db As Database, ts1 As String, u As CTrade
-    Set db = OpenTheDatabase
+    Dim db As ADODB.Connection, ts1 As String, u As CTrade
+    Set db = OpenTheDatabase(True)
     ts1 = SQLTimeStamp
     For Each u In Trades.CTodayTrades
         db.Execute ("INSERT INTO THISTTRADEERRS (DATARUN, DATA, TRADEKEY, ADDR, FUNDO, ATIVO, CV, QUANT, TAXA, PU, EXTENSO) VALUES (" + _
         ts1 + "," + SQLBaseDate + ",'" + u.TradeKey + "','" + u.Addr + "','" + u.Fundo + "','" + u.Ativo + "','" + u.CV + "'," + Str(u.Quant) + "," + Str(u.Taxa) + "," + Str(u.PU) + ",'" + u.Extenso + "')")
     Next u
-    db.Close
 End Sub
 
 Public Sub Report_Allocation(Optional frm As Form)
-    Dim db As Database, rs As Recordset, x As CAlocacao
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CAlocacao
     
-    Set db = OpenTheDatabase
+    Set db = OpenTheDatabase(True)
     
     If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Alocação")
     db.Execute ("DELETE FROM THISTALLOC WHERE DATA = " + SQLBaseDate)
@@ -36,13 +35,12 @@ Public Sub Report_Allocation(Optional frm As Form)
         db.Execute ("INSERT INTO THISTALLOC (DATA, FUNDO, ATIVO, PUFUNDO, PUGERAL, CV, COMPLIANT) VALUES (" + SQLBaseDate + ", '" + _
         x.Fundo + "','" + x.Ativo + "'," + Str(x.PUFundo) + "," + Str(x.PUGeral) + ",'" + x.CV + "','" + x.Compliant + "')")
     Next x
-    db.Close
 End Sub
 
 Public Sub Report_CashReport(Optional frm As Form)
-    Dim db As Database, rs As Recordset, f As CFundo
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, f As CFundo
     
-    Set db = OpenTheDatabase
+    Set db = OpenTheDatabase(True)
     
     If Not frm Is Nothing Then frm.Say ("Gravando Cash Report")
     db.Execute ("DELETE FROM TCASHREPORTHIST WHERE DATA = " + SQLBaseDate)
@@ -64,9 +62,9 @@ End Sub
 
 
 Public Sub Report_AML(Optional frm As Form)
-    Dim db As Database, rs As Recordset, trd As CTrade, trd1 As CTrade, m As String, bkr As CCtpt, vai As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, trd As CTrade, trd1 As CTrade, m As String, bkr As CCtpt, vai As String
     
-    Set db = OpenTheDatabase
+    Set db = OpenTheDatabase(True)
     
     'Grava AML
             If Not frm Is Nothing Then frm.Say ("Gravando Resultado de AML")
@@ -153,10 +151,13 @@ Sub GravaDB(Optional frm As Form)
 
     Dim f As CFundo, b As CBook, r As CRegra, px As Integer, c As Collection, h As CNomeValor
     Dim u As String, u1 As String, u2 As String, m As Double
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     Dim v As Double, s As Double, s1 As Double, i As Integer, prop As CPropriedade, trd As CTrade
     Dim t0 As Date, td As Double, ti As Integer
     Dim RR As CRuleResult
+        
+    Dim vSQL As String
+    Dim vContador As Integer
     
     If MainStatus = "LIVE" Then
         t0 = Now()
@@ -171,7 +172,7 @@ Sub GravaDB(Optional frm As Form)
             Report_CashReport frm
            
         
-        Set db = OpenTheDatabase
+        Set db = OpenTheDatabase(True)
         
         'Grava Compliance
             If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Compliance")
@@ -197,17 +198,16 @@ Sub GravaDB(Optional frm As Form)
                                 End If
                                 ruls = ruls + ", " + r.nome
                                 ruls1 = ruls1 + "-->" + RR.Compliant + ":" + r.nome + ":" + r.Extensa + "<--"
-                                db.Execute ("INSERT INTO THISTCOMPBREACHES (DATA, FUNDO, TIPO, LIVRO, REGRA, REGRATEXTO, ALOCACAO, DELTA, ESCOPO, PAPEIS, VERSAO, TIPOLIMITE) VALUES (" + _
+                                Call db.Execute("INSERT INTO THISTCOMPBREACHES (DATA, FUNDO, TIPO, LIVRO, REGRA, REGRATEXTO, ALOCACAO, DELTA, ESCOPO, PAPEIS, VERSAO, TIPOLIMITE) VALUES (" + _
                                     SQLBaseDate + ", '" + _
-                                    f.nome + "', '" + RR.Compliant + "', '" + b.nome + "', '" + r.nome + "', '" + r.Extensa + "', " + Str(RR.MaxOut * m) + "," + Str(RR.DeltaOut) + ",'" + r.Escopo + "','" + RR.PapelDescr + "',3,'" + u2 + "')")
+                                    f.nome + "', '" + RR.Compliant + "', '" + b.nome + "', '" + r.nome + "', '" + r.Extensa + "', " + Str(RR.MaxOut * m) + "," + Str(RR.DeltaOut) + ",'" + r.Escopo + "','" + RR.PapelDescr + "',3,'" + u2 + "')", , adCmdText + adExecuteNoRecords)
                             End If
                         Next r
                     End If
-                    
                     'Grava o arquivo de teste de compliance
-                    db.Execute ("INSERT INTO THISTCOMPL (DATA, DATAINFO, FUNDO, LIVRO, RESULT, RULEBREACHES, DATAWRITE, FUNDSTATUS, RULEBREACHTEXT) VALUES (" + _
+                    Call db.Execute("INSERT INTO THISTCOMPL (DATA, DATAINFO, FUNDO, LIVRO, RESULT, RULEBREACHES, DATAWRITE, FUNDSTATUS, RULEBREACHTEXT) VALUES (" + _
                      SQLBaseDate + "," + SQLD(f.Dt_LastInfo) + ", '" + _
-                    f.nome + "','" + b.nome + "','" + u + "','" + ruls + "', #" + Format(Now(), "MM/DD/YYYY HH:MM:SS") + "#, '" + f.CarteiraUpdateStatus + "', '" + ruls1 + "')")
+                    f.nome + "','" + b.nome + "','" + u + "','" + ruls + "', '" + Format(Now(), "YYYY-MM-DD HH:MM:SS") + "', '" + f.CarteiraUpdateStatus + "', '" + ruls1 + "')", , adCmdText + adExecuteNoRecords)
                 Next b
             Next f 'Próximo fundo
                 
@@ -215,7 +215,15 @@ Sub GravaDB(Optional frm As Form)
             If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Risco e Liquidez")
             db.Execute ("DELETE FROM THISTRISK WHERE DATARUN = " + SQLBaseDate)
             
+            Dim vConexaoTemp As ADODB.Connection
+            If (vConexaoTemp Is Nothing) Then
+                Set vConexaoTemp = New ADODB.Connection
+                Call vConexaoTemp.open(MMain.DatabaseConnectionString)
+            End If
+            
             For Each f In Fundos.c
+                DoEvents
+                If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Risco e Liquidez Fundo " & f.nome)
                 order = "INSERT INTO THISTRISK (DATAWRITE, DATARUN, DATAINFO, FUNDO, PL, VAR, VARQUOTA, STRESS, E_IMOB, E_INFL, E_PRE, E_DOLAR, CAIXA, DISP, "
                 order = order + "LIQ_OK, LIQ_1, LIQ_5, LIQ_21, LIQ_42, LIQ_63, LIQ_126, LIQ_252, "
                 order = order + "REQ_CASH_1, REQ_CASH_5, REQ_CASH_21, REQ_CASH_42, REQ_CASH_63, REQ_CASH_126, REQ_CASH_252, "
@@ -223,7 +231,7 @@ Sub GravaDB(Optional frm As Form)
                 order = order + "LIQSTRESSPERCENTILE, E_IDA, E_IMOIDIO) VALUES "
                 
                 
-                order = order + "(#" + Format(Now(), "MM/DD/YYYY HH:MM:SS") + "#" + _
+                order = order + "('" + Format(Now(), "YYYY-MM-DD HH:MM:SS") + "'" + _
                     ", " + SQLBaseDate + _
                     ", " + SQLD(f.Dt_LastPortfolio) + _
                     ", '" + f.nome + "'" + _
@@ -291,18 +299,34 @@ Sub GravaDB(Optional frm As Form)
                 
                 order = order + ")"
                     
-                db.Execute (order)
+                Call db.Execute(order)
             Next f 'Próximo fundo (grava risco)
             
         'Grava Resultados de Stress
+            vContador = 0
+            vSQL = Empty
             If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Stress")
             db.Execute ("DELETE FROM THISTSTRESS WHERE DATARUN = " + SQLBaseDate)
             For Each f In Fundos.c
                 For Each h In Stress.ListaDeCenarios
+                    DoEvents
+                    If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Stress  Fundo " & Trim(f.nome) & "Cenario " & h.nome)
                     v = Stress.ApplyToFund(h.nome, f)
-                    db.Execute ("INSERT INTO THISTSTRESS (DATARUN, FUNDO, CENARIO, STRESS, AREA) VALUES (" + _
-                        SQLBaseDate + ",'" + f.nome + "','" + h.nome + "'," + Str(v) + ",'" + f.area + "')")
+                    If (vContador = 500) Then
+                        Call db.Execute(vSQL)
+                        vContador = 0
+                        vSQL = Empty
+                    Else
+                        vSQL = vSQL & "INSERT INTO THISTSTRESS (DATARUN, FUNDO, CENARIO, STRESS, AREA) VALUES (" + _
+                        SQLBaseDate + ",'" + f.nome + "','" + h.nome + "'," + Str(v) + ",'" + f.area + "');"
+                        vContador = vContador + 1
+                    End If
                 Next h
+                If (vContador > 0) Then
+                    Call db.Execute(vSQL)
+                    vContador = 0
+                    vSQL = Empty
+                End If
                 'Grava a provisao
             Next f 'Próximo fundo (Resultado de Stress)
             
@@ -310,6 +334,12 @@ Sub GravaDB(Optional frm As Form)
             If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Concentração")
             db.Execute ("DELETE FROM TCONCENTRA WHERE DATA = " + SQLBaseDate)
             
+            Dim vComand As ADODB.Command
+            Set vComand = New ADODB.Command
+            Set vComand.ActiveConnection = db
+            
+            vSQL = Empty
+            vContador = 0
             For Each f In Fundos.c
                 s = f.PLTotal
                 For i = 1 To 3
@@ -321,19 +351,32 @@ Sub GravaDB(Optional frm As Form)
                             Set c = f.MyConcentration(px)
                             For Each h In c
                                 If s = 0 Then s1 = 0 Else s1 = h.Valor / s
-                                db.Execute ("INSERT INTO TCONCENTRA (DATA, NOME, PROPRIEDADE, VALORPROP, CONCENTRACAO) VALUES " + _
-                                "(" + SQLBaseDate + "," + _
-                                "'" + f.nome + "'," + _
-                                "'" + u + "'," + _
-                                "'" + h.nome + "'," + _
-                                Str(s1) + ")")
+                                DoEvents
+                                If Not frm Is Nothing Then frm.Say ("Gravando Resultado de Concentração Fundo " & f.nome & " Propriedade " & u & " Concentração: " & h.nome)
+                                If vContador = 1000 Then
+                                    Call db.Execute(vSQL)
+                                    vContador = 0
+                                    vSQL = Empty
+                                Else
+                                    vSQL = vSQL & "INSERT INTO TCONCENTRA (DATA, NOME, PROPRIEDADE, VALORPROP, CONCENTRACAO) VALUES " + _
+                                                  "(" + SQLBaseDate + "," + _
+                                                  "'" + f.nome + "'," + _
+                                                  "'" + u + "'," + _
+                                                  "'" + h.nome + "'," + _
+                                                  Str(s1) + ");" & vbCr
+                                    vContador = vContador + 1
+                                End If
                             Next h
+                            If (vContador) > 0 Then
+                                Call db.Execute(vSQL)
+                                vContador = 0
+                                vSQL = Empty
+                            End If
                         End If
                     End If
                 Next i
             Next f 'próximo fundo (Concentração)
             
-        db.Close
         
         td = (Now() - t0) * 24 * 3600
         WriteLogPerf "REPORT_COMP", 1, td
@@ -342,17 +385,18 @@ Sub GravaDB(Optional frm As Form)
 End Sub
 
 Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
-    Dim f As CFundo, db As Database, stt As String, u As CPreTradeCompItem
+    Dim f As CFundo, db As ADODB.Connection, stt As String, u As CPreTradeCompItem
     Dim td As CTrade, ReportTime As String, achou As Boolean, ti As Double
     Dim FrontString As String, St_Status As String, St_Obs As String, St_ok As String
     
     
-    Set db = OpenTheDatabase
+    Set db = OpenTheDatabase(True)
     ReportTime = SQLTimeStamp()
     t0 = Now()
     
     '---Reporta para TPTC
         For Each f In Fundos.c
+            DoEvents
             If f.area = "ASSET" Then
                 If Not f.PTCExecuted Then f.PreTradeCompliance
                 Select Case f.PTCResult
@@ -373,18 +417,19 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
     '---Reporta para TPTCDETAIL
         
         For Each td In Trades.CTodayTrades
+            DoEvents
             'Reporta os não endereçados
             achou = False
             FrontString = "INSERT INTO TPTCDETAIL (DATARUN, DATA, ACTIONBY, TRADEKEY, FUNDO, ADDR, STATUS, OBS, OK) VALUES (" + _
                 ReportTime + "," + SQLBaseDate + ",'" + ActionBy + "','" + td.TradeKey + "','" + td.Fundo + "','" + td.Addr + "',"
             
             If td.Addr <> "OK" Then
-                db.Execute (FrontString + "'NAO ENDERECADO','NAO ENDERECADO',FALSE)")
+                db.Execute (FrontString + "'NAO ENDERECADO','NAO ENDERECADO',0)")
             ElseIf td.MyFund Is Nothing Then
-                db.Execute (FrontString + "'FALTA FUNDO','FALTA FUNDO',FALSE)")
+                db.Execute (FrontString + "'FALTA FUNDO','FALTA FUNDO',0)")
             Else
                 'o trade foi endereçado e tem fundo. Procurar o PTC do fundo
-                St_ok = "TRUE"
+                St_ok = "1"
                 St_Obs = ""
                 St_Status = "OK"
                 achou = False
@@ -394,7 +439,7 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
                     If u.MyTrade Is td Then
                         If u.Result > 1 Then
                             St_Obs = St_Obs + u.regra.nome + " "
-                            St_ok = "FALSE"
+                            St_ok = "0"
                             If u.Result = 3 Then
                                 St_Status = "VIOLOU"
                             ElseIf u.Result = 2 And St_Status <> "VIOLOU" Then
@@ -406,11 +451,10 @@ Public Sub Report_PreTrade(Optional ActionBy As String = "SYSTEM")
                 Next u
                 If achou _
                     Then db.Execute (FrontString + "'" + St_Status + "','" + St_Obs + "'," + St_ok + ")") _
-                    Else db.Execute (FrontString + "'NAO ACHOU TRADE NO FUNDO','NAO ACHOU TRADE NO FUNDO',FALSE)")
+                    Else db.Execute (FrontString + "'NAO ACHOU TRADE NO FUNDO','NAO ACHOU TRADE NO FUNDO',0)")
             End If
         Next td
     
-    db.Close
     ti = (Now() - t0) * 24 * 3600
     WriteLogPerf "REPORT_PTC", 1, ti
 End Sub

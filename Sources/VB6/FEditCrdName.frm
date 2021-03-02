@@ -128,16 +128,17 @@ Attribute VB_Exposed = False
 Private Obj As CCreditName
 
 
+
 Public Sub showfor(x As CCreditName)
     Dim i As Integer, u As CNomeValor
     Set Obj = x
     CrNames.FillComboListWithSectors Me.Combo1
     Me.Label5 = x.Cod
-    Me.Text2 = x.nome
-    Me.Combo1 = x.Setor
+    Me.Text2 = x.Nome
+    Me.Combo1 = x.setor
     Me.List1.Clear
     For Each u In x.CNPJ
-        Me.List1.AddItem u.nome
+        Me.List1.AddItem u.Nome
     Next u
     Me.Show vbModal
 End Sub
@@ -145,27 +146,27 @@ End Sub
 
 Private Sub Command1_Click()
     'OK
-    Dim vai As Boolean, u As CNomeValor, msg As String, db As Database, rs As Recordset
+    Dim vai As Boolean, u As CNomeValor, msg As String, db As ADODB.Connection, rs As ADODB.Recordset
     'Verifica chave primária
     
     vai = True
     Set db = OpenTheDatabase
     For i = 0 To Me.List1.ListCount - 1
-        Set rs = db.OpenRecordset("SELECT * FROM TCNPJNOME WHERE CNPJ='" + Me.List1.List(i) + "' AND NOMECREDITO<>'" + Obj.Cod + "'")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TCNPJNOME WHERE CNPJ='" + Me.List1.List(i) + "' AND NOMECREDITO<>'" + Obj.Cod + "'", db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then
             vai = False
             msg = Me.List1.List(i)
         End If
     Next i
-    db.Close
     
     If vai Then
-        Obj.nome = Me.Text2
-        Obj.Setor = Me.Combo1
+        Obj.Nome = Me.Text2
+        Obj.setor = Me.Combo1
         Set Obj.CNPJ = New Collection
         For i = 0 To Me.List1.ListCount - 1
             Set u = New CNomeValor
-            u.nome = Me.List1.List(i)
+            u.Nome = Me.List1.List(i)
             u.NomeAlt = Obj.Cod
             Obj.CNPJ.Add u
         Next i

@@ -15,25 +15,30 @@ Attribute VB_Exposed = False
 Public c As Collection
 
 Public Sub Init()
-    Dim db As Database, rs As Recordset, rs1 As Recordset, u As CCreditName, uu As CNomeValor, d As Date, r As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, u As CCreditName, uu As CNomeValor, d As Date, r As String
     
     'Lê os nomes de crédito
         Set c = New Collection
-        Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT * FROM TRATINGNAMES ORDER BY SETOR, NOME")
+        Set db = OpenTheDatabase(True)
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TRATINGNAMES ORDER BY SETOR, NOME", db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then rs.MoveFirst
         While Not rs.EOF
+            DoEvents
             Set u = New CCreditName
-            u.nome = rs("NOME")
+            u.Nome = rs("NOME")
             u.Cod = rs("ID")
             u.setor = rs("SETOR")
+            Call FStart.Say("Atualizando nomes: " & u.Nome)
             
             '--Le os cnpjs
             Set u.CNPJ = New Collection
-            Set rs1 = db.OpenRecordset("SELECT * FROM TCNPJNOME WHERE NOMECREDITO='" + u.Cod + "'")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TCNPJNOME WHERE NOMECREDITO='" + u.Cod + "'", db, adOpenForwardOnly, adLockReadOnly)
             While Not rs1.EOF
+                DoEvents
                 Set uu = New CNomeValor
-                uu.nome = rs1("CNPJ")
+                uu.Nome = rs1("CNPJ")
                 uu.NomeAlt = rs1("NOMECREDITO")
                 u.CNPJ.Add uu
                 rs1.MoveNext
@@ -45,8 +50,10 @@ Public Sub Init()
     'Lê o último score (média d a d-7) e o W-1 (média d-14 a d-7)
 
         For Each u In c
-        
-            Set rs = db.OpenRecordset("SELECT * FROM TRATINGS WHERE ID='" + u.Cod + "' AND DATA<=" + SQLBaseDate + " ORDER BY DATA DESC")
+            DoEvents
+            Set rs = New ADODB.Recordset
+            Call FStart.Say("Atualizando nomes: " & u.Nome)
+            Call rs.open("SELECT * FROM TRATINGS WHERE ID='" + u.Cod + "' AND DATA<=" + SQLBaseDate + " ORDER BY DATA DESC", db, adOpenForwardOnly, adLockReadOnly)
             If rs.EOF Then
                 u.Score = "n/a"
                 u.ScoreW_1 = "n/a"
@@ -56,6 +63,7 @@ Public Sub Init()
                 u.DtScore = rs("DATA")
                 d = rs("DATA")
                 While d > BaseDate - 7 And Not rs.EOF
+                    DoEvents
                     d = rs("DATA")
                     r = rs("RATING")
                     u.AverageScore (r)
@@ -68,6 +76,7 @@ Public Sub Init()
                     u.ScoreW_1 = r
                     u.DtScoreW_1 = d
                     While d > BaseDate - 14 And Not rs.EOF
+                        DoEvents
                         u.AverageScoreW_1 (rs("RATING"))
                         d = rs("DATA")
                         rs.MoveNext
@@ -76,7 +85,6 @@ Public Sub Init()
             End If
         Next u
     
-    db.Close
 End Sub
 
 Public Function SearchCreditName(ID As String) As CCreditName
@@ -87,11 +95,11 @@ Public Function SearchCreditName(ID As String) As CCreditName
     Next a
 End Function
 
-Public Function SearchCreditNameByName(nome As String) As CCreditName
+Public Function SearchCreditNameByName(Nome As String) As CCreditName
     Dim a As CCreditName
     Set SearchCreditNameByName = Nothing
     For Each a In c
-        If UCase(a.nome) = UCase(nome) Then Set SearchCreditNameByName = a
+        If UCase(a.Nome) = UCase(Nome) Then Set SearchCreditNameByName = a
     Next a
 End Function
 
@@ -113,15 +121,14 @@ Public Sub Cria(Optional setor As String = "")
 End Sub
 
 Public Sub Deleta(x As CCreditName)
-    Dim db As Database, vai As Boolean, i As Integer, CR As Integer
+    Dim db As ADODB.Connection, vai As Boolean, i As Integer, CR As Integer
     vai = True
     CR = Papeis.QuemUsaCrName(x.Cod)
-    If CR > 0 Then vai = (MsgBox("O nome crédito " + x.Cod + " (" + x.nome + ") é utilizado por " + Str(CR) + " papéis." + vbCr + "Deseja excluir mesmo assim?", vbYesNo) = vbYes)
+    If CR > 0 Then vai = (MsgBox("O nome crédito " + x.Cod + " (" + x.Nome + ") é utilizado por " + Str(CR) + " papéis." + vbCr + "Deseja excluir mesmo assim?", vbYesNo) = vbYes)
     If vai Then
         Set db = OpenTheDatabase
         db.Execute ("DELETE FROM TCNPJNOME WHERE NOMECREDITO='" + x.Cod)
         db.Execute ("DELETE FROM TRATINGNAMES WHERE ID='" + x.Cod)
-        db.Close
         For i = 1 To c.Count
             If c(i) Is x Then c.remove i
         Next i

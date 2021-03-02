@@ -1,0 +1,139 @@
+﻿@using Abp.Authorization.Users
+@using Abp.MultiTenancy
+@using Capitania.MultiTenancy
+@using Capitania.Web.Startup
+@using Capitania.Web.Models.TConfiguracao
+@using Abp.Application.Services.Dto
+@model TConfiguracaoListViewModel
+@{
+    ViewBag.CurrentPageName = PageNames.TConfiguracao; // The menu item will be active for this page.
+}
+
+@section styles
+    {
+}
+
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/TConfiguracao/Index.js" asp-append-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/TConfiguracao/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    @L("TConfigurations")
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a id="RefreshButton" href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">refresh</i>@L("Refresh")</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="body table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>@L("TConfigurations.Code")</th>
+                            <th>@L("TConfigurations.Description")</th>
+                            <th>@L("TConfigurations.Value")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var vConfig in Model.Configuracoes)
+                        {
+                        <tr>
+                            <td>@vConfig.Codigo</td>
+                            <td>@vConfig.Descricao</td>
+                            <td>@vConfig.Valor</td>
+                            <td class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons">menu</i>
+                                </a>
+                                <ul class="dropdown-menu pull-right">
+                                    <li><a href="#" class="waves-effect waves-block edit-config" data-config-id="@vConfig.Id" data-toggle="modal" data-target="#ConfigEditModal"><i class="material-icons">edit</i>@L("Edit")</a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary btn-circle waves-effect waves-circle waves-float pull-right" data-toggle="modal" data-target="#ConfigCreateModal">
+                    <i class="material-icons">add</i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ConfigCreateModal" tabindex="-1" role="dialog" aria-labelledby="ConfigCreateModalLabel" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span>@L("CreateNewConfig")</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form name="configCreateForm" role="form" novalidate class="form-validation">
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input id="configname" type="text" name="configname" required maxlength="32" minlength="2" class="validate form-control">
+                                    <label for="configname" class="form-label">@L("TConfigurations.Code")</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input id="configdesc" type="text" name="configdesc" required maxlength="150" minlength="2" class="validate form-control">
+                                    <label for="configdesc" class="form-label">@L("TConfigurations.Description")</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input id="configvalue" name="configvalue" required maxlength="150" class="validate form-control">
+                                    <label for="configvalue" class="form-label">@L("TConfigurations.Value")</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">@L("Cancel")</button>
+                        <button type="submit" class="btn btn-primary waves-effect">@L("Save")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ConfigEditModal" tabindex="-1" role="dialog" aria-labelledby="ConfigEditModalLabel" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>

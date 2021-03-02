@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
@@ -8,6 +8,10 @@
     <PackageId>Capitania.Web.Mvc</PackageId>
     <UserSecretsId>AbpCompanyName-Capitania-56C2EF2F-ABD6-4EFC-AAF2-2E81C34E8FB1</UserSecretsId>
     <RootNamespace>Capitania.Web</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -23,11 +27,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Capitania.Application\Capitania.Application.csproj" />
+    <ProjectReference Include="..\Capitania.Core\Capitania.Core.csproj" />
+    <ProjectReference Include="..\Capitania.EntityFrameworkCore\Capitania.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Capitania.Web.Core\Capitania.Web.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="AspNet.Security.OpenIdConnect.Server" Version="2.0.0" />
@@ -47,8 +60,15 @@
     <PackageReference Include="Abp.RedisCache" Version="4.8.1" />
     <PackageReference Include="Abp.Castle.Log4Net" Version="4.8.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.ViewCompilation" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="17.4.0.39" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Syncfusion.EJ">
+      <HintPath>C:\Program Files (x86)\Syncfusion\Essential Studio\ASP.NET MVC\16.4.0.42\Assemblies\4.6\Syncfusion.EJ.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.EJ.MVC">
+      <HintPath>C:\Program Files (x86)\Syncfusion\Essential Studio\ASP.NET MVC\16.4.0.42\Assemblies\MVC\MVC5\Syncfusion.EJ.MVC.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>

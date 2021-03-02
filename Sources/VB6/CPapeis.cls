@@ -136,20 +136,22 @@ Private Function BuscaStartPapel(x As String) As Long
 End Function
 
 Public Sub ReadDB(Data1 As Date)
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CPapel, y As CNomeValor, d As Date, i As Long, z As CProvFilterElement
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CPapel, y As CNomeValor, d As Date, i As Long, z As CProvFilterElement
     Dim td As Double, t0 As Date, ti As Integer, t0i As Date, tt1 As Double, tt2 As Double, tt3 As Double 'performance
         
     t0 = Now(): ti = 0: tt1 = 0: tt2 = 0: tt3 = 0
     Set c = New Collection
-    Set db = OpenTheDatabase
+    Set db = OpenTheDatabase(True)
     
     'Lê toda a papelprop
     t0i = Now()
     Set PapelProp = New Collection
     Set y = New CNomeValor: y.nome = "": PapelProp.Add y 'cria header
-    Set rs = db.OpenRecordset("SELECT * FROM TPAPELPROP WHERE DATA<=" + SQLBaseDate + " ORDER BY PAPEL, PROPRIEDADE, DATA")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TPAPELPROP WHERE DATA<=" + SQLBaseDate + " ORDER BY PAPEL, PROPRIEDADE, DATA", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
+        DoEvents
         Set y = New CNomeValor
         y.nome = rs("PAPEL")
         y.Valor = rs("PROPRIEDADE")
@@ -161,17 +163,27 @@ Public Sub ReadDB(Data1 As Date)
     tt1 = tt1 + Now() - t0i
     
     
+    'Lê todo o TDATV TODO
+    t0i = Now()
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT * FROM TADTV WHERE DATA>=" + SQLD(BaseDate - 15) + " ORDER BY NOME ASC, DATA DESC", db, adOpenKeyset, adLockReadOnly)
+        AllADTVs = rs1.GetRows(rs1.RecordCount)
+    tt3 = tt3 + Now() - t0i
+    
     'Lê os títulos
-    Set rs = db.OpenRecordset("SELECT * FROM TPAPEL WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
+    Set rs = New ADODB.Recordset
+    Set rs = db.Execute("SELECT * FROM TPAPEL WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED =1 AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
+        DoEvents
+        FStart.Say ("Lendo papéis... (" & rs("nome") & ")")
         Set x = New CPapel
         x.nome = rs("Nome")
         x.ID = CritS(rs("ID"))
         x.ISIN = CritS(rs("ISIN"))
         x.CNPJ = CritS(rs("CNPJ"))
         x.Status = rs("Status")
-        x.Fundo = rs("Fundo")
+        x.Fundo = (rs("Fundo") = 1)
         x.IDFluxo = crit(rs("CashFlow_ID"))
         x.Tipo = CritS(rs("Tipo"))
         x.Class_Liq = crit(rs("Class_Liq"))
@@ -198,6 +210,7 @@ Public Sub ReadDB(Data1 As Date)
             i = BuscaStartPapel(x.ID)
             If i > 0 Then
                 While PapelProp(i).nome = x.ID And i < PapelProp.Count
+                    DoEvents
                     x.colocprop Int(PapelProp(i).Valor), PapelProp(i).NomeAlt
                     i = i + 1
                 Wend
@@ -208,33 +221,27 @@ Public Sub ReadDB(Data1 As Date)
         '---Lê o Fluxo de Caixa
             t0i = Now()
             x.ResetCFlow
-            Set rs1 = db.OpenRecordset("SELECT * FROM TFLUXOS WHERE IDFLUXO = '" + x.IDFluxo + "' AND DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY DATA")
+            Dim vConexaoTemp As ADODB.Connection
+            If (vConexaoTemp Is Nothing) Then
+                Set vConexaoTemp = New ADODB.Connection
+                Call vConexaoTemp.open(MMain.DatabaseConnectionString)
+            End If
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TFLUXOS WHERE IDFLUXO = '" + x.IDFluxo + "' AND DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1 AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY DATA", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
             x.CFFound = Not (rs1.EOF)
             While Not rs1.EOF
+                DoEvents
                 x.IncluiCFlow rs1("DATA"), crit(rs1("AMORT")), crit(rs1("JUROS"))
                 rs1.MoveNext
             Wend
+            rs1.Close
             x.FazFluxo
             tt2 = tt2 + Now() - t0i
 
         
         '---Lê o ADTV
             t0i = Now()
-            
-            'Tenta pelo código CETIP e ID, últimos 10 dias
-            Set rs1 = db.OpenRecordset("SELECT * FROM TADTV WHERE (NOME='" + x.CodCetip + "' OR NOME='" + x.ID + "') AND DATA>=" + SQLD(d - 10) + " ORDER BY DATA DESC")
-            If rs1.EOF Then
-                x.adtv = 0
-                x.adtvClasse = 0
-                x.adtvCond = 0
-                x.adtvClasseCond = 0
-            Else
-                x.adtv = CritNN(rs1("ADTV"))
-                x.adtvClasse = CritNN(rs1("ADTVCLASSE"))
-                x.adtvCond = CritNN(rs1("ADTVCOND"))
-                x.adtvClasseCond = CritNN(rs1("ADTVCLASSECOND"))
-            End If
-            
+                x.GetYourADTVIn (AllADTVs)
             tt3 = tt3 + Now() - t0i
                             
         c.Add x, Trim(x.ID)
@@ -244,7 +251,8 @@ Public Sub ReadDB(Data1 As Date)
     Wend
     
     'Lê a AKAList
-    Set rs = db.OpenRecordset("SELECT * FROM TAKA WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ")")
+    If rs.State = 1 Then rs.Close
+    Call rs.open("SELECT * FROM TAKA WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED =1 AND DT_DELETED<=" + SQLBaseDate + ")", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     Set akaList = New Collection
     While Not rs.EOF
@@ -255,7 +263,7 @@ Public Sub ReadDB(Data1 As Date)
         rs.MoveNext
     Wend
     
-    db.Close
+    
     
     td = (Now() - t0) * 24 * 3600
     WriteLogPerf "LE_TITULOS", ti, td
@@ -322,13 +330,14 @@ Public Function searchISIN(x As String) As CPapel
 End Function
 
 Public Function IDdeISINNaBase(x As String) As String
-    Dim db As Database, rs As Recordset, y As CFundo, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CFundo, LastNumber As Integer
     
     
-    Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ISIN='" + x + "' AND DT_CREATED<=" + SQLBaseDate + " AND (NOT DELETED OR DT_DELETED>=" + SQLBaseDate + ")")
+    Set db = OpenTheDatabase(True)
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TPAPEL WHERE ISIN='" + x + "' AND DT_CREATED<=" + SQLBaseDate + " AND (DELETED =0 OR DT_DELETED>=" + SQLBaseDate + ")", db, adOpenForwardOnly, adLockReadOnly)
     If rs.EOF Then IDdeISINNaBase = "" Else IDdeISINNaBase = CritS(rs("ID"))
-    db.Close
+    
 End Function
 
 Function IdentifierUsed(x As String) As Boolean
@@ -351,7 +360,7 @@ End Function
 
 Public Function Cria(x As String, Optional CreateStatus As String = "CRIADO_USER") As CPapel
     'Cria um papel com ID=x
-    Dim db As Database, rs As Recordset, rs1 As Recordset, p As CPapel, nome As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, p As CPapel, nome As String
     
     nome = "Unknown (" + x + ")"
     Set p = New CPapel
@@ -367,13 +376,13 @@ End Function
 
 
 Public Sub remove(ID As String)
-    Dim db As Database, rs As Recordset, rs1 As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        db.Execute ("UPDATE TPAPEL SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID='" + ID + "'")
-        db.Close
+        db.Execute ("UPDATE TPAPEL SET DELETED=1, DT_DELETED=" + SQLBaseDate + " WHERE ID='" + ID + "'")
+        
     End If
     j = 1
     For i = 1 To c.Count
@@ -385,13 +394,13 @@ End Sub
 
 Public Sub AKA(FromID As String, ToID As String)
     'Coloca na lista AKA e remove o velho
-    Dim db As Database, rs As Recordset, rs1 As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset
     Dim y As New CNomeValor
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        db.Execute ("INSERT INTO TAKA (FROMID, TOID, DT_CREATED, DT_DELETED, DELETED) VALUES ('" + FromID + "','" + ToID + "'," + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
-        db.Close
+        db.Execute ("INSERT INTO TAKA (FROMID, TOID, DT_CREATED, DT_DELETED, DELETED) VALUES ('" + FromID + "','" + ToID + "'," + SQLBaseDate + "," + SQLBaseDate + ",0)")
+        
     End If
     y.nome = FromID
     y.NomeAlt = ToID
@@ -433,11 +442,11 @@ Public Sub HighLevelCria(Optional CloneFrom As CPapel = Nothing)
 End Sub
 
 Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
-    Dim db As Database, rs As Recordset, i As Integer, s1 As String, s2 As String, se As String, sv As String, dst As String, d1 As Date
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, i As Integer, s1 As String, s2 As String, se As String, sv As String, dst As String, d1 As Date
     
     If MainStatus = "LIVE" Then
         
-        If Obj.Fundo Then s2 = "TRUE" Else s2 = "FALSE"
+        If Obj.Fundo Then s2 = "1" Else s2 = "0"
         se = SQLD(Obj.Dt_Emissao)
         sv = SQLD(Obj.Dt_Venc)
         If Obj.Dt_Created <= LongTimeAgo Then
@@ -447,15 +456,15 @@ Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
                 
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT * FROM TPAPEL WHERE ID='" + Obj.ID + "'")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TPAPEL WHERE ID='" + Obj.ID + "'", db, adOpenForwardOnly, adLockReadOnly)
         
         If rs.EOF Or UpdateIfDuplicated Then
-                    
             'Coloca no Database
                 db.Execute ("DELETE FROM TPAPEL WHERE ID='" + Obj.ID + "'")
                 db.Execute ("INSERT INTO TPAPEL (NOME, ID, STATUS, FUNDO, CLASS_LIQ, CLASS_RENTAB, DATA_EMISSAO, DATA_VENCTO, " + _
-                           "INDEX, COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO, CASHFLOW_ID) VALUES ('" + Obj.nome + "', '" + Obj.ID + "','" + Obj.Status + "', " + s2 + ", '" + Obj.Class_Liq + "','" + Obj.Class_Rent + "'," + _
-                           se + " , " + sv + ",'" + Obj.Index + "', " + Str(Obj.Coupon) + ",'" + Obj.DayCount + "','" + Obj.Senior + "','" + Obj.NameCr + "'," + Str(Obj.Holdings) + ",'" + Obj.ISIN + "','" + Obj.CNPJ + "','" + Obj.CodCetip + "'," + SQLD(Obj.Dt_Created) + "," + SQLBaseDate + ",FALSE,'" + Obj.Tipo + "','" + Obj.IDFluxo + "')")
+                           "[INDEX], COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO, CASHFLOW_ID) VALUES ('" + Obj.nome + "', '" + Obj.ID + "','" + Obj.Status + "', " + s2 + ", '" + Obj.Class_Liq + "','" + Obj.Class_Rent + "'," + _
+                           se + " , " + sv + ",'" + Obj.Index + "', " + Str(Obj.Coupon) + ",'" + Obj.DayCount + "','" + Obj.Senior + "','" + Obj.NameCr + "'," + Str(Obj.Holdings) + ",'" + Obj.ISIN + "','" + Obj.CNPJ + "','" + Obj.CodCetip + "'," + SQLD(Obj.Dt_Created) + "," + SQLBaseDate + ",0,'" + Obj.Tipo + "','" + Obj.IDFluxo + "')")
                            
             'Recoloca as propriedades
                 For i = 1 To Props.c.Count
@@ -463,7 +472,8 @@ Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
                     If Obj.PropV(i) <> "" Then
                 
                         'verifica valor mais recente da propriedade
-                        Set rs = db.OpenRecordset("SELECT MAX(DATA) AS D1 FROM TPAPELPROP WHERE PAPEL='" + Obj.ID + "' AND PROPRIEDADE=" + Str(Props.c(i).ID) + " AND DATA<=" + SQLBaseDate)
+                        Set rs = New ADODB.Recordset
+                        Call rs.open("SELECT MAX(DATA) AS D1 FROM TPAPELPROP WHERE PAPEL='" + Obj.ID + "' AND PROPRIEDADE=" + Str(Props.c(i).ID) + " AND DATA<=" + SQLBaseDate, db, adOpenForwardOnly, adLockReadOnly)
                         If rs.EOF Then
                             d1 = LongTimeAgo
                         ElseIf IsNull(rs("d1")) Then
@@ -471,7 +481,8 @@ Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
                         Else
                             d1 = rs("D1")
                         End If
-                        Set rs = db.OpenRecordset("SELECT * FROM TPAPELPROP WHERE PAPEL='" + Obj.ID + "' AND PROPRIEDADE=" + Str(Props.c(i).ID) + " AND DATA=" + SQLD(d1))
+                        Set rs = New ADODB.Recordset
+                        Call rs.open("SELECT * FROM TPAPELPROP WHERE PAPEL='" + Obj.ID + "' AND PROPRIEDADE=" + Str(Props.c(i).ID) + " AND DATA=" + SQLD(d1), db, adOpenForwardOnly, adLockReadOnly)
                         
                         If rs.EOF _
                             Then vai = True _
@@ -500,7 +511,7 @@ Public Sub Insert(Obj As CPapel, Optional UpdateIfDuplicated As Boolean = True)
                 If c(j).ID = Obj.ID Then c.remove (j)
                 c.Add Obj, Obj.ID
         End If
-        db.Close
+        
         
     End If 'Mainstatus=LIVE
 End Sub

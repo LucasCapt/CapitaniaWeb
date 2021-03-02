@@ -17,6 +17,7 @@ namespace Capitania.Configuration.Ui
                 new UiThemeInfo("Indigo", "indigo"),
                 new UiThemeInfo("Blue", "blue"),
                 new UiThemeInfo("Light Blue", "light-blue"),
+                new UiThemeInfo("Capitânia", "capitania"),
                 new UiThemeInfo("Cyan", "cyan"),
                 new UiThemeInfo("Teal", "teal"),
                 new UiThemeInfo("Green", "green"),

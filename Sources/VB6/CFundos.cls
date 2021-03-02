@@ -15,7 +15,7 @@ Public c As New Collection
 
 
 Public Sub ReadDB(Data1 As Date, Optional f As Form)
-    Dim db As Database, rs As Recordset, rs1 As Recordset, x As CFundo
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, x As CFundo
     Dim pl As Double, a As Double, d As Date, b As Date, mxdata As Date
     Dim PlHist(2000) As Double, PLData(2000) As Date, i As Integer, NPL As Integer, PLMedio As Double
     Dim t0 As Date, td As Double, ti As Integer, t1 As Double, t2 As Double, t3 As Double, t4 As Double, t5 As Double, t6 As Double, t7 As Double, ttt As Double
@@ -25,28 +25,31 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
     t0 = Timer: ti = 0
     Set c = New Collection
     
-    Set db = OpenTheDatabase
+    Set db = OpenTheDatabase(True)
     
     'Lê todas as séries de quotas
     tt = Timer
-    Set rs = db.OpenRecordset("SELECT * FROM TQUOTAS WHERE DATA<=" + SQLBaseDate + " AND DATA>=" + SQLD(BaseDate - 365) + " ORDER BY FUNDO, DATA")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TQUOTAS WHERE DATA<=" + SQLBaseDate + " AND DATA>=" + SQLD(BaseDate - 365) + " ORDER BY FUNDO, DATA", db, adOpenForwardOnly, adLockReadOnly)
     AllQuotas = rs.GetRows(rs.RecordCount)
     t6 = t6 + (Timer - tt)
     
     'Lê todas as últimas datas
     tt = Timer
-    Set rs = db.OpenRecordset("SELECT DISTINCT FUNDO, MAX(DATA) FROM TPOSIC WHERE DATA<=" + SQLD(Data1) + " GROUP BY FUNDO")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT DISTINCT FUNDO, MAX(DATA) FROM TPOSIC WHERE DATA<=" + SQLD(Data1) + " GROUP BY FUNDO", db, adOpenForwardOnly, adLockReadOnly)
     AllMaxDates = rs.GetRows(rs.RecordCount)
     t2 = t2 + Timer - tt
         
     'Lê os fundos
-    Set rs = db.OpenRecordset("SELECT * FROM TFUNDOS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
+    If (rs.State = 1) Then rs.Close
+    Call rs.open("SELECT * FROM TFUNDOS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED =1 AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
+        DoEvents
         Set x = New CFundo
         x.nome = rs("Nome")
-        
-        'If Not f Is Nothing Then f.say "Lendo fundos " + x.Nome
+        Call FStart.Say("Lendo fundos... (" & x.nome & ")")
                
         x.ID = rs("ID")
         x.CNPJ = rs("CNPJ")
@@ -81,9 +84,15 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
                 
         'Le livros de regras
             tt = Timer
-            Set rs1 = db.OpenRecordset("SELECT * FROM TFUNDOBOOK WHERE FUNDO=" + Str(rs("ID")))
-            If Not rs1.EOF Then rs1.MoveFirst
+            Dim vConexaoTemp As ADODB.Connection
+            If (vConexaoTemp Is Nothing) Then
+                Set vConexaoTemp = New ADODB.Connection
+                Call vConexaoTemp.open(MMain.DatabaseConnectionString)
+            End If
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TFUNDOBOOK WHERE FUNDO=" + Str(rs("ID")), vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
             While Not rs1.EOF
+                DoEvents
                 x.AddNewBook (rs1("Book"))
                 rs1.MoveNext
             Wend
@@ -101,9 +110,10 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
                     
             'Le a carteira
             If x.Dt_LastPortfolio > LongTimeAgo Then
-                Set rs1 = db.OpenRecordset("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(rs("ID")) + " AND DATA=" + SQLD(x.Dt_LastPortfolio) + " ORDER BY VALOR DESC")
-                rs1.MoveFirst
+                Set rs1 = New ADODB.Recordset
+                Call rs1.open("SELECT * FROM TPOSIC WHERE FUNDO=" + Str(rs("ID")) + " AND DATA=" + SQLD(x.Dt_LastPortfolio) + " ORDER BY VALOR DESC", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
                 While Not rs1.EOF
+                    DoEvents
                     x.IncluiPosic rs1("Papel"), CritNN(rs1("Valor")), CritNN(rs1("Quant")), False, "AUTO_TIPO_1"
                     rs1.MoveNext
                 Wend
@@ -118,7 +128,8 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
         'Le fila de resgate
             tt = Timer
             x.ResetResgate
-            Set rs1 = db.OpenRecordset("SELECT * FROM TRESGATES WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate + " AND DATALIQ>" + SQLBaseDate + " AND (NOT CANCELADO OR DATACANCEL>" + SQLBaseDate + ")")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TRESGATES WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate + " AND DATALIQ>" + SQLBaseDate + " AND (CANCELADO = 0 OR DATACANCEL>" + SQLBaseDate + ")", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
             While Not rs1.EOF
                 x.InlcluiResgate rs1("DATALIQ"), rs1("VALOR"), rs1("TOTAL"), rs1("DATAOBS")
                 rs1.MoveNext
@@ -127,7 +138,8 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             
         'Le fila de transferências
             x.ResetTransf
-            Set rs1 = db.OpenRecordset("SELECT * FROM TTRANSFERS WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate + " AND DATALIQ>" + SQLBaseDate + " AND (NOT CANCELADO OR DATACANCEL>" + SQLBaseDate + ")")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM TTRANSFERS WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate + " AND DATALIQ>" + SQLBaseDate + " AND (CANCELADO = 0 OR DATACANCEL>" + SQLBaseDate + ")", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
             While Not rs1.EOF
                 x.InlcluiTransf rs1("DATALIQ"), rs1("VALOR")
                 rs1.MoveNext
@@ -138,7 +150,8 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
         'Calcula Volatilidade do Patrimônio Líquido e guarda a série de PL
             'esta parte demora
             tt = Timer
-            Set rs1 = db.OpenRecordset("SELECT * FROM THISTRISK WHERE FUNDO='" + x.nome + "' AND DATARUN>=" + SQLD(BaseDate - 1440) + " AND DATARUN<=" + SQLBaseDate + " AND DAY(DATARUN)>26 ORDER BY DATARUN")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT * FROM THISTRISK WHERE FUNDO='" + x.nome + "' AND DATARUN>=" + SQLD(BaseDate - 1440) + " AND DATARUN<=" + SQLBaseDate + " AND DAY(DATARUN)>26 ORDER BY DATARUN", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
             NPL = 0
             If rs1.EOF Then
                 x.VolPL = 0
@@ -150,6 +163,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
                 somasq = 0
                 N = 0
                 While Not rs1.EOF
+                    DoEvents
                     a = rs1("PL")
                     b = rs1("DATARUN")
                     NPL = NPL + 1
@@ -178,7 +192,8 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             
         'Calcula Volatilidade do Resgate
             tt = Timer
-            Set rs1 = db.OpenRecordset("SELECT DATALIQ, SUM(VALOR) AS TTVALUE FROM TRESGATES WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS>=" + SQLD(BaseDate - 1440) + " AND DATAOBS<=" + SQLBaseDate + " AND NOT CANCELADO GROUP BY DATALIQ ORDER BY DATALIQ")
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT DATALIQ, SUM(VALOR) AS TTVALUE FROM TRESGATES WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS>=" + SQLD(BaseDate - 1440) + " AND DATAOBS<=" + SQLBaseDate + " AND CANCELADO = 0 GROUP BY DATALIQ ORDER BY DATALIQ", vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
             If rs1.EOF Or NPL = 0 Then
                 x.VolResg = 0
             Else
@@ -227,11 +242,13 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
             
         'Obtem concentração do maior cotista
             tt = Timer
-            Set rs1 = db.OpenRecordset("SELECT MAX (DATAOBS) AS MAXDATA FROM TMAIORCOTISTA WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate)
+            Set rs1 = New ADODB.Recordset
+            Call rs1.open("SELECT MAX (DATAOBS) AS MAXDATA FROM TMAIORCOTISTA WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS<=" + SQLBaseDate, vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
             If Not rs1.EOF Then
                 If Not IsNull(rs1("MAXDATA")) Then
                     mxdata = rs1("MAXDATA")
-                    Set rs1 = db.OpenRecordset("SELECT * FROM TMAIORCOTISTA WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS=" + SQLD(mxdata))
+                    Set rs1 = New ADODB.Recordset
+                    Call rs1.open("SELECT * FROM TMAIORCOTISTA WHERE FUNDO='" + x.nomeLiq + "' AND DATAOBS=" + SQLD(mxdata), vConexaoTemp, adOpenForwardOnly, adLockReadOnly)
                     If Not rs1.EOF Then
                         x.MaiorCotista = rs1("MAXCOT1")
                     End If
@@ -251,7 +268,7 @@ Public Sub ReadDB(Data1 As Date, Optional f As Form)
         rs.MoveNext
         
     Wend
-    db.Close
+    
     
     td = (Timer - t0)
     WriteLogPerf "LE_FUNDOS", ti, td
@@ -286,9 +303,22 @@ Public Function searchName(x As String) As CFundo
 End Function
 
 Public Function searchNameBlotter(x As String) As CFundo
-    Dim y As CFundo
+    Dim y As CFundo, a As String, achou As Boolean
     For Each y In c
-        If y.nomeBlotter = x Then Set searchNameBlotter = y
+        a = y.nomeBlotter + ";"
+        i = 1
+        achou = False
+        While (InStr(i, a, ";") > 0 Or InStr(i, a, ",") > 0) And Not achou
+            j = InStr(i, a, ";")
+            If j = 0 Then j = InStr(i, a, ",")
+            a1 = Trim(Mid(a, i, j - i))
+            If a1 = Trim(x) Then
+                achou = True
+                Set searchNameBlotter = y
+            End If
+            i = j + 1
+        Wend
+        'If x = y.nomeBlotter, x Then Set searchNameBlotter = y
     Next y
 End Function
 
@@ -301,17 +331,18 @@ End Function
 
 
 Public Function Cria(x As String) As CFundo
-    Dim db As Database, rs As Recordset, y As CFundo, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CFundo, LastNumber As Integer
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT MAX (ID) AS MAXID FROM TFUNDOS")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT MAX (ID) AS MAXID FROM TFUNDOS", db, adOpenForwardOnly, adLockReadOnly)
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
             
-        db.Execute ("INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, DT_CREATED, DT_DELETED, DELETED) VALUES (" + Str(LastNumber + 1) + ",'" + x + "', '', FALSE, '', " + SQLBaseDate + "," + SQLBaseDate + ",FALSE)")
-        db.Close
+        db.Execute ("INSERT INTO TFUNDOS (ID, NOME, CNPJ, QUALIF, IDTITULO, DT_CREATED, DT_DELETED, DELETED, RULE_NOCRSSTRD, OVERRIDELIMITS, CREDLIMREGULAM, FAVORIT_CASH, FAVORIT_CREDIT, FAVORIT_MKT, RULE_NODAYTRD) VALUES (" + Str(LastNumber + 1) + ",'" + x + "', '', 0, '', " + SQLBaseDate + "," + SQLBaseDate + ",0, 0, 0, 0, 0, 0, 0, 0)")
+        
         
         Set y = New CFundo
         y.ID = LastNumber + 1
@@ -339,12 +370,12 @@ End Sub
 
 
 Public Sub ExcluiFundo(x As CFundo)
-    Dim db As Database, rs As Recordset, y As CFundo
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CFundo
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        db.Execute ("UPDATE TFUNDOS SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
+        db.Execute ("UPDATE TFUNDOS SET DELETED=1, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
     End If
     
     For i = 1 To c.Count - 1
@@ -470,6 +501,7 @@ Public Sub PreTradeCompliance(Mandatory As Boolean, Optional Form1 As Form)
     t0 = Now()
     N = 0
     For Each f In c
+        DoEvents
         If Not Form1 Is Nothing Then Form1.Say ("Executando Pré-Trade Compliance - " + f.nome)
         If Not f.PTCExecuted Or Mandatory Then
             f.PreTradeCompliance

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Capitania.Application": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

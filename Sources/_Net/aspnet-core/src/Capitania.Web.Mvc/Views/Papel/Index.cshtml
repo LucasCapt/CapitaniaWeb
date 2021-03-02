@@ -1,0 +1,77 @@
+﻿
+@using Abp.Authorization.Users
+@using Capitania.Web.Startup
+@model Capitania.Web.Models.Papel.PapelModel
+@{
+    ViewBag.CurrentPageName = PageNames.RatingNames; // The menu item will be active for this page.
+}
+
+@{
+    var col = new List<Syncfusion.EJ2.Grids.GridAggregateColumn> {
+              new Syncfusion.EJ2.Grids.GridAggregateColumn(){ Field = "FirstName", Format = "C2", Type = "count", FooterTemplate = "Count: ${count}" }
+};
+}
+@{
+    var ChildGrid1 = new Syncfusion.EJ2.Grids.Grid()
+    {
+        DataSource = Model.Propriedades,
+        QueryString = "IdentificadorPapel",
+        Columns = new List<Syncfusion.EJ2.Grids.GridColumn> {
+            new Syncfusion.EJ2.Grids.GridColumn(){ Field="IdentificadorPapel", HeaderText="ID", IsPrimaryKey=true, Visible=false},
+            new Syncfusion.EJ2.Grids.GridColumn(){ Field="IDPropriedade", HeaderText="IDPropriedade", IsPrimaryKey=true, Visible=false},
+            new Syncfusion.EJ2.Grids.GridColumn(){ Field="NomePropriedade", HeaderText="Propriedade", AutoFit=true },
+            new Syncfusion.EJ2.Grids.GridColumn(){ Field="ValorPropriedade", HeaderText="Valor", AutoFit=true},
+}
+
+    };
+}
+<script>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("Grid").ej2_instances[0];
+        if (args.item.id === 'Grid_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+</script>
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    @L("Paper")
+                </h2>
+            </div>
+            <div class="portlet-body">
+                <div class="row clearfix">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="overflow-x:auto; white-space:nowrap">
+                        <div>
+                            <ejs-grid id="gridPapel" dataSource="@Model.Papeis" childGrid="ChildGrid1" allowTextWrap="true" allowExcelExport="true" rowHeight="20" locale="pt" allowResizing="true" allowSorting="true" allowFiltering="true" width="100%" allowPaging="true">
+                                <e-grid-pagesettings pageCount="10" pageSize="25"></e-grid-pagesettings>
+                                <e-grid-columns>
+                                    <e-grid-column field="IdentificadorPapel" headerText="ID" isIdentity="true" isPrimaryKey="true" textAlign="Left" visible="true" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Nome" headerText="Nome" textAlign="Left" width="300"></e-grid-column>
+                                    <e-grid-column field="CodigoCETIP" headerText="CETIP" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="ISIN" headerText="ISIN" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="CNPJ" headerText="CNPJ" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Schedule" headerText="Schedule" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Tipo" headerText="Tipo" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Emissao" headerText="Dt. Emissao" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="ClasseLiquidez" headerText="Classe Liquidez" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="DayCount" headerText="DayCount" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Maturidade" headerText="Maturidade" textAlign="Left" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="NomeCRD" headerText="NomeCRD" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Coupon" headerText="Coupon" textAlign="Right" format="P3" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Indexador" headerText="Indexador" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Tranche" headerText="Tranche" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="Status" headerText="Status" textAlign="Left" autoFit="true"></e-grid-column>
+                                    <e-grid-column field="ImobHoldings" headerText="Holdings" textAlign="Left" autoFit="true"></e-grid-column>
+                                </e-grid-columns>
+                            </ejs-grid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

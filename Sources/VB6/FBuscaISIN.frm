@@ -79,11 +79,12 @@ End Sub
 
 Public Sub newrefresh()
     'Busca ISIN
-    Dim db As Database, rs As Recordset, rs1 As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset
     'ISIN DATABASE!
     Set db = DBEngine.Workspaces(0).OpenDatabase(Config.ISINDataBase)
     
-    Set rs = db.OpenRecordset("SELECT * FROM ISIN WHERE ISIN = '" + Me.Text1 + "'")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM ISIN WHERE ISIN = '" + Me.Text1 + "'", db, adOpenForwardOnly, adLockReadOnly)
     
     If rs.EOF Then
         For i = 1 To 38
@@ -91,14 +92,14 @@ Public Sub newrefresh()
         Next i
     Else
         'Procura emissor pelo código
-        Set rs1 = db.OpenRecordset("SELECT * FROM EMISSORES WHERE CODIGO='" + CritS(rs("EMISSOR")) + "'")
+        Set rs1 = New ADODB.Recordset
+        Call rs1.open("SELECT * FROM EMISSORES WHERE CODIGO='" + CritS(rs("EMISSOR")) + "'", db, adOpenForwardOnly, adLockReadOnly)
         If rs1.EOF Then u = "(não encontrado)" Else u = CritS(rs1("Nome"))
         Grid.TextMatrix(0, 1) = u
         For i = 1 To 38
             Grid.TextMatrix(i, 1) = rs(v(i))
         Next i
     End If
-    db.Close
 End Sub
 
 

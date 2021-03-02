@@ -28,7 +28,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Public Sub newshow(qual As Integer)
-    Dim db As Database, rs As Recordset
+    Dim db As ADODB.Connection, rs As ADODB.Recordset
     
     
     Set db = OpenTheDatabase
@@ -63,7 +63,8 @@ Public Sub newshow(qual As Integer)
                 
     End Select
     
-    Set rs = db.OpenRecordset(SelectOrder)
+    Set rs = New ADODB.Recordset
+    Call rs.open(SelectOrder, db, adOpenForwardOnly, adLockReadOnly)
         
     
     Grid.Rows = 1
@@ -127,7 +128,6 @@ Public Sub newshow(qual As Integer)
         rs.MoveNext
     Wend
     
-    db.Close
     Me.Show
 End Sub
 

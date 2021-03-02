@@ -14,13 +14,15 @@ Attribute VB_Exposed = False
 Public c As New Collection
 
 Public Sub ReadDB()
-    Dim db As Database, rs As Recordset, x As CRegra
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, x As CRegra
     Set c = New Collection
     
     Set db = OpenTheDatabase
-    Set rs = db.OpenRecordset("SELECT * FROM TREGRAS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME")
+    Set rs = New ADODB.Recordset
+    Call rs.open("SELECT * FROM TREGRAS WHERE DT_CREATED<=" + SQLBaseDate + " AND NOT (DELETED = 1 AND DT_DELETED<=" + SQLBaseDate + ") ORDER BY NOME", db, adOpenForwardOnly, adLockReadOnly)
     If Not rs.EOF Then rs.MoveFirst
     While Not rs.EOF
+        DoEvents
         Set x = New CRegra
         x.ID = rs("ID")
         x.nome = rs("Nome")
@@ -56,7 +58,7 @@ Public Sub ReadDB()
         c.Add x
         rs.MoveNext
     Wend
-    db.Close
+    
 End Sub
 
 Public Function search(x As Integer) As CRegra
@@ -75,7 +77,7 @@ End Function
 
 Public Sub Exclui(x As CRegra)
     Dim b As CBook, EhUsada As Boolean, R1 As CRegra
-    Dim db As Database, rs As Recordset, i As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, i As Integer
     
     'Verifica se regra é usada em algum book
     EhUsada = False
@@ -92,8 +94,8 @@ Public Sub Exclui(x As CRegra)
         If MainStatus = "LIVE" Then
             
             Set db = OpenTheDatabase
-            db.Execute ("UPDATE TREGRAS SET DELETED=TRUE, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
-            db.Close
+            db.Execute ("UPDATE TREGRAS SET DELETED=1, DT_DELETED=" + SQLBaseDate + " WHERE ID=" + Str(x.ID))
+            
         End If
         
         'Retira da Lista
@@ -111,20 +113,21 @@ End Sub
 
 
 Public Function Cria(x As String) As CRegra
-    Dim db As Database, rs As Recordset, y As CRegra, LastNumber As Integer
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, y As CRegra, LastNumber As Integer
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT MAX (ID) AS MAXID FROM TREGRAS")
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT MAX (ID) AS MAXID FROM TREGRAS", db, adOpenForwardOnly, adLockReadOnly)
         If rs.EOF Then LastNumber = 0 Else LastNumber = rs("MAXID")
         rs.Close
         
-        order = "INSERT INTO TREGRAS (ID, NOME, MAXMIN, LIMITE, POR, POR_PROP, PARA, PARA_PROP, PARA_VALOR, WORKLOW, WARN, PARA_COMP, ABERTA, DELETED, DT_CREATED, DT_DELETED, ESCOPO, LIM_REF) " + _
-            "VALUES (" + Str(LastNumber + 1) + ", '" + x + "', 'MAX', 0, FALSE, 0, FALSE, 0, '', 0, 0, '', FALSE, FALSE, " + SQLBaseDate + "," + SQLBaseDate + ",'CTRL','PL')"
+        order = "INSERT INTO TREGRAS (ID, NOME, MAXMIN, LIMITE, POR, POR_PROP, PARA, PARA_PROP, PARA_VALOR, WORKLOW, WARN, PARA_COMP, ABERTA, DELETED, DT_CREATED, DT_DELETED, ESCOPO, LIM_REF, CONECTOR, MOVEMENTRULE, ANDRULE, REFISSUE, ISSUE_QUANT, AND2RULE, AND3RULE) " + _
+            "VALUES (" + Str(LastNumber + 1) + ", '" + x + "', 'MAX', 0, 0, 0, 0, 0, '', 0, 0, '', 0, 0, " + SQLBaseDate + "," + SQLBaseDate + ",'CTRL','PL', 0, 0, 0, 0, 0, 0, 0)"
         
         db.Execute order
-        db.Close
+        
     
         Set y = New CRegra
         y.ID = LastNumber + 1

@@ -79,13 +79,14 @@ End Property
 
 
 Public Sub WriteDB()
-    Dim db As Database, rs As Recordset, sbPor As String, sbPara As String, order As String, SpPara As String, SpPor As String
+    Dim db As ADODB.Connection, rs As ADODB.Recordset, sbPor As String, sbPara As String, order As String, SpPara As String, SpPor As String
     Dim u1 As String
     
     If MainStatus = "LIVE" Then
         
         Set db = OpenTheDatabase
-        Set rs = db.OpenRecordset("SELECT * FROM TPROPRIEDADES WHERE ID=" + Str(Me.ID))
+        Set rs = New ADODB.Recordset
+        Call rs.open("SELECT * FROM TPROPRIEDADES WHERE ID=" + Str(Me.ID), db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then
             rs.Close
             db.Execute ("DELETE FROM TPROPRIEDADES WHERE ID=" + Str(Me.ID))
@@ -93,7 +94,7 @@ Public Sub WriteDB()
             rs.Close
         End If
             
-        If Me.ValorLivre Then u1 = "TRUE" Else u1 = "FALSE"
+        If Me.ValorLivre Then u1 = "1" Else u1 = "0"
         db.Execute ("INSERT INTO TPROPRIEDADES (ID, NOME, VALORLIVRE) VALUES (" + Str(Me.ID) + ", '" + Me.nome + "'," + u1 + ")")
         
         db.Execute ("DELETE FROM TPROPVALUES WHERE PROPRIEDADE=" + Str(Me.ID))
@@ -101,7 +102,6 @@ Public Sub WriteDB()
             db.Execute ("INSERT INTO TPROPVALUES (PROPRIEDADE, VALOR) VALUES (" + Str(Me.ID) + ", '" + L_Valor(i) + "')")
         Next i
         
-        db.Close
         
     End If
 End Sub

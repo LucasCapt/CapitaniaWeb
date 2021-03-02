@@ -4,8 +4,8 @@ Object = "{0D452EE1-E08F-101A-852E-02608C4D0BB4}#2.0#0"; "FM20.DLL"
 Begin VB.Form Fpapel 
    Caption         =   "Títulos"
    ClientHeight    =   8220
-   ClientLeft      =   60
-   ClientTop       =   345
+   ClientLeft      =   180
+   ClientTop       =   690
    ClientWidth     =   12570
    LinkTopic       =   "Form1"
    ScaleHeight     =   8220
@@ -175,7 +175,7 @@ Private PropCols As Boolean
 
 Private Group As Boolean
 
-Sub NewShow()
+Sub newshow()
     Filter = False
     ToggleButton1 = False
     PosicFilter = False
