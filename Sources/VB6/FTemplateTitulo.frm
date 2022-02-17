@@ -175,7 +175,7 @@ Private matriz As Variant
 Private NL As Integer
 Private NC As Integer
 
-Private Const NFixed = 11  'Numero de propriedades fixas
+Private Const NFixed = 16  'Numero de propriedades fixas
 
 
 Public Sub newshow()
@@ -202,7 +202,16 @@ Public Sub newshow()
         matriz(1, 10) = "DayCount"
             matriz(2, 10) = "ACT/ACT": matriz(3, 10) = "ACT/360": matriz(4, 10) = "30/360": matriz(5, 10) = "BUS/252"
         matriz(1, 11) = "Index"
-            matriz(2, 11) = "CDI+": matriz(3, 11) = "%CDI": matriz(4, 11) = "IPCA+": matriz(5, 11) = "IGPM+": matriz(6, 11) = "IGPDI+": matriz(6, 12) = "FIXED": matriz(6, 13) = "SELIC": matriz(6, 14) = "IFIX"
+            matriz(2, 11) = "CDI+": matriz(3, 11) = "%CDI": matriz(4, 11) = "IPCA+": matriz(5, 11) = "IGPM+": matriz(6, 11) = "IGPDI+": matriz(7, 11) = "FIXED": matriz(8, 11) = "SELIC": matriz(9, 11) = "IFIX"
+        matriz(1, 12) = "CNPJ"
+        matriz(1, 13) = "TIPO"
+            matriz(2, 13) = "CAIXA": matriz(3, 13) = "CONTA": matriz(4, 13) = "TITPUBLICO": matriz(5, 13) = "TITPRIVADO": matriz(6, 13) = "DEBENTURE": matriz(7, 13) = "ACOES"
+            matriz(8, 13) = "COTAS": matriz(9, 13) = "FUTUROS": matriz(10, 13) = "IMOVEL": matriz(11, 13) = "PROVISAO"
+        matriz(1, 14) = "Name.Crd"
+        matriz(1, 15) = "TRANCHE"
+            matriz(2, 15) = "SR_SEC": matriz(3, 15) = "SR_CLEAN":: matriz(4, 15) = "SUB": matriz(5, 15) = "EQUITY"
+        matriz(1, 16) = "HOLDINGS"
+            
         NC = NFixed
         NL = 29
         For Each p In Props.c
@@ -295,6 +304,16 @@ Private Sub RotinaPaste()
                             pp.DayCount = a
                         Case 11
                             pp.Index = a
+                        Case 12
+                            pp.CNPJ = a
+                        Case 13
+                            pp.Tipo = a
+                        Case 14
+                            pp.NameCr = a
+                        Case 15
+                            pp.Senior = a
+                        Case 16
+                            pp.Holdings = Val(a)
                         Case Else
                             pp.PropV(j - NFixed) = a
                     End Select
@@ -407,6 +426,26 @@ Private Sub ColocaNaGrade(pp As CPapel)
     Grid.TextMatrix(11, 0) = "*Index"
         Grid.TextMatrix(11, 1) = pp.Index
         HighLightCell 11, critField(pp, 11)
+        
+    Grid.TextMatrix(12, 0) = "*CNPJ"
+        Grid.TextMatrix(12, 1) = pp.CNPJ
+        HighLightCell 12, critField(pp, 12)
+        
+    Grid.TextMatrix(13, 0) = "*Tipo"
+        Grid.TextMatrix(13, 1) = pp.Tipo
+        HighLightCell 13, critField(pp, 13)
+        
+    Grid.TextMatrix(14, 0) = "*NameCrd"
+        Grid.TextMatrix(14, 1) = pp.NameCr
+        HighLightCell 14, critField(pp, 14)
+        
+    Grid.TextMatrix(15, 0) = "*Tranche"
+        Grid.TextMatrix(15, 1) = pp.Senior
+        HighLightCell 15, critField(pp, 15)
+        
+    Grid.TextMatrix(16, 0) = "*Holdings"
+        Grid.TextMatrix(16, 1) = Str(pp.Holdings)
+        HighLightCell 16, critField(pp, 16)
         
     For i = 1 To Props.c.Count
         Grid.TextMatrix(NFixed + i, 0) = Props.c(i).nome

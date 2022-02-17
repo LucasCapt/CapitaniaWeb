@@ -163,7 +163,7 @@ Public Sub ReadDB(Data1 As Date)
     tt1 = tt1 + Now() - t0i
     
     
-    'Lê todo o TDATV TODO
+    'Lê todo o TDATV
     t0i = Now()
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT * FROM TADTV WHERE DATA>=" + SQLD(BaseDate - 15) + " ORDER BY NOME ASC, DATA DESC", db, adOpenKeyset, adLockReadOnly)
@@ -643,6 +643,7 @@ Public Function Maiores(N As Integer) As Collection
     Set Maiores = New Collection
     For i = 1 To N: ArrVol(i) = 0: Set ArrPp(i) = Nothing: Next i
     For Each x In c
+        
         If (x.Tipo = "DEBENTURE" Or x.Tipo = "COTAS") And Not x.ehcaixa And Not x.Fundo Then
             i = 1
             While i < N And ArrVol(i) > x.PosicAssetV

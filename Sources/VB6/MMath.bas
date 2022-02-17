@@ -1,5 +1,7 @@
 Attribute VB_Name = "MMath"
 'V. 2.127 - Alterada a sub AtualizaErros(). Trocado CritN() por CritNN().
+'V  2.132 - Alterado AtualizaErros
+'           para comparar corretamente a data do registro com a data/hora da última revisão de erros
 
 
 Public Function CritString(x As String) As String

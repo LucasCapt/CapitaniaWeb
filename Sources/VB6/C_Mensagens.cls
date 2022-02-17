@@ -145,7 +145,9 @@ Private Function SubPTC() As String
                     For Each u In f.PTCNodes
                         If u.Result > 1 Then
                             If Not u.MyTrade Is Nothing And Not u.regra Is Nothing Then
-                                m = m + vbCr + Space(38) + u.MyTrade.Extenso + vbCr + _
+                                'Reporta apenas se a regra for CTRL
+                                If u.regra.Escopo = "CTRL" Then _
+                                    m = m + vbCr + Space(38) + u.MyTrade.Extenso + vbCr + _
                                                     Space(38) + u.regra.nome + vbCr + _
                                                     Space(38) + u.regra.LimiteExtenso + "  (" + FormatLimit(u.PLSubA, u.regra) + " -> " + FormatLimit(u.PLSubB, u.regra) + ")" + "  {" + FNumkMM(u.DeltaA) + " -> " + FNumkMM(u.DeltaB) + "}" + vbCr
                             Else

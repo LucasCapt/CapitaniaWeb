@@ -158,7 +158,7 @@ Public Sub Init()
     While Not rs.EOF
         DoEvents
         Set u = New CCrise
-        u.Nome = CritS(rs("NOME"))
+        u.nome = CritS(rs("NOME"))
         u.Ini = CritD(rs("DT_INI"))
         u.Fim = CritD(rs("DT_FIM"))
         u.Populate db
@@ -189,7 +189,7 @@ End Sub
 Private Sub TrataSerie(DBName As String, vetor As Variant, Processo As String, _
             ByRef Vol As Double, ByRef Stress As Double, ByRef LastDate As Date, ByRef N As Integer, db As ADODB.Connection)
             
-    Dim rs As ADODB.Recordset, d As Date, Incompleta As Boolean, UltData As Date
+    Dim rs As ADODB.Recordset, d As Date, Incompleta As Boolean, UltData As Date, r As Double
     
     'Lê Database para o vetor
         Set rs = New ADODB.Recordset
@@ -211,17 +211,29 @@ Private Sub TrataSerie(DBName As String, vetor As Variant, Processo As String, _
     
     'Calcula Vol
         v = 0: p = 0
-        For k = 0 To i - 2
-            v = v + Log(vetor(i - k) / vetor(i - k - 1)) ^ 2 * Lambda ^ k
-            p = p + Lambda ^ k
-        Next k
-        If p <> 0 Then
-            If Processo = "NORM" Then
-                Vol = Sqr(v / p) * vetor(i)
-            Else
-                Vol = Sqr(v / p)
-            End If
+        
+        If Processo = "NORM" Then
+            For k = 0 To i - 2
+                v = v + (vetor(i - k) - vetor(i - k - 1)) ^ 2 * Lambda ^ k
+                p = p + Lambda ^ k
+            Next k
+        Else
+            For k = 0 To i - 2
+                If vetor(i - k - 1) = 0 Then r = 0 Else r = vetor(i - k) / vetor(i - k - 1)
+                If r > 0 Then v = v + Log(r) ^ 2 * Lambda ^ k
+                p = p + Lambda ^ k
+            Next k
         End If
+        
+        Vol = Sqr(v / p)
+        
+'        If p <> 0 Then
+'            If Processo = "NORM" Then
+'                Vol = Sqr(v / p) * vetor(i)
+'            Else
+'                Vol = Sqr(v / p)
+'            End If
+'        End If
     
     'Calcula Stress
         If Processo = "NORM" Then
@@ -250,7 +262,7 @@ Public Function VaRHistory(Fundo As CFundo, Optional dtcorte As Date = LongTimeA
         
         Set db = OpenTheDatabase
         Set rs = New ADODB.Recordset
-        Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + Fundo.Nome + _
+        Call rs.open("SELECT * FROM THISTRISK WHERE FUNDO='" + Fundo.nome + _
             "' AND DATAINFO<=" + SQLBaseDate + " AND DATAINFO>=" + SQLD(d) + " AND FUNDSTATUS<>'INV' ORDER BY DATAINFO", db, adOpenForwardOnly, adLockReadOnly)
         If Not rs.EOF Then rs.MoveFirst
         While Not rs.EOF

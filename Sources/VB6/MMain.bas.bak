@@ -2,7 +2,7 @@ Attribute VB_Name = "MMain"
 Public Const LongTimeAgo As Date = 36526
 
 Private vConexao As ADODB.Connection
-Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=S14\SQLSTD2019;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
+Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=S14;Database=db_capitania_prd;Uid=sa;pwd=DS!2002nt; DataTypeCompatibility=80"
 'Public Const DatabaseConnectionString As String = "Provider=SQLNCLI11;Server=WIN10DEV;Database=db_capitania;Uid=sa;pwd=Capitania2019; DataTypeCompatibility=80"
 
 Public DBFileName As String
@@ -84,17 +84,7 @@ Public NumErrors As Double             'Número de erros desde a última revisão
 'Public Const Ver = "2.133"               '28-Nov-2019 'Consertado o contador de erros no statusbar e a rotina
 'Public Const Ver = "2.134"               '06-Dec-2019 'Incluido Cdate() para converter certas datas que vem da Base
 'Public Const Ver = "2.135"               '30-Apr-2020 'Incluido mais um teste contra ISIN=ID0000 no Importador e risco imobiliário ortogonal
-'Public Const Ver = "2.136"               '02-Jun-2020 'Aumentou a importação de quotas de fundos para até 1000 colunas
-'Public Const Ver = "2.137"               '05-Jun-2020 'Nova conexão com a base de dados
-'Public Const Ver = "2.138"               '05-Jun-2020 'Alteração do ícone da aplicação. Tentativa de correção do erro de overflow
-'Public Const Ver = "2.139"               '10-Jul-2020 'Correção de Int --> Long em GetYourADTVIn
-'Public Const Ver = "2.140"               '27-Jul-2020 'Correção de erro na importação de carteira txt
-'Public Const Ver = "2.141"               '07-Aug-2020 'Filtro de erro ao ler planilha de trades do Excel
-'Public Const Ver = "2.142"               '14-Aug-2020 'Eliminar o erro de log de número negativo no cálculo da vol de fator de risco
-'Public Const Ver = "2.143"               '23-Aug-2021 'Crítica do filetab na abertura de Excel
-'Public Const Ver = "2.144"               '20-Out-2021 'email de PTC traz apenas regras CTRL
-'Public Const Ver = "2.145"               '19-Nov-2021 'Aumentou no de resgates para 5000 (CFundo)
-Public Const Ver = "2.146"                '16-Fev-2022 'Acrescentou teste se quota(t-1)>0 no C_Fundo
+Public Const Ver = "2.136"                '02-Jun-2020 'Aumentou a importação de quotas de fundos para até 1000 colunas
 
 
 Sub Init()
@@ -396,13 +386,9 @@ Public Function OpenAndSetExcel(Excel As Object, FileName As String, FileTab As 
                     Set wb = Excel.workbooks.open(FileName, 2, True, , , , True)
             End If
             If Not wb Is Nothing Then
-                If FileTab = "\WORKBOOK" Then
-                    Set OpenAndSetExcel = wb
-                Else
-                    For Each ws1 In wb.worksheets
-                        If ws1.Name = FileTab Then Set OpenAndSetExcel = wb.worksheets(FileTab)
-                    Next ws1
-                End If
+                If FileTab = "\WORKBOOK" _
+                    Then Set OpenAndSetExcel = wb _
+                    Else Set OpenAndSetExcel = wb.worksheets(FileTab)
             End If
         End If
     End If

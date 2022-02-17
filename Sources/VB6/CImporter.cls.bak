@@ -11,18 +11,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'V. 2.128 - Alterado o ImportaPricing
-'           para não repetir ativo nem pegar ativos tipo CRIPR e CRIVT
-'V. 2.133 - Alterado Layt22MainParaData --> desconsiderar ISIN que começa com BR0000 (default do Bradesco)
-'
-'V. 2.135 - Alterado Layt22MainParaData --> desconsiderar ISIN que começa com BR0000 (default do Bradesco) também para ID
-'
-'V. 2.136 - Alterado ImportRiskSeries --> aumentar para 1000 o número de colunas de importação de quotas de fundos
-
 Public LastDate
 
 Private Excel As Object
-
 
 
 Public Sub ImportaTudo(Level As Integer, EhBatch As Boolean, ehPreTrade As Boolean, Optional f As Form)
@@ -51,7 +42,7 @@ Sub importaADTV(Level As Integer, Optional f As Form)
         
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT MAX(DATA) AS LASTDATE FROM TADTV WHERE DATA<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
-        If Not IsNull(rs1("LASTDATE")) Then LastDate = CDate(rs1("LASTDATE")) - 5
+        If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE") - 5
         If LastDate < DateSerial(2015, 10, 1) Then LastDate = DateSerial(2015, 10, 1)
         rs1.Close
         
@@ -100,9 +91,6 @@ End Sub
 Sub ImportaPricing(Level As Integer, Optional f As Form)
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, LastDate As Date, d As Date
     Dim nome As String, L As String, fdo As String, pp As String, vl As String
-    Dim AllPpr As String, TipoPpr As String
-    
-    AllPpr = ""
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("PRICING")) Then
     
@@ -113,7 +101,7 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
         'Identifica a última data que consta do database de pricing
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT MAX(DATAOBS) AS LASTDATE FROM TPRICING WHERE DATAOBS<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
-        If Not IsNull(rs1("LASTDATE")) Then LastDate = CDate(rs1("LASTDATE")) - 5
+        If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE") - 5
         If LastDate < DateSerial(2015, 10, 1) Then LastDate = DateSerial(2015, 10, 1)
         rs1.Close
         
@@ -129,9 +117,8 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                 nome = Config.PricingFilePrefix + Format(Year(d), "0000") + Format(Month(d), "00") + Format(Day(d), "00") + ".txt"
                 
                 If FileExists(nome) Then
-                
-                    '---------Importa do arquivo texto
-                    If Not f Is Nothing Then f.Say ("Importando pricing txt " + Format(d, "dd-MMM-yy"))
+                    '---------Importa da Planilha
+                    If Not f Is Nothing Then f.Say ("Importando pricing " + Format(d, "dd-MMM-yy"))
                     Open nome For Input As 1
                     
                     If Not EOF(1) Then Line Input #1, L
@@ -154,21 +141,7 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                                 Ativo = Ativo + Mid(L, i, 1)
                                 i = i + 1
                             Wend
-                            TipoPpr = ""
-                            If Mid(L, i, 1) = ";" Then
-                                'Separa o próximo campo --> TipoPpr
-                                While i < Len(L) And Mid(L, i, 1) <> ";"
-                                    TipoPpr = TipoPpr + Mid(L, i, 1)
-                                    i = i + 1
-                                Wend
                         End If
-                        End If
-                        
-                        'Verifica se a linha não é de um ativo (códigos proibidos) e se o ativo não é repetido
-                        If TipoPpr <> "CRIVT" And TipoPpr <> "CRIPR" And TipoPpr <> "DEBVT" And TipoPpr <> "DBPRV" And InStr(AllPpr, "\" + Ativo + "\") = 0 Then
-                        
-                            'Acrescenta o ativo entre os já processados
-                            AllPpr = AllPpr + "\" + Ativo + "\"
                         
                         'Procura a 2a virgula de tras p/ frente e separa o preço
                         i = Len(L)
@@ -183,16 +156,13 @@ Sub ImportaPricing(Level As Integer, Optional f As Form)
                         db.Execute ("DELETE FROM TPRICING WHERE DATAOBS=" + SQLD(d) + " AND ATIVO='" + Ativo + "'")
                         db.Execute ("INSERT INTO TPRICING (DATAOBS, ATIVO, PRECO) VALUES (" + SQLD(d) + ", '" + Ativo + "', " + preco + ")")
                         
-                        End If
-                        
                     Wend
                     Close 1
-                End If 'FileExists (importação do arquivo-texto)
+                End If 'FileExists
                     
                     
                 If Not ws Is Nothing Then
                     '-------- Importa FII/ debentures (uma vez que importa, trava a importação do anterior)
-                    If Not f Is Nothing Then f.Say ("Importando pricing Excel " + Format(d, "dd-MMM-yy"))
                     j = 1
                     While ws.cells(1, j) <> ""
                         DoEvents
@@ -244,7 +214,7 @@ Sub ImportaPosicao(Level As Integer, ForceLast As Boolean, Optional f As Form)
         'Identifica a última data que consta do database de posicao
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT MAX(DATA) AS LASTDATE FROM TPOSIC WHERE DATA<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
-        If Not IsNull(rs1("LASTDATE")) Then LastDate = CDate(rs1("LASTDATE"))
+        If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE")
         If LastDate < DateSerial(2015, 1, 1) Then LastDate = DateSerial(2015, 1, 1)
         rs1.Close
         
@@ -295,8 +265,8 @@ Sub ImportaPosicaoParaData(d As Date, Optional Notify As Boolean = False)
                 fdo = Left(L, t1 - 1)
                 pp = Mid(L, t1 + 1, t2 - t1 - 1)
                 vl = Right(L, Len(L) - t2)
-                If fdo <> "" And pp <> "" And v1 <> 0 _
-                    Then db.Execute ("INSERT INTO TPOSIC (FUNDO, PAPEL, VALOR, DATA, TIPO) VALUES (" + fdo + " ,'" + pp + "' ," + vl + ", " + SQLD(d) + ",1)")
+                                        
+                db.Execute ("INSERT INTO TPOSIC (FUNDO, PAPEL, VALOR, DATA, TIPO) VALUES (" + fdo + " ,'" + pp + "' ," + vl + ", " + SQLD(d) + ",1)")
             End If
         Wend
         Close 1
@@ -313,13 +283,12 @@ End Sub
 '-----------------------------------------------------------------------------------------------------------
 Sub ImportaResgates(Level As Integer, Optional f As Form)
     Dim db As ADODB.Connection, rs As ADODB.Recordset, rs1 As ADODB.Recordset, d As Date, fd As String, vs As String, v As Double
-    Dim w As Object, wb As Object, spg As String, tp As Boolean
+    Dim w As Object, wb As Object, MaxLines As Integer, spg As String, tp As Boolean
     Dim LastDate As Date, CutDate As Date, S_Cancel As String
-    Dim i As Long, MaxLines As Long
     
     If Level = 2 Or (Level = 1 And Not JahImportouNoDia("RESGATES")) Then
     
-        MaxLines = 100000
+        MaxLines = 30000
         
         If Not f Is Nothing Then f.Say ("Importando Resgates")
         
@@ -329,7 +298,7 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
         'Identifica a última data que consta do database de resgates
         Set rs1 = New ADODB.Recordset
         Call rs1.open("SELECT MAX(DATAOBS) AS LASTDATE FROM TRESGATES WHERE DATAOBS<=" + SQLD(Now()), db, adOpenForwardOnly, adLockReadOnly)
-        If Not IsNull(rs1("LASTDATE")) Then LastDate = CDate(rs1("LASTDATE"))
+        If Not IsNull(rs1("LASTDATE")) Then LastDate = rs1("LASTDATE")
         If LastDate < DateSerial(2012, 1, 1) Then LastDate = DateSerial(2012, 1, 1)
         rs1.Close
         
@@ -353,7 +322,7 @@ Sub ImportaResgates(Level As Integer, Optional f As Form)
                     db.Execute ("DELETE FROM TRESGATES WHERE DATAOBS >= " + SQLD(CutDate))
                     
                     'localiza aproximadamente o início da série (Cutdate)
-                    i = 70000
+                    i = 16384
                     
                     While w.cells(i, 1) = "" Or w.cells(i, 1) > CutDate And i > 4
                         i = i / 2
@@ -583,7 +552,7 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
 '            Wend
 '            db1.Close
         
-        'Importa Trades de RFE (arquivo .xls)
+        'Importa Trdes de RFE (arquivo .xls)
             If FileSystem.Dir(Config.RFETradeSheet) <> "" Then
                 CaptureExcel
                 Set ws = OpenAndSetExcel(Excel, Config.RFETradeSheet, Config.RFETradeTab)
@@ -615,12 +584,7 @@ Public Sub ImportaTrades(Level As Integer, Optional f As Form, Optional SinceDat
                         p1 = ws.cells(i, 6)
                         b1 = ws.cells(i, 3)
                         PR = ws.cells(i, 23)
-                        If Not IsError(ws.cells(i, 24)) Then
-                            NA = CritString(ws.cells(i, 24))
-                        Else
-                            NA = "#Erro#"
-                            WriteLogError "Célula Excel inválida", Str(i) + ",24"
-                        End If
+                        NA = CritString(ws.cells(i, 24))
                         vf = ws.cells(i, 7)
                                                 
                         db.Execute ("INSERT INTO TTRADES (DATA, HORA, HORA_MS, FUNDO, ATIVO, CV, QUANT, TAXA, PU, PRICEREF, PRICESRC, BROKER, PRODUTO, NOMEATIVO, VALFIN) VALUES ( " + _
@@ -753,7 +717,7 @@ Public Sub ImportRiskSeries(Level As Integer, Optional f As Form)
             Set w = OpenAndSetExcel(Excel, Config.HistFilePath + Config.HistFileName, Config.HistFileQuotaTab)
             If Not w Is Nothing Then
                 i = 1
-                While w.cells(1, i) <> "" And i < 1000 'número máximo de colunas
+                While w.cells(1, i) <> "" And i < 256
                     DoEvents
                     If IsNumeric(w.cells(1, i)) Then
                         fundoid = w.cells(1, i) 'numero do fundo
@@ -798,7 +762,7 @@ Private Sub ImportaSerie(DBName As String, WSName As String, w As Object, db As 
     ElseIf IsNull(rs("LASTDATE")) Then
         Incompleta = True
     Else
-        UltData = CDate(rs("LASTDATE"))
+        UltData = rs("LASTDATE")
         Incompleta = UltData < sub1util(Now())
     End If
     
@@ -1285,16 +1249,14 @@ Public Sub Layt22MainParaData(d As Date)
             PapelAchado = Not rs1.EOF
         End If
         
-        'If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then <--Antes da V. 2.133
-        If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 And Left(CritS(rs("PAPEL_ISIN")), 6) <> "BR0000" Then
+        If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then
             'Procura o papel na TPAPEL pelo ISIN = ISIN
             Set rs1 = New ADODB.Recordset
             Call rs1.open("SELECT * FROM TPAPEL WHERE ISIN='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED =0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
             PapelAchado = Not rs1.EOF
         End If
         
-        'If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then <-- Antes da V. 2.135
-        If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 And Left(CritS(rs("PAPEL_ISIN")), 6) <> "BR0000" Then
+        If Not PapelAchado And InStr(CritS(rs("PAPEL_ISIN")), "**") = 0 Then
             'Procura o papel na TPAPEL por ID = ISIN
             Set rs1 = New ADODB.Recordset
             Call rs1.open("SELECT * FROM TPAPEL WHERE ID='" + CritS(rs("PAPEL_ISIN")) + "' AND DT_CREATED<=" + SQLD(d) + " AND (DELETED = 0 OR DT_DELETED>=" + SQLD(d) + ")", db, adOpenForwardOnly, adLockReadOnly)
@@ -1568,8 +1530,8 @@ Public Sub Layt22MainParaData(d As Date)
                 "[INDEX], COUPON, DAYCOUNT, SENIOR, NAMECR, HOLDINGS, ISIN, CNPJ, CODCETIP, DT_CREATED, DT_DELETED, DELETED, TIPO) VALUES " + _
                 "('" + pp.nome + "', '" + _
                 pp.ID + "','" + _
-                pp.Status + "', " + _
-                s2 + ", '" + _
+                pp.Status + "', '" + _
+                s2 + "', '" + _
                 pp.Class_Liq + "','" _
                 + pp.Class_Rent + "'," + _
                 SQLD(pp.Dt_Emissao) + " , " + _

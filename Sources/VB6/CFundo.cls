@@ -15,6 +15,7 @@ Attribute VB_Exposed = False
 '         erro nas regras com mais de uma violação
 'V 2.135 - Alterada ComputeRisk
 '         VaR e Stress agora fazem a composição ortogonal dos 2 riscos imobiliários
+'V 2.146 - Acrescentado o teste se Quota(i-1)>0 (para poder fazer o log) na rotina que calcula a vol da quota
 
 Public ID As Long
 Public nome As String
@@ -82,15 +83,15 @@ Public PTCExecuted As Boolean
 
 '-----Resgates
 Private NResg As Integer
-Private ResgatesV(1000) As Double        'Valor
-Private ResgatesD(1000) As Date          'Data de Liquidação
-Private ResgatesT(1000) As Boolean       'Total?
-Private ResgatesD0(1000) As Date         'data de pedido
+Private ResgatesV(5000) As Double        'Valor
+Private ResgatesD(5000) As Date          'Data de Liquidação
+Private ResgatesT(5000) As Boolean       'Total?
+Private ResgatesD0(5000) As Date         'data de pedido
 
 '-----Transferencias
 Private NTrans As Integer
-Private TransferV(1000) As Double
-Private TransferD(1000) As Date
+Private TransferV(5000) As Double
+Private TransferD(5000) As Date
 
 Public MaiorCotista As Double
 Public VolPL As Double              'volatilidade anual do PL
@@ -416,9 +417,8 @@ Public Sub L_MyPosicsExCaixa(ByRef a As Collection, ByRef pl As Double)
         If x.Papel.Fundo And Not x.Papel.MyFundo Is Nothing Then
             If x.Papel.MyFundo.area <> "EXTERNO" Then
                 x.Papel.MyFundo.L_MyPosicConsol b1, PLb
-                    For Each y In b1
+                For Each y In b1
                     If Not y.Papel.ehcaixa Then b.Add y
-            
                 Next y
             Else
                 If Not x.Papel.ehcaixa Then b.Add x
@@ -1306,7 +1306,7 @@ Private Sub ComputeRisk()
         If k > 1 Then
             p = 0: v = 0: Lambda = RiskMgr.Lambda
             For i = 0 To k - 2
-                If MyQuotas(k - i - 1).Valor > 0 Then v = v + Log(MyQuotas(k - i).Valor / MyQuotas(k - i - 1).Valor) ^ 2 * Lambda ^ i
+                If MyQuotas(k - i - 1).Valor > 0 And MyQuotas(k - i).Valor > 0 Then v = v + Log(MyQuotas(k - i).Valor / MyQuotas(k - i - 1).Valor) ^ 2 * Lambda ^ i
                 p = p + Lambda ^ i
             Next i
         End If

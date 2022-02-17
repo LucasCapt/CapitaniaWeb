@@ -11,9 +11,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'V.129 - Alterado PresumedMaturity
-'        para que classe "PERP" ignore data de vencimento informada
-
 Public ID As String
 Public nome As String
 Public Fundo As Boolean
@@ -116,9 +113,9 @@ End Sub
 
 Private Function SearchArray(x As Variant, key As String)
     'Auxiliar de GetYourADTVIn e funções GetRows - retorna o 1o da sequencia
-    Dim N As Long, i As Long, hi As Long, lo As Long
-    N = UBound(x, 2)
-    hi = N: lo = 0: i = (hi + lo) \ 2
+    Dim n As Integer, i As Integer, hi As Integer, lo As Integer
+    n = UBound(x, 2)
+    hi = n: lo = 0: i = (hi + lo) \ 2
     While UCase(x(1, i)) <> key And hi > lo
         If UCase(x(1, i)) > key Then hi = i - 1 Else lo = i + 1
         i = (hi + lo) \ 2
@@ -134,7 +131,7 @@ End Function
 
 Public Sub GetYourADTVIn(x As Variant)
     'Procura o ADTV no array "GetRows" x
-    Dim i As Long, vai As Boolean
+    Dim i As Integer, vai As Boolean
     
     vai = False
     i = SearchArray(x, UCase(CodCetip))
@@ -257,7 +254,7 @@ End Sub
 Property Get PresumedMaturity() As Date
     Dim EmatDY As Integer, EmatYr As Integer
     
-    If Year(Dt_Venc) > 2000 And Class_Rent <> "PERP" Then '<---2.129 alterada aqui
+    If Year(Dt_Venc) > 2000 Then
         PresumedMaturity = Dt_Venc
     Else
         EmatDY = 0: EmatYr = 0
