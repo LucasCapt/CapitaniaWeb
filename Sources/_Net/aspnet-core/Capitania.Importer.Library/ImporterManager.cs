@@ -311,6 +311,8 @@ namespace Capitania.Importer.Library
                                             vPosicLayout2.TIPO = "caixa";
                                             vPosicLayout2.DATA = vDataPosicao;
                                             vPosicLayout2.PAPEL_ISIN = caixa.isininstituicao;
+                                            if (string.IsNullOrEmpty(vPosicLayout2.PAPEL_ISIN))
+                                                vPosicLayout2.PAPEL_ISIN = "";
                                             vPosicLayout2.PAPEL_COD = "CONTA";
                                             vPosicLayout2.QUANT = (double)caixa.saldo;
                                             vPosicLayout2.VALOR = vPosicLayout2.QUANT;
@@ -1171,7 +1173,8 @@ namespace Capitania.Importer.Library
                                             }
                                             else
                                             {
-                                                if (vReader.GetString(vReader.GetOrdinal("PAPEL_ISIN")).Substring(8, 3) == "CRI")
+                                                string vPapel = vReader.GetString(vReader.GetOrdinal("PAPEL_ISIN"));
+                                                if (vPapel.Length > 10 && vPapel.Substring(8, 3) == "CRI")
                                                 {
                                                     pp.Class_Liq = "CRI";
                                                 }
