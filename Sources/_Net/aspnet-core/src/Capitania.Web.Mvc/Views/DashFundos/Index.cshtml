@@ -135,22 +135,21 @@
                     </div>
                 </div>
             </div>*@
-                <div>
+            <div>
 
-
-                    <ejs-grid id="Grid" dataSource="@ViewBag.DadosDash" allowExcelExport="true" rowHeight="20" locale="pt-BR" allowResizing="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })" allowSorting="true" allowFiltering="true">
+                    <ejs-grid id="Grid" class="grid-separator" dataSource="@ViewBag.DadosDash" allowExcelExport="true" rowHeight="20" locale="pt-BR" allowResizing="true" toolbarClick="toolbarClick" toolbar="@(new List<string>() { "ExcelExport" })" allowSorting="true" allowFiltering="true">
                         <e-grid-columns>
                             <e-grid-column field="NomeFundo" headerText="Fundo" textAlign="Left" autoFit="true"></e-grid-column>
                             <e-grid-column field="PL" headerText="PL" textAlign="Right" format="N2" autoFit="true"></e-grid-column>
                             <e-grid-column field="Caixa" headerText="Caixa" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
                             <e-grid-column field="CRD_EL1" headerText="Credit Loss" textAlign="Right" format="N1" autoFit="true"></e-grid-column>
-                            <e-grid-column field="VAR" headerText="VAR" textAlign="Right" autoFit="true" format="N1" ></e-grid-column>
-                            <e-grid-column field="Stress" headerText="Stress" textAlign="Right" autoFit="true" format="N1" ></e-grid-column>
-                            <e-grid-column field="LIQSTRESSPERCENTILE" headerText="Percentil" textAlign="Right" autoFit="true" format="N1" ></e-grid-column>
+                            <e-grid-column field="VAR" headerText="VAR" textAlign="Right" autoFit="true" format="N1"></e-grid-column>
+                            <e-grid-column field="Stress" headerText="Stress" textAlign="Right" autoFit="true" format="N1"></e-grid-column>
+                            <e-grid-column field="LIQSTRESSPERCENTILE" headerText="Percentil" textAlign="Right" autoFit="true" format="N1"></e-grid-column>
                             <e-grid-column field="DataInfo" headerText="DataInfo" textAlign="Right" format="dd/MM/yyyy" autoFit="true"></e-grid-column>
                         </e-grid-columns>
                     </ejs-grid>
-                </div>
+            </div>
         </div>
     </div>
 </div>

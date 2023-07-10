@@ -4904,6 +4904,14 @@ section.content {
   background-color: #fb483a;
   color: #fff; }
 
+.grid-separator .e-gridheader .e-headercell {
+    border-right: 1px solid #000000;
+}
+
+.grid-separator .e-rowcell {
+    border-right: 1px solid #000000;
+}
+
 /* Progress Bars =============================== */
 .progress {
   -webkit-border-radius: 0;
