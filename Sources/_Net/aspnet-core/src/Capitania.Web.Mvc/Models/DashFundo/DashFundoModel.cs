@@ -29,7 +29,7 @@ namespace Capitania.Web.Models.DashFundo
         {
             get
             {
-                return this.Concentracao.FindAll(w => w.Propriedade.Equals("tomador")).OrderBy(k => k.ConcentracaoConvertida).ToList();
+                return this.Concentracao.FindAll(w => w.Propriedade.Equals("tomador") && w.ConcentracaoConvertida >= 0.9).OrderBy(k => k.ConcentracaoConvertida).ToList();
             }
         }
 
@@ -37,7 +37,7 @@ namespace Capitania.Web.Models.DashFundo
         {
             get
             {
-                return this.Concentracao.FindAll(w => w.Propriedade.Equals("segmento")).OrderBy(k => k.ConcentracaoConvertida).ToList();
+                return this.Concentracao.FindAll(w => w.Propriedade.Equals("segmento") && w.ConcentracaoConvertida >= 0.9).OrderBy(k => k.ConcentracaoConvertida).ToList();
             }
         }
     }
