@@ -28,4 +28,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Security" />
   </ItemGroup>
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\lucas.costa\OneDrive\Desktop\SISTEMA DE RISCO\capitania\Sources\_Net\aspnet-core\src\Capitania.Core\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\lucas.costa\OneDrive\Desktop\SISTEMA DE RISCO\capitania\Sources\_Net\aspnet-core\src\Capitania.Core\.editorconfig" />
+  </ItemGroup>
 </Project>
